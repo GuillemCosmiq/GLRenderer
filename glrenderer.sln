@@ -1,0 +1,25 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 16
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GLRenderer", "source\glrenderer.vcxproj", "{BC69D7D9-FF24-F587-C42E-F3E2C7F5F0EC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Debug|x64 = Debug|x64
+		Release|Win32 = Release|Win32
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BC69D7D9-FF24-F587-C42E-F3E2C7F5F0EC}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BC69D7D9-FF24-F587-C42E-F3E2C7F5F0EC}.Debug|Win32.Build.0 = Debug|Win32
+		{BC69D7D9-FF24-F587-C42E-F3E2C7F5F0EC}.Debug|x64.ActiveCfg = Debug|x64
+		{BC69D7D9-FF24-F587-C42E-F3E2C7F5F0EC}.Debug|x64.Build.0 = Debug|x64
+		{BC69D7D9-FF24-F587-C42E-F3E2C7F5F0EC}.Release|Win32.ActiveCfg = Release|Win32
+		{BC69D7D9-FF24-F587-C42E-F3E2C7F5F0EC}.Release|Win32.Build.0 = Release|Win32
+		{BC69D7D9-FF24-F587-C42E-F3E2C7F5F0EC}.Release|x64.ActiveCfg = Release|x64
+		{BC69D7D9-FF24-F587-C42E-F3E2C7F5F0EC}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

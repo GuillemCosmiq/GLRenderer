@@ -1,0 +1,15 @@
+# Blender MTL File: 'None'
+# Material Count: 1
+
+newmtl None
+Ns 500
+Ka 0.8 0.8 0.8
+Kd 0.8 0.8 0.8
+Ks 0.8 0.8 0.8
+d 1
+illum 2
+map_Ka textures_CobbleStone/CobbleStone_01_M.tga
+map_Kd textures_CobbleStone/CobbleStone_01_BC.tga
+map_bump textures_CobbleStone/CobbleStone_01_NOpenGL.tga
+bump textures_CobbleStone/CobbleStone_01_NOpenGL.tga
+map_Ns textures_CobbleStone/CobbleStone_01_R.tga

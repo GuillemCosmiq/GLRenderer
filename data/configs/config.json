@@ -1,0 +1,11 @@
+{
+  "settings": {
+    "name": "TFG by Guillem Costa",
+    "default scene": "",
+    "logfile path": "LogError.txt",
+    "config paths": {
+      "graphics": "graphics.json",
+      "debug ui": "debug_ui.json"
+    }
+  }
+}

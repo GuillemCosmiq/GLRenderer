@@ -1,0 +1,18 @@
+# Blender MTL File: 'None'
+# Material Count: 1
+
+newmtl 08_-_Default
+Ns 18.000005
+Ka 1.000000 1.000000 1.000000
+Kd 0.588235 0.588235 0.588235
+Ks 0.000000 0.000000 0.000000
+Ke 0.0 0.0 0.0
+Ni 1.450000
+d 1.000000
+illum 1
+map_Ka textures_Cerberus/Cerberus_M.tga
+map_Kd textures_Cerberus/Cerberus_A.tga
+map_bump textures_Cerberus/Cerberus_N.tga
+bump textures_Cerberus/Cerberus_N.tga
+map_Ns textures_Cerberus/Cerberus_R.tga
+

@@ -1,0 +1,1191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{BC69D7D9-FF24-F587-C42E-F3E2C7F5F0EC}</ProjectGuid>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <RootNamespace>GLRenderer</RootNamespace>
+    <ProjectName>GLRenderer</ProjectName>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <TargetName>glrenderer</TargetName>
+    <OutDir>output\win32\debug\</OutDir>
+    <IntDir>obj\win32\debug\</IntDir>
+    <TargetExt>.exe</TargetExt>
+    <GenerateManifest>true</GenerateManifest>
+    <LinkIncremental>false</LinkIncremental>
+    <OutputFile>output\win32\debug\glrenderer.exe</OutputFile>
+    <IgnoreImportLibrary>false</IgnoreImportLibrary>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetName>glrenderer</TargetName>
+    <OutDir>output\win64\debug\</OutDir>
+    <IntDir>obj\win64\debug\</IntDir>
+    <TargetExt>.exe</TargetExt>
+    <GenerateManifest>true</GenerateManifest>
+    <LinkIncremental>false</LinkIncremental>
+    <OutputFile>output\win64\debug\glrenderer.exe</OutputFile>
+    <IgnoreImportLibrary>false</IgnoreImportLibrary>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <TargetName>glrenderer</TargetName>
+    <OutDir>output\win32\release\</OutDir>
+    <IntDir>obj\win32\release\</IntDir>
+    <TargetExt>.exe</TargetExt>
+    <GenerateManifest>true</GenerateManifest>
+    <LinkIncremental>false</LinkIncremental>
+    <OutputFile>output\win32\release\glrenderer.exe</OutputFile>
+    <IgnoreImportLibrary>false</IgnoreImportLibrary>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetName>glrenderer</TargetName>
+    <OutDir>output\win64\release\</OutDir>
+    <IntDir>obj\win64\release\</IntDir>
+    <TargetExt>.exe</TargetExt>
+    <GenerateManifest>true</GenerateManifest>
+    <LinkIncremental>false</LinkIncremental>
+    <OutputFile>output\win64\release\glrenderer.exe</OutputFile>
+    <IgnoreImportLibrary>false</IgnoreImportLibrary>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_CONSOLE;_DEBUG;%(PreprocessorDefinitions);$(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\contrib\glm;..\contrib</AdditionalIncludeDirectories>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <UseUnicodeForAssemblerListing>false</UseUnicodeForAssemblerListing>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+      <OmitFramePointers>false</OmitFramePointers>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
+      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+      <PreprocessToFile>false</PreprocessToFile>
+      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+      <PreprocessKeepComments>false</PreprocessKeepComments>
+      <StringPooling>true</StringPooling>
+      <ExceptionHandling>false</ExceptionHandling>
+      <SmallerTypeCheck>false</SmallerTypeCheck>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <FloatingPointExceptions>false</FloatingPointExceptions>
+      <CreateHotpatchableImage>false</CreateHotpatchableImage>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <OpenMPSupport>false</OpenMPSupport>
+      <ExpandAttributedSource>false</ExpandAttributedSource>
+      <AssemblerOutput>NoListing</AssemblerOutput>
+      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+      <BrowseInformation>false</BrowseInformation>
+      <CallingConvention>Cdecl</CallingConvention>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <AdditionalOptions>/Zc:__cplusplus</AdditionalOptions>
+      <PrecompiledHeaderFile>$(ProjectDir)stdafx.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>obj\win32\debug\GLRenderer.pch</PrecompiledHeaderOutputFile>
+      <ProgramDatabaseFileName>obj\win32\debug\glrenderer_compiler.pdb</ProgramDatabaseFileName>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <ShowIncludes>false</ShowIncludes>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <ForcedIncludeFiles>$(ProjectDir)stdafx.h</ForcedIncludeFiles>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <OutputFile>output\win32\debug\glrenderer.exe</OutputFile>
+      <ShowProgress>NotSet</ShowProgress>
+      <AdditionalLibraryDirectories>..\bin;..\contrib\assimp\libx86;..\contrib\sdl2\lib\x86</AdditionalLibraryDirectories>
+      <ProgramDatabaseFile>output\win32\debug\glrenderer.pdb</ProgramDatabaseFile>
+      <GenerateMapFile>true</GenerateMapFile>
+      <MapExports>false</MapExports>
+      <SwapRunFromCD>false</SwapRunFromCD>
+      <SwapRunFromNET>false</SwapRunFromNET>
+      <Driver>NotSet</Driver>
+      <OptimizeReferences>false</OptimizeReferences>
+      <EnableCOMDATFolding>false</EnableCOMDATFolding>
+      <ProfileGuidedDatabase>
+      </ProfileGuidedDatabase>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
+      <IgnoreEmbeddedIDL>false</IgnoreEmbeddedIDL>
+      <TypeLibraryResourceID>1</TypeLibraryResourceID>
+      <NoEntryPoint>false</NoEntryPoint>
+      <SetChecksum>false</SetChecksum>
+      <TurnOffAssemblyGeneration>false</TurnOffAssemblyGeneration>
+      <TargetMachine>MachineX86</TargetMachine>
+      <Profile>false</Profile>
+      <CLRImageType>Default</CLRImageType>
+      <LinkErrorReporting>PromptImmediately</LinkErrorReporting>
+      <AdditionalOptions>
+      </AdditionalOptions>
+      <AdditionalDependencies>assimp-vc142-mt.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
+      <LargeAddressAware>true</LargeAddressAware>
+      <MapFileName>output\win32\debug\glrenderer.map</MapFileName>
+      <BaseAddress>
+      </BaseAddress>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN64;_CONSOLE;_DEBUG;%(PreprocessorDefinitions);$(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\contrib\glm;..\contrib</AdditionalIncludeDirectories>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <UseUnicodeForAssemblerListing>false</UseUnicodeForAssemblerListing>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+      <OmitFramePointers>false</OmitFramePointers>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
+      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+      <PreprocessToFile>false</PreprocessToFile>
+      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+      <PreprocessKeepComments>false</PreprocessKeepComments>
+      <StringPooling>true</StringPooling>
+      <ExceptionHandling>false</ExceptionHandling>
+      <SmallerTypeCheck>false</SmallerTypeCheck>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <FloatingPointExceptions>false</FloatingPointExceptions>
+      <CreateHotpatchableImage>false</CreateHotpatchableImage>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <OpenMPSupport>false</OpenMPSupport>
+      <ExpandAttributedSource>false</ExpandAttributedSource>
+      <AssemblerOutput>NoListing</AssemblerOutput>
+      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+      <BrowseInformation>false</BrowseInformation>
+      <CallingConvention>Cdecl</CallingConvention>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <AdditionalOptions>/Zc:__cplusplus</AdditionalOptions>
+      <PrecompiledHeaderFile>$(ProjectDir)stdafx.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>obj\win64\debug\GLRenderer.pch</PrecompiledHeaderOutputFile>
+      <ProgramDatabaseFileName>obj\win64\debug\glrenderer_compiler.pdb</ProgramDatabaseFileName>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <ShowIncludes>false</ShowIncludes>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <ForcedIncludeFiles>$(ProjectDir)stdafx.h</ForcedIncludeFiles>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <OutputFile>output\win64\debug\glrenderer.exe</OutputFile>
+      <ShowProgress>NotSet</ShowProgress>
+      <AdditionalLibraryDirectories>..\bin;..\contrib\assimp\libx64;..\contrib\sdl2\lib\x64</AdditionalLibraryDirectories>
+      <ProgramDatabaseFile>output\win64\debug\glrenderer.pdb</ProgramDatabaseFile>
+      <GenerateMapFile>true</GenerateMapFile>
+      <MapExports>false</MapExports>
+      <SwapRunFromCD>false</SwapRunFromCD>
+      <SwapRunFromNET>false</SwapRunFromNET>
+      <Driver>NotSet</Driver>
+      <OptimizeReferences>false</OptimizeReferences>
+      <EnableCOMDATFolding>false</EnableCOMDATFolding>
+      <ProfileGuidedDatabase>
+      </ProfileGuidedDatabase>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
+      <IgnoreEmbeddedIDL>false</IgnoreEmbeddedIDL>
+      <TypeLibraryResourceID>1</TypeLibraryResourceID>
+      <NoEntryPoint>false</NoEntryPoint>
+      <SetChecksum>false</SetChecksum>
+      <TurnOffAssemblyGeneration>false</TurnOffAssemblyGeneration>
+      <TargetMachine>MachineX64</TargetMachine>
+      <Profile>false</Profile>
+      <CLRImageType>Default</CLRImageType>
+      <LinkErrorReporting>PromptImmediately</LinkErrorReporting>
+      <AdditionalOptions>
+      </AdditionalOptions>
+      <AdditionalDependencies>assimp-vc142-mt.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
+      <LargeAddressAware>true</LargeAddressAware>
+      <MapFileName>output\win64\debug\glrenderer.map</MapFileName>
+      <BaseAddress>
+      </BaseAddress>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>Full</Optimization>
+      <PreprocessorDefinitions>NDEBUG;WIN32;_CONSOLE;%(PreprocessorDefinitions);$(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\contrib\glm;..\contrib</AdditionalIncludeDirectories>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <UseUnicodeForAssemblerListing>false</UseUnicodeForAssemblerListing>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OmitFramePointers>false</OmitFramePointers>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
+      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+      <PreprocessToFile>false</PreprocessToFile>
+      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+      <PreprocessKeepComments>false</PreprocessKeepComments>
+      <StringPooling>true</StringPooling>
+      <ExceptionHandling>false</ExceptionHandling>
+      <SmallerTypeCheck>false</SmallerTypeCheck>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <FloatingPointExceptions>false</FloatingPointExceptions>
+      <CreateHotpatchableImage>false</CreateHotpatchableImage>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <OpenMPSupport>false</OpenMPSupport>
+      <ExpandAttributedSource>false</ExpandAttributedSource>
+      <AssemblerOutput>NoListing</AssemblerOutput>
+      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+      <BrowseInformation>false</BrowseInformation>
+      <CallingConvention>Cdecl</CallingConvention>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <AdditionalOptions>/Zc:__cplusplus</AdditionalOptions>
+      <PrecompiledHeaderFile>$(ProjectDir)stdafx.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>obj\win32\release\GLRenderer.pch</PrecompiledHeaderOutputFile>
+      <ProgramDatabaseFileName>obj\win32\release\glrenderer_compiler.pdb</ProgramDatabaseFileName>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <ShowIncludes>false</ShowIncludes>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <ForcedIncludeFiles>$(ProjectDir)stdafx.h</ForcedIncludeFiles>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <OutputFile>output\win32\release\glrenderer.exe</OutputFile>
+      <ShowProgress>NotSet</ShowProgress>
+      <AdditionalLibraryDirectories>..\bin;..\contrib\assimp\libx86;..\contrib\sdl2\lib\x86</AdditionalLibraryDirectories>
+      <ProgramDatabaseFile>output\win32\release\glrenderer.pdb</ProgramDatabaseFile>
+      <GenerateMapFile>true</GenerateMapFile>
+      <MapExports>false</MapExports>
+      <SwapRunFromCD>false</SwapRunFromCD>
+      <SwapRunFromNET>false</SwapRunFromNET>
+      <Driver>NotSet</Driver>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <ProfileGuidedDatabase>
+      </ProfileGuidedDatabase>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
+      <IgnoreEmbeddedIDL>false</IgnoreEmbeddedIDL>
+      <TypeLibraryResourceID>1</TypeLibraryResourceID>
+      <NoEntryPoint>false</NoEntryPoint>
+      <SetChecksum>false</SetChecksum>
+      <TurnOffAssemblyGeneration>false</TurnOffAssemblyGeneration>
+      <TargetMachine>MachineX86</TargetMachine>
+      <Profile>false</Profile>
+      <CLRImageType>Default</CLRImageType>
+      <LinkErrorReporting>PromptImmediately</LinkErrorReporting>
+      <AdditionalOptions>
+      </AdditionalOptions>
+      <AdditionalDependencies>assimp-vc142-mt.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
+      <LargeAddressAware>true</LargeAddressAware>
+      <MapFileName>output\win32\release\glrenderer.map</MapFileName>
+      <BaseAddress>
+      </BaseAddress>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>Full</Optimization>
+      <PreprocessorDefinitions>NDEBUG;WIN64;_CONSOLE;%(PreprocessorDefinitions);$(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\contrib\glm;..\contrib</AdditionalIncludeDirectories>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <UseUnicodeForAssemblerListing>false</UseUnicodeForAssemblerListing>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OmitFramePointers>false</OmitFramePointers>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
+      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+      <PreprocessToFile>false</PreprocessToFile>
+      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+      <PreprocessKeepComments>false</PreprocessKeepComments>
+      <StringPooling>true</StringPooling>
+      <ExceptionHandling>false</ExceptionHandling>
+      <SmallerTypeCheck>false</SmallerTypeCheck>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <FloatingPointExceptions>false</FloatingPointExceptions>
+      <CreateHotpatchableImage>false</CreateHotpatchableImage>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <OpenMPSupport>false</OpenMPSupport>
+      <ExpandAttributedSource>false</ExpandAttributedSource>
+      <AssemblerOutput>NoListing</AssemblerOutput>
+      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+      <BrowseInformation>false</BrowseInformation>
+      <CallingConvention>Cdecl</CallingConvention>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <AdditionalOptions>/Zc:__cplusplus</AdditionalOptions>
+      <PrecompiledHeaderFile>$(ProjectDir)stdafx.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>obj\win64\release\GLRenderer.pch</PrecompiledHeaderOutputFile>
+      <ProgramDatabaseFileName>obj\win64\release\glrenderer_compiler.pdb</ProgramDatabaseFileName>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <ShowIncludes>false</ShowIncludes>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <ForcedIncludeFiles>$(ProjectDir)stdafx.h</ForcedIncludeFiles>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <OutputFile>output\win64\release\glrenderer.exe</OutputFile>
+      <ShowProgress>NotSet</ShowProgress>
+      <AdditionalLibraryDirectories>..\bin;..\contrib\assimp\libx64;..\contrib\sdl2\lib\x64</AdditionalLibraryDirectories>
+      <ProgramDatabaseFile>output\win64\release\glrenderer.pdb</ProgramDatabaseFile>
+      <GenerateMapFile>true</GenerateMapFile>
+      <MapExports>false</MapExports>
+      <SwapRunFromCD>false</SwapRunFromCD>
+      <SwapRunFromNET>false</SwapRunFromNET>
+      <Driver>NotSet</Driver>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <ProfileGuidedDatabase>
+      </ProfileGuidedDatabase>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
+      <IgnoreEmbeddedIDL>false</IgnoreEmbeddedIDL>
+      <TypeLibraryResourceID>1</TypeLibraryResourceID>
+      <NoEntryPoint>false</NoEntryPoint>
+      <SetChecksum>false</SetChecksum>
+      <TurnOffAssemblyGeneration>false</TurnOffAssemblyGeneration>
+      <TargetMachine>MachineX64</TargetMachine>
+      <Profile>false</Profile>
+      <CLRImageType>Default</CLRImageType>
+      <LinkErrorReporting>PromptImmediately</LinkErrorReporting>
+      <AdditionalOptions>
+      </AdditionalOptions>
+      <AdditionalDependencies>assimp-vc142-mt.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
+      <LargeAddressAware>true</LargeAddressAware>
+      <MapFileName>output\win64\release\glrenderer.map</MapFileName>
+      <BaseAddress>
+      </BaseAddress>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\contrib\assimp\include\aabb.h" />
+    <ClInclude Include="..\contrib\assimp\include\ai_assert.h" />
+    <ClInclude Include="..\contrib\assimp\include\anim.h" />
+    <ClInclude Include="..\contrib\assimp\include\BaseImporter.h" />
+    <ClInclude Include="..\contrib\assimp\include\Bitmap.h" />
+    <ClInclude Include="..\contrib\assimp\include\BlobIOSystem.h" />
+    <ClInclude Include="..\contrib\assimp\include\ByteSwapper.h" />
+    <ClInclude Include="..\contrib\assimp\include\camera.h" />
+    <ClInclude Include="..\contrib\assimp\include\cexport.h" />
+    <ClInclude Include="..\contrib\assimp\include\cfileio.h" />
+    <ClInclude Include="..\contrib\assimp\include\cimport.h" />
+    <ClInclude Include="..\contrib\assimp\include\color4.h" />
+    <ClInclude Include="..\contrib\assimp\include\color4.inl" />
+    <ClInclude Include="..\contrib\assimp\include\Compiler\poppack1.h" />
+    <ClInclude Include="..\contrib\assimp\include\Compiler\pstdint.h" />
+    <ClInclude Include="..\contrib\assimp\include\Compiler\pushpack1.h" />
+    <ClInclude Include="..\contrib\assimp\include\config.h" />
+    <ClInclude Include="..\contrib\assimp\include\CreateAnimMesh.h" />
+    <ClInclude Include="..\contrib\assimp\include\DefaultIOStream.h" />
+    <ClInclude Include="..\contrib\assimp\include\DefaultIOSystem.h" />
+    <ClInclude Include="..\contrib\assimp\include\DefaultLogger.hpp" />
+    <ClInclude Include="..\contrib\assimp\include\Defines.h" />
+    <ClInclude Include="..\contrib\assimp\include\defs.h" />
+    <ClInclude Include="..\contrib\assimp\include\Exceptional.h" />
+    <ClInclude Include="..\contrib\assimp\include\Exporter.hpp" />
+    <ClInclude Include="..\contrib\assimp\include\fast_atof.h" />
+    <ClInclude Include="..\contrib\assimp\include\GenericProperty.h" />
+    <ClInclude Include="..\contrib\assimp\include\Hash.h" />
+    <ClInclude Include="..\contrib\assimp\include\Importer.hpp" />
+    <ClInclude Include="..\contrib\assimp\include\importerdesc.h" />
+    <ClInclude Include="..\contrib\assimp\include\IOStream.hpp" />
+    <ClInclude Include="..\contrib\assimp\include\IOStreamBuffer.h" />
+    <ClInclude Include="..\contrib\assimp\include\IOSystem.hpp" />
+    <ClInclude Include="..\contrib\assimp\include\irrXMLWrapper.h" />
+    <ClInclude Include="..\contrib\assimp\include\light.h" />
+    <ClInclude Include="..\contrib\assimp\include\LineSplitter.h" />
+    <ClInclude Include="..\contrib\assimp\include\LogAux.h" />
+    <ClInclude Include="..\contrib\assimp\include\Logger.hpp" />
+    <ClInclude Include="..\contrib\assimp\include\LogStream.hpp" />
+    <ClInclude Include="..\contrib\assimp\include\Macros.h" />
+    <ClInclude Include="..\contrib\assimp\include\material.h" />
+    <ClInclude Include="..\contrib\assimp\include\material.inl" />
+    <ClInclude Include="..\contrib\assimp\include\MathFunctions.h" />
+    <ClInclude Include="..\contrib\assimp\include\matrix3x3.h" />
+    <ClInclude Include="..\contrib\assimp\include\matrix3x3.inl" />
+    <ClInclude Include="..\contrib\assimp\include\matrix4x4.h" />
+    <ClInclude Include="..\contrib\assimp\include\matrix4x4.inl" />
+    <ClInclude Include="..\contrib\assimp\include\MemoryIOWrapper.h" />
+    <ClInclude Include="..\contrib\assimp\include\mesh.h" />
+    <ClInclude Include="..\contrib\assimp\include\metadata.h" />
+    <ClInclude Include="..\contrib\assimp\include\NullLogger.hpp" />
+    <ClInclude Include="..\contrib\assimp\include\ParsingUtils.h" />
+    <ClInclude Include="..\contrib\assimp\include\pbrmaterial.h" />
+    <ClInclude Include="..\contrib\assimp\include\port\AndroidJNI\AndroidJNIIOSystem.h" />
+    <ClInclude Include="..\contrib\assimp\include\postprocess.h" />
+    <ClInclude Include="..\contrib\assimp\include\Profiler.h" />
+    <ClInclude Include="..\contrib\assimp\include\ProgressHandler.hpp" />
+    <ClInclude Include="..\contrib\assimp\include\qnan.h" />
+    <ClInclude Include="..\contrib\assimp\include\quaternion.h" />
+    <ClInclude Include="..\contrib\assimp\include\quaternion.inl" />
+    <ClInclude Include="..\contrib\assimp\include\RemoveComments.h" />
+    <ClInclude Include="..\contrib\assimp\include\scene.h" />
+    <ClInclude Include="..\contrib\assimp\include\SceneCombiner.h" />
+    <ClInclude Include="..\contrib\assimp\include\SGSpatialSort.h" />
+    <ClInclude Include="..\contrib\assimp\include\SkeletonMeshBuilder.h" />
+    <ClInclude Include="..\contrib\assimp\include\SmoothingGroups.h" />
+    <ClInclude Include="..\contrib\assimp\include\SmoothingGroups.inl" />
+    <ClInclude Include="..\contrib\assimp\include\SpatialSort.h" />
+    <ClInclude Include="..\contrib\assimp\include\StandardShapes.h" />
+    <ClInclude Include="..\contrib\assimp\include\StreamReader.h" />
+    <ClInclude Include="..\contrib\assimp\include\StreamWriter.h" />
+    <ClInclude Include="..\contrib\assimp\include\StringComparison.h" />
+    <ClInclude Include="..\contrib\assimp\include\StringUtils.h" />
+    <ClInclude Include="..\contrib\assimp\include\Subdivision.h" />
+    <ClInclude Include="..\contrib\assimp\include\texture.h" />
+    <ClInclude Include="..\contrib\assimp\include\TinyFormatter.h" />
+    <ClInclude Include="..\contrib\assimp\include\types.h" />
+    <ClInclude Include="..\contrib\assimp\include\vector2.h" />
+    <ClInclude Include="..\contrib\assimp\include\vector2.inl" />
+    <ClInclude Include="..\contrib\assimp\include\vector3.h" />
+    <ClInclude Include="..\contrib\assimp\include\vector3.inl" />
+    <ClInclude Include="..\contrib\assimp\include\version.h" />
+    <ClInclude Include="..\contrib\assimp\include\Vertex.h" />
+    <ClInclude Include="..\contrib\assimp\include\XMLTools.h" />
+    <ClInclude Include="..\contrib\assimp\include\ZipArchiveIOSystem.h" />
+    <ClInclude Include="..\contrib\glad\glad.h" />
+    <ClInclude Include="..\contrib\glad\khrplatform.h" />
+    <ClInclude Include="..\contrib\glm\common.hpp" />
+    <ClInclude Include="..\contrib\glm\detail\_features.hpp" />
+    <ClInclude Include="..\contrib\glm\detail\_fixes.hpp" />
+    <ClInclude Include="..\contrib\glm\detail\_noise.hpp" />
+    <ClInclude Include="..\contrib\glm\detail\_swizzle.hpp" />
+    <ClInclude Include="..\contrib\glm\detail\_swizzle_func.hpp" />
+    <ClInclude Include="..\contrib\glm\detail\_vectorize.hpp" />
+    <ClInclude Include="..\contrib\glm\detail\compute_common.hpp" />
+    <ClInclude Include="..\contrib\glm\detail\compute_vector_relational.hpp" />
+    <ClInclude Include="..\contrib\glm\detail\func_common.inl" />
+    <ClInclude Include="..\contrib\glm\detail\func_common_simd.inl" />
+    <ClInclude Include="..\contrib\glm\detail\func_exponential.inl" />
+    <ClInclude Include="..\contrib\glm\detail\func_exponential_simd.inl" />
+    <ClInclude Include="..\contrib\glm\detail\func_geometric.inl" />
+    <ClInclude Include="..\contrib\glm\detail\func_geometric_simd.inl" />
+    <ClInclude Include="..\contrib\glm\detail\func_integer.inl" />
+    <ClInclude Include="..\contrib\glm\detail\func_integer_simd.inl" />
+    <ClInclude Include="..\contrib\glm\detail\func_matrix.inl" />
+    <ClInclude Include="..\contrib\glm\detail\func_matrix_simd.inl" />
+    <ClInclude Include="..\contrib\glm\detail\func_packing.inl" />
+    <ClInclude Include="..\contrib\glm\detail\func_packing_simd.inl" />
+    <ClInclude Include="..\contrib\glm\detail\func_trigonometric.inl" />
+    <ClInclude Include="..\contrib\glm\detail\func_trigonometric_simd.inl" />
+    <ClInclude Include="..\contrib\glm\detail\func_vector_relational.inl" />
+    <ClInclude Include="..\contrib\glm\detail\func_vector_relational_simd.inl" />
+    <ClInclude Include="..\contrib\glm\detail\qualifier.hpp" />
+    <ClInclude Include="..\contrib\glm\detail\setup.hpp" />
+    <ClInclude Include="..\contrib\glm\detail\type_float.hpp" />
+    <ClInclude Include="..\contrib\glm\detail\type_half.hpp" />
+    <ClInclude Include="..\contrib\glm\detail\type_half.inl" />
+    <ClInclude Include="..\contrib\glm\detail\type_mat2x2.hpp" />
+    <ClInclude Include="..\contrib\glm\detail\type_mat2x2.inl" />
+    <ClInclude Include="..\contrib\glm\detail\type_mat2x3.hpp" />
+    <ClInclude Include="..\contrib\glm\detail\type_mat2x3.inl" />
+    <ClInclude Include="..\contrib\glm\detail\type_mat2x4.hpp" />
+    <ClInclude Include="..\contrib\glm\detail\type_mat2x4.inl" />
+    <ClInclude Include="..\contrib\glm\detail\type_mat3x2.hpp" />
+    <ClInclude Include="..\contrib\glm\detail\type_mat3x2.inl" />
+    <ClInclude Include="..\contrib\glm\detail\type_mat3x3.hpp" />
+    <ClInclude Include="..\contrib\glm\detail\type_mat3x3.inl" />
+    <ClInclude Include="..\contrib\glm\detail\type_mat3x4.hpp" />
+    <ClInclude Include="..\contrib\glm\detail\type_mat3x4.inl" />
+    <ClInclude Include="..\contrib\glm\detail\type_mat4x2.hpp" />
+    <ClInclude Include="..\contrib\glm\detail\type_mat4x2.inl" />
+    <ClInclude Include="..\contrib\glm\detail\type_mat4x3.hpp" />
+    <ClInclude Include="..\contrib\glm\detail\type_mat4x3.inl" />
+    <ClInclude Include="..\contrib\glm\detail\type_mat4x4.hpp" />
+    <ClInclude Include="..\contrib\glm\detail\type_mat4x4.inl" />
+    <ClInclude Include="..\contrib\glm\detail\type_mat4x4_simd.inl" />
+    <ClInclude Include="..\contrib\glm\detail\type_quat.hpp" />
+    <ClInclude Include="..\contrib\glm\detail\type_quat.inl" />
+    <ClInclude Include="..\contrib\glm\detail\type_quat_simd.inl" />
+    <ClInclude Include="..\contrib\glm\detail\type_vec1.hpp" />
+    <ClInclude Include="..\contrib\glm\detail\type_vec1.inl" />
+    <ClInclude Include="..\contrib\glm\detail\type_vec2.hpp" />
+    <ClInclude Include="..\contrib\glm\detail\type_vec2.inl" />
+    <ClInclude Include="..\contrib\glm\detail\type_vec3.hpp" />
+    <ClInclude Include="..\contrib\glm\detail\type_vec3.inl" />
+    <ClInclude Include="..\contrib\glm\detail\type_vec4.hpp" />
+    <ClInclude Include="..\contrib\glm\detail\type_vec4.inl" />
+    <ClInclude Include="..\contrib\glm\detail\type_vec4_simd.inl" />
+    <ClInclude Include="..\contrib\glm\exponential.hpp" />
+    <ClInclude Include="..\contrib\glm\ext.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_clip_space.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_clip_space.inl" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_common.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_common.inl" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_double2x2.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_double2x2_precision.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_double2x3.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_double2x3_precision.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_double2x4.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_double2x4_precision.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_double3x2.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_double3x2_precision.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_double3x3.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_double3x3_precision.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_double3x4.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_double3x4_precision.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_double4x2.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_double4x2_precision.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_double4x3.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_double4x3_precision.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_double4x4.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_double4x4_precision.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_float2x2.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_float2x2_precision.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_float2x3.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_float2x3_precision.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_float2x4.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_float2x4_precision.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_float3x2.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_float3x2_precision.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_float3x3.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_float3x3_precision.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_float3x4.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_float3x4_precision.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_float4x2.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_float4x2_precision.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_float4x3.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_float4x3_precision.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_float4x4.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_float4x4_precision.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_projection.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_projection.inl" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_relational.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_relational.inl" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_transform.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\matrix_transform.inl" />
+    <ClInclude Include="..\contrib\glm\ext\quaternion_common.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\quaternion_common.inl" />
+    <ClInclude Include="..\contrib\glm\ext\quaternion_common_simd.inl" />
+    <ClInclude Include="..\contrib\glm\ext\quaternion_double.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\quaternion_double_precision.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\quaternion_exponential.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\quaternion_exponential.inl" />
+    <ClInclude Include="..\contrib\glm\ext\quaternion_float.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\quaternion_float_precision.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\quaternion_geometric.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\quaternion_geometric.inl" />
+    <ClInclude Include="..\contrib\glm\ext\quaternion_relational.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\quaternion_relational.inl" />
+    <ClInclude Include="..\contrib\glm\ext\quaternion_transform.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\quaternion_transform.inl" />
+    <ClInclude Include="..\contrib\glm\ext\quaternion_trigonometric.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\quaternion_trigonometric.inl" />
+    <ClInclude Include="..\contrib\glm\ext\scalar_common.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\scalar_common.inl" />
+    <ClInclude Include="..\contrib\glm\ext\scalar_constants.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\scalar_constants.inl" />
+    <ClInclude Include="..\contrib\glm\ext\scalar_int_sized.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\scalar_integer.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\scalar_integer.inl" />
+    <ClInclude Include="..\contrib\glm\ext\scalar_relational.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\scalar_relational.inl" />
+    <ClInclude Include="..\contrib\glm\ext\scalar_uint_sized.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\scalar_ulp.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\scalar_ulp.inl" />
+    <ClInclude Include="..\contrib\glm\ext\vector_bool1.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\vector_bool1_precision.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\vector_bool2.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\vector_bool2_precision.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\vector_bool3.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\vector_bool3_precision.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\vector_bool4.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\vector_bool4_precision.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\vector_common.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\vector_common.inl" />
+    <ClInclude Include="..\contrib\glm\ext\vector_double1.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\vector_double1_precision.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\vector_double2.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\vector_double2_precision.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\vector_double3.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\vector_double3_precision.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\vector_double4.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\vector_double4_precision.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\vector_float1.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\vector_float1_precision.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\vector_float2.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\vector_float2_precision.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\vector_float3.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\vector_float3_precision.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\vector_float4.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\vector_float4_precision.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\vector_int1.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\vector_int1_precision.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\vector_int2.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\vector_int2_precision.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\vector_int3.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\vector_int3_precision.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\vector_int4.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\vector_int4_precision.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\vector_integer.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\vector_integer.inl" />
+    <ClInclude Include="..\contrib\glm\ext\vector_relational.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\vector_relational.inl" />
+    <ClInclude Include="..\contrib\glm\ext\vector_uint1.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\vector_uint1_precision.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\vector_uint2.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\vector_uint2_precision.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\vector_uint3.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\vector_uint3_precision.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\vector_uint4.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\vector_uint4_precision.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\vector_ulp.hpp" />
+    <ClInclude Include="..\contrib\glm\ext\vector_ulp.inl" />
+    <ClInclude Include="..\contrib\glm\fwd.hpp" />
+    <ClInclude Include="..\contrib\glm\geometric.hpp" />
+    <ClInclude Include="..\contrib\glm\glm.hpp" />
+    <ClInclude Include="..\contrib\glm\gtc\bitfield.hpp" />
+    <ClInclude Include="..\contrib\glm\gtc\bitfield.inl" />
+    <ClInclude Include="..\contrib\glm\gtc\color_space.hpp" />
+    <ClInclude Include="..\contrib\glm\gtc\color_space.inl" />
+    <ClInclude Include="..\contrib\glm\gtc\constants.hpp" />
+    <ClInclude Include="..\contrib\glm\gtc\constants.inl" />
+    <ClInclude Include="..\contrib\glm\gtc\epsilon.hpp" />
+    <ClInclude Include="..\contrib\glm\gtc\epsilon.inl" />
+    <ClInclude Include="..\contrib\glm\gtc\integer.hpp" />
+    <ClInclude Include="..\contrib\glm\gtc\integer.inl" />
+    <ClInclude Include="..\contrib\glm\gtc\matrix_access.hpp" />
+    <ClInclude Include="..\contrib\glm\gtc\matrix_access.inl" />
+    <ClInclude Include="..\contrib\glm\gtc\matrix_integer.hpp" />
+    <ClInclude Include="..\contrib\glm\gtc\matrix_inverse.hpp" />
+    <ClInclude Include="..\contrib\glm\gtc\matrix_inverse.inl" />
+    <ClInclude Include="..\contrib\glm\gtc\matrix_transform.hpp" />
+    <ClInclude Include="..\contrib\glm\gtc\matrix_transform.inl" />
+    <ClInclude Include="..\contrib\glm\gtc\noise.hpp" />
+    <ClInclude Include="..\contrib\glm\gtc\noise.inl" />
+    <ClInclude Include="..\contrib\glm\gtc\packing.hpp" />
+    <ClInclude Include="..\contrib\glm\gtc\packing.inl" />
+    <ClInclude Include="..\contrib\glm\gtc\quaternion.hpp" />
+    <ClInclude Include="..\contrib\glm\gtc\quaternion.inl" />
+    <ClInclude Include="..\contrib\glm\gtc\quaternion_simd.inl" />
+    <ClInclude Include="..\contrib\glm\gtc\random.hpp" />
+    <ClInclude Include="..\contrib\glm\gtc\random.inl" />
+    <ClInclude Include="..\contrib\glm\gtc\reciprocal.hpp" />
+    <ClInclude Include="..\contrib\glm\gtc\reciprocal.inl" />
+    <ClInclude Include="..\contrib\glm\gtc\round.hpp" />
+    <ClInclude Include="..\contrib\glm\gtc\round.inl" />
+    <ClInclude Include="..\contrib\glm\gtc\type_aligned.hpp" />
+    <ClInclude Include="..\contrib\glm\gtc\type_precision.hpp" />
+    <ClInclude Include="..\contrib\glm\gtc\type_precision.inl" />
+    <ClInclude Include="..\contrib\glm\gtc\type_ptr.hpp" />
+    <ClInclude Include="..\contrib\glm\gtc\type_ptr.inl" />
+    <ClInclude Include="..\contrib\glm\gtc\ulp.hpp" />
+    <ClInclude Include="..\contrib\glm\gtc\ulp.inl" />
+    <ClInclude Include="..\contrib\glm\gtc\vec1.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\associated_min_max.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\associated_min_max.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\bit.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\bit.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\closest_point.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\closest_point.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\color_encoding.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\color_encoding.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\color_space.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\color_space.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\color_space_YCoCg.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\color_space_YCoCg.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\common.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\common.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\compatibility.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\compatibility.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\component_wise.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\component_wise.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\dual_quaternion.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\dual_quaternion.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\easing.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\easing.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\euler_angles.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\euler_angles.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\extend.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\extend.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\extended_min_max.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\extended_min_max.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\exterior_product.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\exterior_product.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\fast_exponential.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\fast_exponential.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\fast_square_root.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\fast_square_root.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\fast_trigonometry.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\fast_trigonometry.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\float_notmalize.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\functions.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\functions.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\gradient_paint.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\gradient_paint.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\handed_coordinate_space.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\handed_coordinate_space.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\hash.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\hash.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\integer.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\integer.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\intersect.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\intersect.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\io.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\io.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\log_base.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\log_base.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\matrix_cross_product.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\matrix_cross_product.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\matrix_decompose.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\matrix_decompose.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\matrix_factorisation.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\matrix_factorisation.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\matrix_interpolation.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\matrix_interpolation.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\matrix_major_storage.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\matrix_major_storage.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\matrix_operation.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\matrix_operation.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\matrix_query.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\matrix_query.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\matrix_transform_2d.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\matrix_transform_2d.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\mixed_product.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\mixed_product.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\norm.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\norm.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\normal.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\normal.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\normalize_dot.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\normalize_dot.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\number_precision.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\number_precision.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\optimum_pow.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\optimum_pow.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\orthonormalize.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\orthonormalize.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\perpendicular.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\perpendicular.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\polar_coordinates.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\polar_coordinates.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\projection.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\projection.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\quaternion.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\quaternion.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\range.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\raw_data.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\raw_data.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\rotate_normalized_axis.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\rotate_normalized_axis.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\rotate_vector.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\rotate_vector.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\scalar_multiplication.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\scalar_relational.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\scalar_relational.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\spline.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\spline.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\std_based_type.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\std_based_type.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\string_cast.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\string_cast.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\texture.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\texture.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\transform.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\transform.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\transform2.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\transform2.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\type_aligned.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\type_aligned.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\type_trait.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\type_trait.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\vec_swizzle.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\vector_angle.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\vector_angle.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\vector_query.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\vector_query.inl" />
+    <ClInclude Include="..\contrib\glm\gtx\wrap.hpp" />
+    <ClInclude Include="..\contrib\glm\gtx\wrap.inl" />
+    <ClInclude Include="..\contrib\glm\integer.hpp" />
+    <ClInclude Include="..\contrib\glm\mat2x2.hpp" />
+    <ClInclude Include="..\contrib\glm\mat2x3.hpp" />
+    <ClInclude Include="..\contrib\glm\mat2x4.hpp" />
+    <ClInclude Include="..\contrib\glm\mat3x2.hpp" />
+    <ClInclude Include="..\contrib\glm\mat3x3.hpp" />
+    <ClInclude Include="..\contrib\glm\mat3x4.hpp" />
+    <ClInclude Include="..\contrib\glm\mat4x2.hpp" />
+    <ClInclude Include="..\contrib\glm\mat4x3.hpp" />
+    <ClInclude Include="..\contrib\glm\mat4x4.hpp" />
+    <ClInclude Include="..\contrib\glm\matrix.hpp" />
+    <ClInclude Include="..\contrib\glm\packing.hpp" />
+    <ClInclude Include="..\contrib\glm\simd\common.h" />
+    <ClInclude Include="..\contrib\glm\simd\exponential.h" />
+    <ClInclude Include="..\contrib\glm\simd\geometric.h" />
+    <ClInclude Include="..\contrib\glm\simd\integer.h" />
+    <ClInclude Include="..\contrib\glm\simd\matrix.h" />
+    <ClInclude Include="..\contrib\glm\simd\packing.h" />
+    <ClInclude Include="..\contrib\glm\simd\platform.h" />
+    <ClInclude Include="..\contrib\glm\simd\trigonometric.h" />
+    <ClInclude Include="..\contrib\glm\simd\vector_relational.h" />
+    <ClInclude Include="..\contrib\glm\trigonometric.hpp" />
+    <ClInclude Include="..\contrib\glm\vec2.hpp" />
+    <ClInclude Include="..\contrib\glm\vec3.hpp" />
+    <ClInclude Include="..\contrib\glm\vec4.hpp" />
+    <ClInclude Include="..\contrib\glm\vector_relational.hpp" />
+    <ClInclude Include="..\contrib\imgui\imconfig.h" />
+    <ClInclude Include="..\contrib\imgui\imgui.h" />
+    <ClInclude Include="..\contrib\imgui\imgui_impl_opengl3.h" />
+    <ClInclude Include="..\contrib\imgui\imgui_impl_sdl.h" />
+    <ClInclude Include="..\contrib\imgui\imgui_internal.h" />
+    <ClInclude Include="..\contrib\imgui\imgui_stdlib.h" />
+    <ClInclude Include="..\contrib\imgui\imstb_rectpack.h" />
+    <ClInclude Include="..\contrib\imgui\imstb_textedit.h" />
+    <ClInclude Include="..\contrib\imgui\imstb_truetype.h" />
+    <ClInclude Include="..\contrib\jsoncpp\json\json.h" />
+    <ClInclude Include="..\contrib\jsoncpp\json\json-forwards.h" />
+    <ClInclude Include="..\contrib\SDL2\include\begin_code.h" />
+    <ClInclude Include="..\contrib\SDL2\include\close_code.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_assert.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_atomic.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_audio.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_bits.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_blendmode.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_clipboard.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_config.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_config_android.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_config_iphoneos.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_config_macosx.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_config_minimal.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_config_pandora.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_config_psp.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_config_windows.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_config_winrt.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_config_wiz.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_copying.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_cpuinfo.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_egl.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_endian.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_error.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_events.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_filesystem.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_gamecontroller.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_gesture.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_haptic.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_hints.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_joystick.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_keyboard.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_keycode.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_loadso.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_log.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_main.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_messagebox.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_mouse.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_mutex.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_name.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_opengl.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_opengl_glext.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_opengles.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_opengles2.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_opengles2_gl2.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_opengles2_gl2ext.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_opengles2_gl2platform.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_opengles2_khrplatform.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_pixels.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_platform.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_power.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_quit.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_rect.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_render.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_revision.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_rwops.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_scancode.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_sensor.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_shape.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_stdinc.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_surface.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_system.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_syswm.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_test.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_test_assert.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_test_common.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_test_compare.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_test_crc32.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_test_font.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_test_fuzzer.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_test_harness.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_test_images.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_test_log.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_test_md5.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_test_memory.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_test_random.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_thread.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_timer.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_touch.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_types.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_version.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_video.h" />
+    <ClInclude Include="..\contrib\SDL2\include\SDL_vulkan.h" />
+    <ClInclude Include="..\contrib\stb_image\stb_image.h" />
+    <ClInclude Include="engine\components\autorotation_component.h" />
+    <ClInclude Include="engine\components\base_component.h" />
+    <ClInclude Include="engine\components\camera_component.h" />
+    <ClInclude Include="engine\components\directional_light_component.h" />
+    <ClInclude Include="engine\components\drawable_component.h" />
+    <ClInclude Include="engine\components\point_light_component.h" />
+    <ClInclude Include="engine\components\transform_component.h" />
+    <ClInclude Include="engine\config.h" />
+    <ClInclude Include="engine\engine.h" />
+    <ClInclude Include="engine\entity.h" />
+    <ClInclude Include="engine\scene.h" />
+    <ClInclude Include="engine\systems\console.h" />
+    <ClInclude Include="engine\systems\debug_ui_system\debug_ui_system.h" />
+    <ClInclude Include="engine\systems\debug_ui_system\panels\base_panel.h" />
+    <ClInclude Include="engine\systems\debug_ui_system\panels\console_panel.h" />
+    <ClInclude Include="engine\systems\debug_ui_system\panels\performance_panel.h" />
+    <ClInclude Include="engine\systems\debug_ui_system\panels\render_panel.h" />
+    <ClInclude Include="engine\systems\input.h" />
+    <ClInclude Include="engine\systems\renderer\gpu_profiler.h" />
+    <ClInclude Include="engine\systems\renderer\ping_pong.h" />
+    <ClInclude Include="engine\systems\renderer\render_passes\environment_pass.h" />
+    <ClInclude Include="engine\systems\renderer\render_passes\geometry_pass.h" />
+    <ClInclude Include="engine\systems\renderer\render_passes\lighting.h" />
+    <ClInclude Include="engine\systems\renderer\render_passes\postprocessor.h" />
+    <ClInclude Include="engine\systems\renderer\render_passes\screen_sampler.h" />
+    <ClInclude Include="engine\systems\renderer\render_passes\shadow_mapping_pass.h" />
+    <ClInclude Include="engine\systems\renderer\render_sources\gbuffer_source.h" />
+    <ClInclude Include="engine\systems\renderer\render_sources\geometry_source.h" />
+    <ClInclude Include="engine\systems\renderer\render_sources\lighting_source.h" />
+    <ClInclude Include="engine\systems\renderer\render_sources\postprocessor_source.h" />
+    <ClInclude Include="engine\systems\renderer\render_sources\screen_sampler_source.h" />
+    <ClInclude Include="engine\systems\renderer\render_sources\shadow_mapping_pass_source.h" />
+    <ClInclude Include="engine\systems\renderer\renderer.h" />
+    <ClInclude Include="engine\systems\renderer\shaders_storage.h" />
+    <ClInclude Include="engine\systems\resource_system\resources\render_buffer.h" />
+    <ClInclude Include="engine\systems\resource_system\resource_system.h" />
+    <ClInclude Include="engine\systems\resource_system\resources\cubemap.h" />
+    <ClInclude Include="engine\systems\resource_system\resources\mesh.h" />
+    <ClInclude Include="engine\systems\resource_system\resources\program.h" />
+    <ClInclude Include="engine\systems\resource_system\resources\render_target.h" />
+    <ClInclude Include="engine\systems\resource_system\resources\resource.h" />
+    <ClInclude Include="engine\systems\resource_system\resources\texture.h" />
+    <ClInclude Include="engine\systems\system_events.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="utilities\emitter.h" />
+    <ClInclude Include="utilities\json_utils.h" />
+    <ClInclude Include="utilities\logging.h" />
+    <ClInclude Include="utilities\model_loader.h" />
+    <ClInclude Include="utilities\singleton.h" />
+    <ClInclude Include="utilities\types.h" />
+    <ClInclude Include="utilities\utilities.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\contrib\glad\glad.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\contrib\glm\detail\glm.cpp" />
+    <ClCompile Include="..\contrib\imgui\imgui.cpp" />
+    <ClCompile Include="..\contrib\imgui\imgui_demo.cpp" />
+    <ClCompile Include="..\contrib\imgui\imgui_draw.cpp" />
+    <ClCompile Include="..\contrib\imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="..\contrib\imgui\imgui_impl_sdl.cpp" />
+    <ClCompile Include="..\contrib\imgui\imgui_stdlib.cpp" />
+    <ClCompile Include="..\contrib\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="..\contrib\jsoncpp\jsoncpp.cpp" />
+    <ClCompile Include="engine\components\autorotation_component.cpp" />
+    <ClCompile Include="engine\components\base_component.cpp" />
+    <ClCompile Include="engine\components\camera_component.cpp" />
+    <ClCompile Include="engine\components\directional_light_component.cpp" />
+    <ClCompile Include="engine\components\drawable_component.cpp" />
+    <ClCompile Include="engine\components\point_light_component.cpp" />
+    <ClCompile Include="engine\components\transform_component.cpp" />
+    <ClCompile Include="engine\config.cpp" />
+    <ClCompile Include="engine\engine.cpp" />
+    <ClCompile Include="engine\entity.cpp" />
+    <ClCompile Include="engine\scene.cpp" />
+    <ClCompile Include="engine\systems\console.cpp" />
+    <ClCompile Include="engine\systems\debug_ui_system\debug_ui_system.cpp" />
+    <ClCompile Include="engine\systems\debug_ui_system\panels\base_panel.cpp" />
+    <ClCompile Include="engine\systems\debug_ui_system\panels\console_panel.cpp" />
+    <ClCompile Include="engine\systems\debug_ui_system\panels\performance_panel.cpp" />
+    <ClCompile Include="engine\systems\debug_ui_system\panels\render_panel.cpp" />
+    <ClCompile Include="engine\systems\input.cpp" />
+    <ClCompile Include="engine\systems\renderer\gpu_profiler.cpp" />
+    <ClCompile Include="engine\systems\renderer\ping_pong.cpp" />
+    <ClCompile Include="engine\systems\renderer\render_passes\environment_pass.cpp" />
+    <ClCompile Include="engine\systems\renderer\render_passes\geometry_pass.cpp" />
+    <ClCompile Include="engine\systems\renderer\render_passes\lighting.cpp" />
+    <ClCompile Include="engine\systems\renderer\render_passes\postprocessor.cpp" />
+    <ClCompile Include="engine\systems\renderer\render_passes\screen_sampler.cpp" />
+    <ClCompile Include="engine\systems\renderer\render_passes\shadow_mapping_pass.cpp" />
+    <ClCompile Include="engine\systems\renderer\renderer.cpp" />
+    <ClCompile Include="engine\systems\renderer\shaders_storage.cpp" />
+    <ClCompile Include="engine\systems\resource_system\resources\render_buffer.cpp" />
+    <ClCompile Include="engine\systems\resource_system\resource_system.cpp" />
+    <ClCompile Include="engine\systems\resource_system\resources\cubemap.cpp" />
+    <ClCompile Include="engine\systems\resource_system\resources\mesh.cpp" />
+    <ClCompile Include="engine\systems\resource_system\resources\program.cpp" />
+    <ClCompile Include="engine\systems\resource_system\resources\render_target.cpp" />
+    <ClCompile Include="engine\systems\resource_system\resources\texture.cpp" />
+    <ClCompile Include="engine\systems\system_events.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)stdafx.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)stdafx.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)stdafx.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)stdafx.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="utilities\json_utils.cpp" />
+    <ClCompile Include="utilities\logging.cpp" />
+    <ClCompile Include="utilities\model_loader.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="glrenderer_runtimedependencies.txt">
+      <FileType>Document</FileType>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Copy files to output paths...</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">xcopy /d /F /R /H /V /Y "..\bin\assimp-vc142-mt.dll" "output\win32\debug" &gt;nul
+xcopy /d /F /R /H /V /Y "..\bin\sdl2.dll" "output\win32\debug" &gt;nul</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\bin\assimp-vc142-mt.dll;..\bin\sdl2.dll</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">output\win32\debug\assimp-vc142-mt.dll;output\win32\debug\sdl2.dll</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">False</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Copy files to output paths...</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">xcopy /d /F /R /H /V /Y "..\bin\assimp-vc142-mt.dll" "output\win64\debug" &gt;nul
+xcopy /d /F /R /H /V /Y "..\bin\sdl2.dll" "output\win64\debug" &gt;nul</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\bin\assimp-vc142-mt.dll;..\bin\sdl2.dll</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">output\win64\debug\assimp-vc142-mt.dll;output\win64\debug\sdl2.dll</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">False</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Copy files to output paths...</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">xcopy /d /F /R /H /V /Y "..\bin\assimp-vc142-mt.dll" "output\win32\release" &gt;nul
+xcopy /d /F /R /H /V /Y "..\bin\sdl2.dll" "output\win32\release" &gt;nul</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\bin\assimp-vc142-mt.dll;..\bin\sdl2.dll</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">output\win32\release\assimp-vc142-mt.dll;output\win32\release\sdl2.dll</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">False</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Copy files to output paths...</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">xcopy /d /F /R /H /V /Y "..\bin\assimp-vc142-mt.dll" "output\win64\release" &gt;nul
+xcopy /d /F /R /H /V /Y "..\bin\sdl2.dll" "output\win64\release" &gt;nul</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\bin\assimp-vc142-mt.dll;..\bin\sdl2.dll</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">output\win64\release\assimp-vc142-mt.dll;output\win64\release\sdl2.dll</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">False</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

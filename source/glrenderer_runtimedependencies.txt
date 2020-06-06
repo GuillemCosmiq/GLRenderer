@@ -1,0 +1,16 @@
+﻿
+Debug|Win32
+  ..\bin\assimp-vc142-mt.dll
+  ..\bin\sdl2.dll
+
+Debug|x64
+  ..\bin\assimp-vc142-mt.dll
+  ..\bin\sdl2.dll
+
+Release|Win32
+  ..\bin\assimp-vc142-mt.dll
+  ..\bin\sdl2.dll
+
+Release|x64
+  ..\bin\assimp-vc142-mt.dll
+  ..\bin\sdl2.dll
