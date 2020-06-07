@@ -23,7 +23,7 @@
 #include "resources/program.h"
 #include "resources/texture.h"
 #include "resources/cubemap.h"
-#include "resources/render_target.h"
+#include "resources/framebuffer_object.h"
 
 namespace_begin
 

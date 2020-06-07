@@ -19,7 +19,7 @@
 #include "ping_pong.h"
 
 #include "../resource_system/resource_system.h"
-#include "../resource_system/resources/render_target.h"
+#include "../resource_system/resources/framebuffer_object.h"
 
 namespace_begin
 

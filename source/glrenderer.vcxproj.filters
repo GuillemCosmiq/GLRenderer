@@ -118,9 +118,6 @@
     <ClCompile Include="engine\systems\resource_system\resources\program.cpp">
       <Filter>engine\systems\resource_system\resources</Filter>
     </ClCompile>
-    <ClCompile Include="engine\systems\resource_system\resources\render_target.cpp">
-      <Filter>engine\systems\resource_system\resources</Filter>
-    </ClCompile>
     <ClCompile Include="engine\systems\resource_system\resources\texture.cpp">
       <Filter>engine\systems\resource_system\resources</Filter>
     </ClCompile>
@@ -149,6 +146,9 @@
     </ClCompile>
     <ClCompile Include="engine\systems\renderer\ping_pong.cpp">
       <Filter>engine\systems\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\systems\resource_system\resources\framebuffer_object.cpp">
+      <Filter>engine\systems\resource_system\resources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1934,9 +1934,6 @@
     <ClInclude Include="engine\systems\resource_system\resources\program.h">
       <Filter>engine\systems\resource_system\resources</Filter>
     </ClInclude>
-    <ClInclude Include="engine\systems\resource_system\resources\render_target.h">
-      <Filter>engine\systems\resource_system\resources</Filter>
-    </ClInclude>
     <ClInclude Include="engine\systems\resource_system\resources\resource.h">
       <Filter>engine\systems\resource_system\resources</Filter>
     </ClInclude>
@@ -1979,6 +1976,9 @@
     </ClInclude>
     <ClInclude Include="engine\systems\renderer\ping_pong.h">
       <Filter>engine\systems\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\systems\resource_system\resources\framebuffer_object.h">
+      <Filter>engine\systems\resource_system\resources</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

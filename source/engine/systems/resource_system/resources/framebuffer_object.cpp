@@ -16,7 +16,7 @@
 // 3. The above copyright notice and this permission notice shall be included in
 //	  all copies or substantial portions of the Software.
 
-#include "render_target.h"
+#include "framebuffer_object.h"
 
 #include "render_buffer.h"
 #include "texture.h"

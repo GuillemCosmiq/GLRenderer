@@ -22,7 +22,7 @@
 #include "../renderer.h"
 #include "../shaders_storage.h"
 #include "../../resource_system/resource_system.h"
-#include "../../resource_system/resources/render_target.h"
+#include "../../resource_system/resources/framebuffer_object.h"
 #include "../../resource_system/resources/program.h"
 #include "../../resource_system/resources/mesh.h"
 #include "../../resource_system/resources/texture.h"

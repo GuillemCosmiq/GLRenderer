@@ -20,7 +20,7 @@
 #define __POST_PROCESSOR_H__
 
 #include "../ping_pong.h"
-#include "../../resource_system/resources/render_target.h"
+#include "../../resource_system/resources/framebuffer_object.h"
 #include "../../resource_system/resources/texture.h"
 
 namespace_begin

@@ -16,8 +16,8 @@
 // 3. The above copyright notice and this permission notice shall be included in
 //	  all copies or substantial portions of the Software.
 
-#ifndef __RENDER_TARGET_H__
-#define __RENDER_TARGET_H__
+#ifndef __FRAMEBUFFER_OBJECT_H__
+#define __FRAMEBUFFER_OBJECT_H__
 
 #include "resource.h"
 
