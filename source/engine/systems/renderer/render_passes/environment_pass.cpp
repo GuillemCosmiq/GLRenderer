@@ -74,27 +74,42 @@ EnvironmentPass::EnvironmentPass(ResourceSystem& resSystem, const Renderer& rend
 	m_environmentCubemap = resSystem.Create<Cubemap>();
 	m_environmentCubemap->Create();
 	m_environmentCubemap->Bind(0);
-	m_environmentCubemap->DefineParameters(GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR);
+	m_environmentCubemap->DefineParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	m_environmentCubemap->DefineParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	m_environmentCubemap->DefineParameter(GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	m_environmentCubemap->DefineParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	m_environmentCubemap->DefineParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	m_environmentCubemap->DefineBuffer(glm::vec2(1024, 1024), GL_RGB16F, GL_RGB, GL_FLOAT, NULL);
 
 	m_irradianceCubemap = resSystem.Create<Cubemap>();
 	m_irradianceCubemap->Create();
 	m_irradianceCubemap->Bind(0);
-	m_irradianceCubemap->DefineParameters(GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR);
+	m_irradianceCubemap->DefineParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	m_irradianceCubemap->DefineParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	m_irradianceCubemap->DefineParameter(GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	m_irradianceCubemap->DefineParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	m_irradianceCubemap->DefineParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	m_irradianceCubemap->DefineBuffer(glm::vec2(32, 32), GL_RGB16F, GL_RGB, GL_FLOAT, NULL);
 
 	m_prefilterCubemap = resSystem.Create<Cubemap>();
 	m_prefilterCubemap->Create();
 	m_prefilterCubemap->Bind(0);
-	m_prefilterCubemap->DefineParameters(GL_CLAMP_TO_EDGE, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
+	m_prefilterCubemap->DefineParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	m_prefilterCubemap->DefineParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	m_prefilterCubemap->DefineParameter(GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	m_prefilterCubemap->DefineParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	m_prefilterCubemap->DefineParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	m_prefilterCubemap->DefineBuffer(glm::vec2(128, 128), GL_RGB16F, GL_RGB, GL_FLOAT, NULL);
 	m_prefilterCubemap->GenerateMipMaps();
 
 	m_brdfLUTTexture = resSystem.Create<Texture>();
 	m_brdfLUTTexture->Create();
 	m_brdfLUTTexture->Bind(0);
-	m_brdfLUTTexture->DefineParameters(GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR);
-	m_brdfLUTTexture->DefineBuffer({ 512, 512 }, GL_RG16F, GL_RG, GL_FLOAT, NULL);
+	m_brdfLUTTexture->DefineParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	m_brdfLUTTexture->DefineParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	m_brdfLUTTexture->DefineParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	m_brdfLUTTexture->DefineParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	m_brdfLUTTexture->DefineBuffer(glm::vec2(512, 512), GL_RG16F, GL_RG, GL_FLOAT, NULL);
 }
 
 EnvironmentPass::~EnvironmentPass() {}

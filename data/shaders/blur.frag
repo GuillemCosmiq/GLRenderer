@@ -9,21 +9,29 @@ void main()
 	vec2 screenUVs = gl_FragCoord.xy / viewport;
     vec2 tex_offset = 1.0 / textureSize(ping, 0);
     vec3 result = texture(ping, screenUVs).rgb * weight[0];
-    if(horizontal)
+
+	tex_offset *= vec2(horizontal, 1.0 - int(horizontal));
+	
+	for(int i = 1; i < 5; ++i)
     {
-        for(int i = 1; i < 5; ++i)
-        {
-            result += texture(ping, screenUVs + vec2(tex_offset.x * i, 0.0)).rgb * weight[i];
-            result += texture(ping, screenUVs - vec2(tex_offset.x * i, 0.0)).rgb * weight[i];
-        }
+        result += texture(ping, screenUVs + tex_offset * i).rgb * weight[i];
+        result += texture(ping, screenUVs - tex_offset * i).rgb * weight[i];
     }
-    else
-    {
-        for(int i = 1; i < 5; ++i)
-        {
-            result += texture(ping, screenUVs + vec2(0.0, tex_offset.y * i)).rgb * weight[i];
-            result += texture(ping, screenUVs - vec2(0.0, tex_offset.y * i)).rgb * weight[i];
-        }
-    }
+   // if(horizontal)
+   // {
+   //     for(int i = 1; i < 5; ++i)
+   //     {
+   //         result += texture(ping, screenUVs + vec2(tex_offset.x * i, 0.0)).rgb * weight[i];
+   //         result += texture(ping, screenUVs - vec2(tex_offset.x * i, 0.0)).rgb * weight[i];
+   //     }
+   // }
+   // else
+   // {
+   //     for(int i = 1; i < 5; ++i)
+   //     {
+   //         result += texture(ping, screenUVs + vec2(0.0, tex_offset.y * i)).rgb * weight[i];
+   //         result += texture(ping, screenUVs - vec2(0.0, tex_offset.y * i)).rgb * weight[i];
+   //     }
+   // }
     pong.rgb = result;
 }

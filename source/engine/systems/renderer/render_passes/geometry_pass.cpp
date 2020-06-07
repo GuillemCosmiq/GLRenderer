@@ -49,25 +49,37 @@ GeometryPass::GeometryPass(ResourceSystem& resSystem, const Renderer& renderer)
 	m_albedoTexture = resSystem.Create<Texture>();
 	m_albedoTexture->Create();
 	m_albedoTexture->Bind(0);
-	m_albedoTexture->DefineParameters(GL_REPEAT, GL_NEAREST, GL_NEAREST);
+	m_albedoTexture->DefineParameter(GL_TEXTURE_WRAP_S, GL_REPEAT);
+	m_albedoTexture->DefineParameter(GL_TEXTURE_WRAP_T, GL_REPEAT);
+	m_albedoTexture->DefineParameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	m_albedoTexture->DefineParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	m_albedoTexture->DefineBuffer(viewport, GL_RGB8, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 
 	m_normalsTexture = resSystem.Create<Texture>();
 	m_normalsTexture->Create();
 	m_normalsTexture->Bind(0);
-	m_normalsTexture->DefineParameters(GL_REPEAT, GL_NEAREST, GL_NEAREST);
+	m_normalsTexture->DefineParameter(GL_TEXTURE_WRAP_S, GL_REPEAT);
+	m_normalsTexture->DefineParameter(GL_TEXTURE_WRAP_T, GL_REPEAT);
+	m_normalsTexture->DefineParameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	m_normalsTexture->DefineParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	m_normalsTexture->DefineBuffer(viewport, GL_RGB16F, GL_RGB, GL_FLOAT, NULL);
 
 	m_materialTexture = resSystem.Create<Texture>();
 	m_materialTexture->Create();
 	m_materialTexture->Bind(0);
-	m_materialTexture->DefineParameters(GL_REPEAT, GL_NEAREST, GL_NEAREST);
+	m_materialTexture->DefineParameter(GL_TEXTURE_WRAP_S, GL_REPEAT);
+	m_materialTexture->DefineParameter(GL_TEXTURE_WRAP_T, GL_REPEAT);
+	m_materialTexture->DefineParameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	m_materialTexture->DefineParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	m_materialTexture->DefineBuffer(viewport, GL_RGB8, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 
 	m_depthTexture = resSystem.Create<Texture>();
 	m_depthTexture->Create();
 	m_depthTexture->Bind(0);
-	m_depthTexture->DefineParameters(GL_REPEAT, GL_NEAREST, GL_NEAREST);
+	m_depthTexture->DefineParameter(GL_TEXTURE_WRAP_S, GL_REPEAT);
+	m_depthTexture->DefineParameter(GL_TEXTURE_WRAP_T, GL_REPEAT);
+	m_depthTexture->DefineParameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	m_depthTexture->DefineParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	m_depthTexture->DefineBuffer(viewport, GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 
 	m_fbo->Init();

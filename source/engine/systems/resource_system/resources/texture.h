@@ -34,7 +34,7 @@ public:
 	void Create();
 	void Free();
 	void Bind(int textureIndex) const;
-	void DefineParameters(uint32 wrapper, uint32 minFilter, uint32 maxFilter) const;
+	void DefineParameter(uint32 parameter, uint32 value) const;
 	void DefineBuffer(const glm::vec2& size, uint32 internalFormat, uint32 format, uint32 dataType, const void* data);
 	void GenerateMipMaps() const;
 

@@ -35,8 +35,10 @@ public:
 	PingPong();
 	~PingPong();
 
-	void Create(ResourceSystem& resSystem, const glm::vec2& size, uint32 internalFormat, uint32 format, uint32 dataType,
-		const void* data = NULL, uint32 wrapper = GL_REPEAT, uint32 minFilter = GL_LINEAR, uint32 maxFilter = GL_LINEAR);
+	void CreateBuffers(ResourceSystem& resSystem, const glm::vec2& size, uint32 internalFormat, uint32 format, uint32 dataType,
+		const void* data = NULL);
+	void DefineBuffersParameters(uint32 parameter, uint32 value);
+	void Create(ResourceSystem& resSystem);
 	void Free();
 	void ResetState();
 	void ClearAttachments(uint32 operation);

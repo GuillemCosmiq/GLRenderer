@@ -52,15 +52,10 @@ void Cubemap::Bind(int textureIndex) const
 	glBindTexture(GL_TEXTURE_CUBE_MAP, m_ID);
 }
 
-void Cubemap::DefineParameters(uint32 wrapper, uint32 minFilter, uint32 maxFilter) const
+void Cubemap::DefineParameter(uint32 parameter, uint32 value) const
 {
 	assert(m_ID != 0);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, wrapper);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, wrapper);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, wrapper);
-
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, minFilter);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, maxFilter);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, parameter, value);
 }
 
 void Cubemap::DefineBuffer(const glm::vec2& size, uint32 internalFormat, uint32 format, uint32 dataType, const void* data)

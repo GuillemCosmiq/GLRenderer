@@ -201,7 +201,10 @@ namespace ModelLoader
 			GLEngine::Texture* texRef = resSystem.Create<GLEngine::Texture>();
 			texRef->Create();
 			texRef->Bind(0);
-			texRef->DefineParameters(GL_REPEAT, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
+			texRef->DefineParameter(GL_TEXTURE_WRAP_S, GL_REPEAT);
+			texRef->DefineParameter(GL_TEXTURE_WRAP_T, GL_REPEAT);
+			texRef->DefineParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			texRef->DefineParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 			texRef->DefineBuffer({ width, height }, internalFormat, format, GL_UNSIGNED_BYTE, data);
 			texRef->GenerateMipMaps();
 			stbi_image_free(data);

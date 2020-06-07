@@ -56,7 +56,7 @@ void Scene::Initialize(Config& config, ResourceSystem& resSystem)
 
 	//-------------------------------------------------//
 
-	ModelLoader::Load("../data/3d_scenes/export3dcoatPBR_rustediron.obj", scene, resSystem);
+	ModelLoader::Load("../data/3d_scenes/export3dcoatPBR_gold.obj", scene, resSystem);
 	for (std::shared_ptr<Entity> entity : scene)
 	{
 		entity->AddComponent<AutorotationComponent>();
@@ -84,7 +84,10 @@ void Scene::Initialize(Config& config, ResourceSystem& resSystem)
 
 			environment->Create();
 			environment->Bind(0);
-			environment->DefineParameters(GL_CLAMP_TO_EDGE, GL_LINEAR, GL_LINEAR);
+			environment->DefineParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			environment->DefineParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			environment->DefineParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			environment->DefineParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			if (nrComponents == 3)
 				environment->DefineBuffer({ envWidth, envHeight }, GL_RGB16F, GL_RGB, GL_FLOAT, environmentData);
 			else
@@ -126,7 +129,11 @@ void Scene::Initialize(Config& config, ResourceSystem& resSystem)
 	Cubemap* pointShadowMap = resSystem.Create<Cubemap>();
 	pointShadowMap->Create();
 	pointShadowMap->Bind(0);
-	pointShadowMap->DefineParameters(GL_CLAMP_TO_EDGE, GL_NEAREST, GL_NEAREST);
+	pointShadowMap->DefineParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	pointShadowMap->DefineParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	pointShadowMap->DefineParameter(GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	pointShadowMap->DefineParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	pointShadowMap->DefineParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	pointShadowMap->DefineBuffer(glm::vec2(1024, 1024), GL_DEPTH, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 	pointLightCmp->SetColor(glm::vec3(1000.f, 0.3f, 0.3f));
 	pointLightCmp->SetRadius(1200.f);

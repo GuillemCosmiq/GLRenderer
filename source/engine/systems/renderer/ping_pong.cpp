@@ -36,7 +36,27 @@ PingPong::~PingPong()
 	assert(m_index == 0);
 }
 
-void PingPong::Create(ResourceSystem& resSystem, const glm::vec2& size, uint32 internalFormat, uint32 format, uint32 dataType, const void* data, uint32 wrapper, uint32 minFilter, uint32 maxFilter)
+void PingPong::CreateBuffers(ResourceSystem& resSystem, const glm::vec2& size, uint32 internalFormat, uint32 format, uint32 dataType, const void* data)
+{
+	for (int i = 0; i < SizeofArray(m_buffers); ++i)
+	{
+		m_buffers[i] = resSystem.Create<Texture>();
+		m_buffers[i]->Create();
+		m_buffers[i]->Bind(0);
+		m_buffers[i]->DefineBuffer(size, internalFormat, format, dataType, data);
+	}
+}
+
+void PingPong::DefineBuffersParameters(uint32 parameter, uint32 value)
+{
+	for (int i = 0; i < SizeofArray(m_buffers); ++i)
+	{
+		m_buffers[i]->Bind(0);
+		m_buffers[i]->DefineParameter(parameter, value);
+	}
+}
+
+void PingPong::Create(ResourceSystem& resSystem)
 {
 	assert(m_fbo == nullptr);
 	assert(m_index == 0);
@@ -44,14 +64,7 @@ void PingPong::Create(ResourceSystem& resSystem, const glm::vec2& size, uint32 i
 	m_fbo->Init();
 	m_fbo->Bind();
 	for (int i = 0; i < SizeofArray(m_buffers); ++i)
-	{
-		m_buffers[i] = resSystem.Create<Texture>();
-		m_buffers[i]->Create();
-		m_buffers[i]->Bind(0);
-		m_buffers[i]->DefineParameters(wrapper, minFilter, maxFilter);
-		m_buffers[i]->DefineBuffer(size, internalFormat, format, dataType, data);
 		m_fbo->AttachTarget(m_buffers[i], GL_COLOR_ATTACHMENT0 + i);
-	}
 
 	uint32 attachment = GL_COLOR_ATTACHMENT0;
 	m_fbo->DefineDrawAttachments(&attachment, 1);

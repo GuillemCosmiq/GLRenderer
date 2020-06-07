@@ -91,10 +91,18 @@ Lighting::Lighting(ResourceSystem& resSystem, const Renderer& renderer)
 	m_bloomTextureHDR = resSystem.Create<Texture>();
 	m_bloomTextureHDR->Create();
 	m_bloomTextureHDR->Bind(0);
-	m_bloomTextureHDR->DefineParameters(GL_REPEAT, GL_NEAREST, GL_NEAREST);
+	m_bloomTextureHDR->DefineParameter(GL_TEXTURE_WRAP_S, GL_REPEAT);
+	m_bloomTextureHDR->DefineParameter(GL_TEXTURE_WRAP_T, GL_REPEAT);
+	m_bloomTextureHDR->DefineParameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	m_bloomTextureHDR->DefineParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	m_bloomTextureHDR->DefineBuffer(viewport, GL_RGB16F, GL_RGB, GL_FLOAT, NULL);
 
-	m_lightAccumulationPP.Create(resSystem, viewport, GL_RGB16F, GL_RGB, GL_FLOAT);
+	m_lightAccumulationPP.CreateBuffers(resSystem, viewport, GL_RGB16F, GL_RGB, GL_FLOAT);
+	m_lightAccumulationPP.DefineBuffersParameters(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	m_lightAccumulationPP.DefineBuffersParameters(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	m_lightAccumulationPP.DefineBuffersParameters(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	m_lightAccumulationPP.DefineBuffersParameters(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	m_lightAccumulationPP.Create(resSystem);
 	m_lightAccumulationPP.AttachExtraBuffer(renderer.geometryPass->GetDepth(), GL_DEPTH_ATTACHMENT);
 }
 

@@ -62,9 +62,22 @@ PostProcessor::PostProcessor(ResourceSystem& resSystem, const Renderer& renderer
 	m_vignetteProgram->Bind();
 	m_vignetteProgram->SetUniformTexture("sceneSample", 0);
 
-	m_pingPong.Create(resSystem, viewport, GL_RGB8, GL_RGB, GL_UNSIGNED_BYTE);
+	m_pingPong.CreateBuffers(resSystem, viewport, GL_RGB8, GL_RGB, GL_UNSIGNED_BYTE);
+	m_pingPong.DefineBuffersParameters(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	m_pingPong.DefineBuffersParameters(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	m_pingPong.DefineBuffersParameters(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	m_pingPong.DefineBuffersParameters(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	m_pingPong.Create(resSystem);
 
-	m_gaussianBlurPP.Create(resSystem, viewport, GL_RGB16F, GL_RGB, GL_FLOAT);
+	m_gaussianBlurPP.CreateBuffers(resSystem, viewport, GL_RGB16F, GL_RGB, GL_FLOAT);
+	m_gaussianBlurPP.DefineBuffersParameters(GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+	m_gaussianBlurPP.DefineBuffersParameters(GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+	m_gaussianBlurPP.DefineBuffersParameters(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	m_gaussianBlurPP.DefineBuffersParameters(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	m_gaussianBlurPP.Create(resSystem);
+
+	// TODO: Improve bloom by using mipmaps and downscaling the image at each step. Check Jesus presentation at Drive, but basically we can set max mipamap numbers using texparameters and
+	// even define them with texImage2D :)
 }
 
 PostProcessor::~PostProcessor() {}
