@@ -89,9 +89,9 @@ void Scene::Initialize(Config& config, ResourceSystem& resSystem)
 			environment->DefineParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			environment->DefineParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			if (nrComponents == 3)
-				environment->DefineBuffer({ envWidth, envHeight }, GL_RGB16F, GL_RGB, GL_FLOAT, environmentData);
+				environment->DefineBuffer({ envWidth, envHeight }, 0, GL_RGB16F, GL_RGB, GL_FLOAT, environmentData);
 			else
-				environment->DefineBuffer({ envWidth, envHeight }, GL_RGBA16F, GL_RGBA, GL_FLOAT, environmentData);
+				environment->DefineBuffer({ envWidth, envHeight }, 0, GL_RGBA16F, GL_RGBA, GL_FLOAT, environmentData);
 			stbi_image_free(environmentData);
 			Engine::Get()->renderer->environment->SetEquirectangularEnv(environment);
 		}

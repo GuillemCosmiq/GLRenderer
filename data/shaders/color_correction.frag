@@ -5,6 +5,7 @@ uniform sampler2D filteredBloomSampleHDR;
 uniform vec2 viewport;
 uniform float gamma;
 uniform float exposure;
+uniform float BloomLODIntesities[5];
 uniform bool IsBloomActive;
 uniform bool IsToneMappingActive;
 uniform bool IsGammaCorrectionActive;
@@ -12,12 +13,23 @@ uniform bool IsGammaCorrectionActive;
 void main()
 {
 	vec2 screenUVs = gl_FragCoord.xy / viewport;
-	vec3 sceneHDR = texture(sceneSampleHDR, screenUVs).rgb;
-	vec3 bloomHDR = texture(filteredBloomSampleHDR, screenUVs).rgb;
-	vec3 result = sceneHDR + bloomHDR;
+	vec3 outputColor = texture(sceneSampleHDR, screenUVs).rgb;
+
+	if (IsBloomActive)
+	{
+		for (int LOD = 0; LOD < 5; ++LOD)
+			outputColor += textureLod(filteredBloomSampleHDR, screenUVs, LOD).rgb * BloomLODIntesities[LOD];
+	}
+
 	if (IsToneMappingActive)
-		result = vec3(1.0) - exp(-result * exposure);	
+	{
+		outputColor = vec3(1.0) - exp(-outputColor * exposure);
+	}
+
 	if (IsGammaCorrectionActive)
-		result = pow(result, vec3(1.0 / gamma));
-	outputSample = result;
+	{
+		outputColor = pow(outputColor, vec3(1.0 / gamma));
+	}
+
+	outputSample = outputColor;
 }

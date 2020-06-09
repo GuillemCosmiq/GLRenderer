@@ -54,7 +54,7 @@ void main()
 
 	vec3 PBRresult = ambient + amountLight;
 	float brightness = dot(PBRresult, vec3(0.2126, 0.7152, 0.0722));
-    if(brightness > 1.0)
+    if (brightness > 1.0)
         bloomHDR.rgb = PBRresult;
     else
         bloomHDR.rgb = vec3(0.0, 0.0, 0.0);

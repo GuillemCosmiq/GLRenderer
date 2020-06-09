@@ -36,14 +36,21 @@ PingPong::~PingPong()
 	assert(m_index == 0);
 }
 
-void PingPong::CreateBuffers(ResourceSystem& resSystem, const glm::vec2& size, uint32 internalFormat, uint32 format, uint32 dataType, const void* data)
+void PingPong::CreateBuffers(ResourceSystem& resSystem)
 {
 	for (int i = 0; i < SizeofArray(m_buffers); ++i)
 	{
 		m_buffers[i] = resSystem.Create<Texture>();
 		m_buffers[i]->Create();
+	}
+}
+
+void PingPong::DefineBuffers(const glm::vec2& size, uint32 level, uint32 internalFormat, uint32 format, uint32 dataType, const void* data)
+{
+	for (int i = 0; i < SizeofArray(m_buffers); ++i)
+	{
 		m_buffers[i]->Bind(0);
-		m_buffers[i]->DefineBuffer(size, internalFormat, format, dataType, data);
+		m_buffers[i]->DefineBuffer(size, level, internalFormat, format, dataType, data);
 	}
 }
 
@@ -56,6 +63,15 @@ void PingPong::DefineBuffersParameters(uint32 parameter, uint32 value)
 	}
 }
 
+void PingPong::GenerateMipMaps()
+{
+	for (int i = 0; i < SizeofArray(m_buffers); ++i)
+	{
+		m_buffers[i]->Bind(0);
+		m_buffers[i]->GenerateMipMaps();
+	}
+}
+
 void PingPong::Create(ResourceSystem& resSystem)
 {
 	assert(m_fbo == nullptr);
@@ -63,9 +79,7 @@ void PingPong::Create(ResourceSystem& resSystem)
 	m_fbo = resSystem.Create<FrameBufferObject>();
 	m_fbo->Init();
 	m_fbo->Bind();
-	for (int i = 0; i < SizeofArray(m_buffers); ++i)
-		m_fbo->AttachTarget(m_buffers[i], GL_COLOR_ATTACHMENT0 + i);
-
+	m_fbo->AttachTarget(m_buffers[0], GL_COLOR_ATTACHMENT0, 0);
 	uint32 attachment = GL_COLOR_ATTACHMENT0;
 	m_fbo->DefineDrawAttachments(&attachment, 1);
 }
@@ -86,18 +100,17 @@ void PingPong::Free()
 void PingPong::ResetState()
 {
 	m_index = 0;
-	uint32 attachment = GL_COLOR_ATTACHMENT0;
-	m_fbo->DefineDrawAttachments(&attachment, 1);
+	m_fbo->AttachTarget(m_buffers[0], GL_COLOR_ATTACHMENT0, 0);
 }
 
 void PingPong::ClearAttachments(uint32 operation)
 {
 	for (int i = 0; i < SizeofArray(m_buffers); ++i)
-		m_fbo->AttachTarget(m_buffers[i], GL_COLOR_ATTACHMENT0 + i);
-
-	uint32 attachments[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
-	m_fbo->DefineDrawAttachments(attachments, 2);
-	glClear(operation);
+	{
+		m_fbo->AttachTarget(m_buffers[i], GL_COLOR_ATTACHMENT0, 0);
+		glClear(operation);
+	}
+	m_fbo->AttachTarget(GetBackBuffer(), GL_COLOR_ATTACHMENT0, 0);
 }
 
 void PingPong::BindFBO() const
@@ -105,26 +118,25 @@ void PingPong::BindFBO() const
 	m_fbo->Bind();
 }
 
-void PingPong::AttachExtraBuffer(const Texture* texture, uint32 type)
-{
-	m_fbo->AttachTarget(texture, type);
-}
-
 void PingPong::AttachExtraBuffer(const RenderBuffer* renderBuffer, uint32 type)
 {
 	m_fbo->AttachTarget(renderBuffer, type);
 }
 
-void PingPong::AttachExtraBuffer(const Cubemap* cubemap, uint32 type)
+void PingPong::AttachExtraBuffer(const Texture* texture, uint32 type, uint32 level)
 {
-	m_fbo->AttachTarget(cubemap, type);
+	m_fbo->AttachTarget(texture, type, level);
 }
 
-void PingPong::SwapBuffers()
+void PingPong::AttachExtraBuffer(const Cubemap* cubemap, uint32 type, uint32 level)
+{
+	m_fbo->AttachTarget(cubemap, type, level);
+}
+
+void PingPong::SwapBuffers(uint32 level)
 {
 	m_index++;
-	uint32 attachments[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
-	m_fbo->DefineDrawAttachments(&attachments[m_index % 2], 1);
+	m_fbo->AttachTarget(GetBackBuffer(), GL_COLOR_ATTACHMENT0, level);
 }
 
 FrameBufferObject* PingPong::GetFBO() const

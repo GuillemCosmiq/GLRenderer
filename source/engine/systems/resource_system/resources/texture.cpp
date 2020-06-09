@@ -58,11 +58,11 @@ void Texture::DefineParameter(uint32 parameter, uint32 value) const
 	glTexParameteri(GL_TEXTURE_2D, parameter, value);
 }
 
-void Texture::DefineBuffer(const glm::vec2& size, uint32 internalFormat, uint32 format, uint32 dataType, const void* data)
+void Texture::DefineBuffer(const glm::vec2& size, uint32 level, uint32 internalFormat, uint32 format, uint32 dataType, const void* data)
 {
 	assert(m_ID != 0);
 	m_currentBufferSize = size;
-	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, size.x, size.y, 0, format, dataType, data);
+	glTexImage2D(GL_TEXTURE_2D, level, internalFormat, size.x, size.y, 0, format, dataType, data);
 }
 
 void Texture::GenerateMipMaps() const

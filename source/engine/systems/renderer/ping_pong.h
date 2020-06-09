@@ -35,18 +35,19 @@ public:
 	PingPong();
 	~PingPong();
 
-	void CreateBuffers(ResourceSystem& resSystem, const glm::vec2& size, uint32 internalFormat, uint32 format, uint32 dataType,
-		const void* data = NULL);
-	void DefineBuffersParameters(uint32 parameter, uint32 value);
 	void Create(ResourceSystem& resSystem);
 	void Free();
+	void CreateBuffers(ResourceSystem& resSystem );
+	void DefineBuffers(const glm::vec2& size, uint32 level, uint32 internalFormat, uint32 format, uint32 dataType, const void* data = NULL);
+	void DefineBuffersParameters(uint32 parameter, uint32 value);
+	void GenerateMipMaps();
 	void ResetState();
 	void ClearAttachments(uint32 operation);
 	void BindFBO() const;
-	void AttachExtraBuffer(const Texture* texture, uint32 type);
 	void AttachExtraBuffer(const RenderBuffer* texture, uint32 type);
-	void AttachExtraBuffer(const Cubemap* texture, uint32 type);
-	void SwapBuffers();
+	void AttachExtraBuffer(const Texture* texture, uint32 type, uint32 level);
+	void AttachExtraBuffer(const Cubemap* texture, uint32 type, uint32 level);
+	void SwapBuffers(uint32 level);
 
 	FrameBufferObject* GetFBO() const;
 	const Texture* GetBackBuffer() const;

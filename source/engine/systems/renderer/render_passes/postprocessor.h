@@ -28,6 +28,7 @@ namespace_begin
 class Renderer;
 class ResourceSystem;
 class PostProcessorSource;
+class FrameBufferObject;
 class Texture;
 class Program;
 
@@ -41,7 +42,7 @@ public:
 	void Destroy();
 	void Render(const Renderer& renderer, PostProcessorSource& postProcessorSource);
 
-	const Texture* ComputeGaussianBlur(const Renderer& renderer, const Texture* sample, const glm::vec2& sampleSize, int numSamples);
+	void ComputeTwoPassGaussianBlur(const Renderer& renderer, const FrameBufferObject* fbo, const Texture* input, const Texture* output, glm::vec2& resolution, int LOD, glm::vec2& direction);
 
 public:
 	enum FiltersFlags
@@ -57,7 +58,7 @@ public:
 
 	struct BloomData
 	{
-		int iterations = 10;
+		float LODIntesities[5] = { 1.f, 1.f, 1.f, 1.f, 1.f };
 	} bloomData;
 
 	struct ColorCorrectionData
@@ -76,7 +77,8 @@ public:
 
 private:
 	PingPong m_pingPong;
-	PingPong m_gaussianBlurPP;
+	FrameBufferObject* m_gaussianBlurFbo;
+	Texture* m_gaussianBlurInnerStepTexture;
 
 	Program* m_gaussianBlurProgram;
 	Program* m_colorCorrectionProgram;

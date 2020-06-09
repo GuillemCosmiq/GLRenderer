@@ -39,13 +39,13 @@ public:
 	void Free();
 	void Bind() const;
 
-	void DefineDrawAttachments(uint32* attachments, uint32 num);
-	void DefineReadAttachment(uint32 att);
+	void DefineDrawAttachments(const uint32* attachments, uint32 num) const;
+	void DefineReadAttachment(uint32 att) const;
 
-	void AttachTarget(const RenderBuffer* target, uint32 type);
-	void AttachTarget(const Texture* target, uint32 type);
-	void AttachTarget(const Cubemap* target, uint32 type);
-	void AttachTarget(const Cubemap* target, uint32 type, uint32 face, uint32 mipMapLevel);
+	void AttachTarget(const RenderBuffer* target, uint32 type) const;
+	void AttachTarget(const Texture* target, uint32 type, uint32 level) const;
+	void AttachTarget(const Cubemap* target, uint32 type, uint32 level) const;
+	void AttachTarget(const Cubemap* target, uint32 type, uint32 face, uint32 level) const;
 
 private:
 	uint32 m_ID;

@@ -53,7 +53,7 @@ GeometryPass::GeometryPass(ResourceSystem& resSystem, const Renderer& renderer)
 	m_albedoTexture->DefineParameter(GL_TEXTURE_WRAP_T, GL_REPEAT);
 	m_albedoTexture->DefineParameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	m_albedoTexture->DefineParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	m_albedoTexture->DefineBuffer(viewport, GL_RGB8, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	m_albedoTexture->DefineBuffer(viewport, 0, GL_RGB8, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 
 	m_normalsTexture = resSystem.Create<Texture>();
 	m_normalsTexture->Create();
@@ -62,7 +62,7 @@ GeometryPass::GeometryPass(ResourceSystem& resSystem, const Renderer& renderer)
 	m_normalsTexture->DefineParameter(GL_TEXTURE_WRAP_T, GL_REPEAT);
 	m_normalsTexture->DefineParameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	m_normalsTexture->DefineParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	m_normalsTexture->DefineBuffer(viewport, GL_RGB16F, GL_RGB, GL_FLOAT, NULL);
+	m_normalsTexture->DefineBuffer(viewport, 0, GL_RGB16F, GL_RGB, GL_FLOAT, NULL);
 
 	m_materialTexture = resSystem.Create<Texture>();
 	m_materialTexture->Create();
@@ -71,7 +71,7 @@ GeometryPass::GeometryPass(ResourceSystem& resSystem, const Renderer& renderer)
 	m_materialTexture->DefineParameter(GL_TEXTURE_WRAP_T, GL_REPEAT);
 	m_materialTexture->DefineParameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	m_materialTexture->DefineParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	m_materialTexture->DefineBuffer(viewport, GL_RGB8, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	m_materialTexture->DefineBuffer(viewport, 0, GL_RGB8, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 
 	m_depthTexture = resSystem.Create<Texture>();
 	m_depthTexture->Create();
@@ -80,14 +80,14 @@ GeometryPass::GeometryPass(ResourceSystem& resSystem, const Renderer& renderer)
 	m_depthTexture->DefineParameter(GL_TEXTURE_WRAP_T, GL_REPEAT);
 	m_depthTexture->DefineParameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	m_depthTexture->DefineParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	m_depthTexture->DefineBuffer(viewport, GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	m_depthTexture->DefineBuffer(viewport, 0, GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 
 	m_fbo->Init();
 	m_fbo->Bind();
-	m_fbo->AttachTarget(m_albedoTexture, GL_COLOR_ATTACHMENT0);
-	m_fbo->AttachTarget(m_normalsTexture, GL_COLOR_ATTACHMENT1);
-	m_fbo->AttachTarget(m_materialTexture, GL_COLOR_ATTACHMENT2);
-	m_fbo->AttachTarget(m_depthTexture, GL_DEPTH_ATTACHMENT);
+	m_fbo->AttachTarget(m_albedoTexture, GL_COLOR_ATTACHMENT0, 0);
+	m_fbo->AttachTarget(m_normalsTexture, GL_COLOR_ATTACHMENT1, 0);
+	m_fbo->AttachTarget(m_materialTexture, GL_COLOR_ATTACHMENT2, 0);
+	m_fbo->AttachTarget(m_depthTexture, GL_DEPTH_ATTACHMENT, 0);
 	uint32 attachments[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
 	m_fbo->DefineDrawAttachments(attachments, SizeofArray(attachments));
 	m_fbo->DefineReadAttachment(GL_NONE);

@@ -109,7 +109,7 @@ EnvironmentPass::EnvironmentPass(ResourceSystem& resSystem, const Renderer& rend
 	m_brdfLUTTexture->DefineParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	m_brdfLUTTexture->DefineParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	m_brdfLUTTexture->DefineParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	m_brdfLUTTexture->DefineBuffer(glm::vec2(512, 512), GL_RG16F, GL_RG, GL_FLOAT, NULL);
+	m_brdfLUTTexture->DefineBuffer(glm::vec2(512, 512), 0, GL_RG16F, GL_RG, GL_FLOAT, NULL);
 }
 
 EnvironmentPass::~EnvironmentPass() {}
@@ -216,7 +216,7 @@ void EnvironmentPass::ComputeBRDFMap(const Renderer& renderer)
 {
 	glm::vec2 viewport = renderer.GetViewport();
 	m_fbo->Bind();
-	m_fbo->AttachTarget(m_brdfLUTTexture, GL_COLOR_ATTACHMENT0);
+	m_fbo->AttachTarget(m_brdfLUTTexture, GL_COLOR_ATTACHMENT0, 0);
 	glViewport(0, 0, 512, 512);
 	m_brdfProgram->Bind();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

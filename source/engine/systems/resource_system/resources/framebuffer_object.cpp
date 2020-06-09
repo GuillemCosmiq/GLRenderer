@@ -49,7 +49,7 @@ void FrameBufferObject::Bind() const
 	glBindFramebuffer(GL_FRAMEBUFFER, m_ID);
 }
 
-void FrameBufferObject::DefineDrawAttachments(uint32* attachments, uint32 num)
+void FrameBufferObject::DefineDrawAttachments(const uint32* attachments, uint32 num) const
 {
 	if (num > 1)
 		glDrawBuffers(num, attachments);
@@ -57,35 +57,35 @@ void FrameBufferObject::DefineDrawAttachments(uint32* attachments, uint32 num)
 		glDrawBuffer(*attachments);
 }
 
-void FrameBufferObject::DefineReadAttachment(uint32 attachment)
+void FrameBufferObject::DefineReadAttachment(uint32 attachment) const
 {
 	glReadBuffer(attachment);
 }
 
-void FrameBufferObject::AttachTarget(const RenderBuffer* target, uint32 type)
+void FrameBufferObject::AttachTarget(const RenderBuffer* target, uint32 type) const
 {
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, type, GL_RENDERBUFFER, target->GetID());
 	GLenum result = 0;
 	result = glGetError();
 }
 
-void FrameBufferObject::AttachTarget(const Texture* target, uint32 type)
+void FrameBufferObject::AttachTarget(const Texture* target, uint32 type, uint32 level) const
 {
-	glFramebufferTexture2D(GL_FRAMEBUFFER, type, GL_TEXTURE_2D, target->GetID(), 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, type, GL_TEXTURE_2D, target->GetID(), level);
 	GLenum result = 0;
 	result = glGetError();
 }
 
-void FrameBufferObject::AttachTarget(const Cubemap* target, uint32 type)
+void FrameBufferObject::AttachTarget(const Cubemap* target, uint32 type, uint32 level) const
 {
-	glFramebufferTexture(GL_FRAMEBUFFER, type, target->GetID(), 0);
+	glFramebufferTexture(GL_FRAMEBUFFER, type, target->GetID(), level);
 	GLenum result = 0;
 	result = glGetError();
 }
 
-void FrameBufferObject::AttachTarget(const Cubemap* target, uint32 type, uint32 face, uint32 mipMapLevel)
+void FrameBufferObject::AttachTarget(const Cubemap* target, uint32 type, uint32 face, uint32 level) const
 {
-	glFramebufferTexture2D(GL_FRAMEBUFFER, type, GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, target->GetID(), mipMapLevel);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, type, GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, target->GetID(), level);
 	GLenum result = 0;
 	result = glGetError();
 }

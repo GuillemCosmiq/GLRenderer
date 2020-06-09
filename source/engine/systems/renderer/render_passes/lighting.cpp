@@ -91,19 +91,26 @@ Lighting::Lighting(ResourceSystem& resSystem, const Renderer& renderer)
 	m_bloomTextureHDR = resSystem.Create<Texture>();
 	m_bloomTextureHDR->Create();
 	m_bloomTextureHDR->Bind(0);
-	m_bloomTextureHDR->DefineParameter(GL_TEXTURE_WRAP_S, GL_REPEAT);
-	m_bloomTextureHDR->DefineParameter(GL_TEXTURE_WRAP_T, GL_REPEAT);
-	m_bloomTextureHDR->DefineParameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	m_bloomTextureHDR->DefineParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	m_bloomTextureHDR->DefineBuffer(viewport, GL_RGB16F, GL_RGB, GL_FLOAT, NULL);
+	m_bloomTextureHDR->DefineParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	m_bloomTextureHDR->DefineParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	m_bloomTextureHDR->DefineParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	m_bloomTextureHDR->DefineParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	m_bloomTextureHDR->DefineParameter(GL_TEXTURE_BASE_LEVEL, 0);
+	m_bloomTextureHDR->DefineParameter(GL_TEXTURE_MAX_LEVEL, 4); // viewport, viewport/2, viewport/4, viewport/8, viewport/16
+	m_bloomTextureHDR->DefineBuffer(viewport, 0, GL_RGB16F, GL_RGB, GL_FLOAT, NULL);
+	m_bloomTextureHDR->DefineBuffer(viewport / glm::vec2(2.f, 2.f), 1, GL_RGB16F, GL_RGB, GL_FLOAT, NULL);
+	m_bloomTextureHDR->DefineBuffer(viewport / glm::vec2(4.f, 4.f), 2, GL_RGB16F, GL_RGB, GL_FLOAT, NULL);
+	m_bloomTextureHDR->DefineBuffer(viewport / glm::vec2(8.f, 8.f), 3, GL_RGB16F, GL_RGB, GL_FLOAT, NULL);
+	m_bloomTextureHDR->DefineBuffer(viewport / glm::vec2(16.f, 16.f), 4, GL_RGB16F, GL_RGB, GL_FLOAT, NULL);
 
-	m_lightAccumulationPP.CreateBuffers(resSystem, viewport, GL_RGB16F, GL_RGB, GL_FLOAT);
+	m_lightAccumulationPP.CreateBuffers(resSystem);
 	m_lightAccumulationPP.DefineBuffersParameters(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	m_lightAccumulationPP.DefineBuffersParameters(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	m_lightAccumulationPP.DefineBuffersParameters(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	m_lightAccumulationPP.DefineBuffersParameters(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	m_lightAccumulationPP.DefineBuffers(viewport, 0, GL_RGB16F, GL_RGB, GL_FLOAT);
 	m_lightAccumulationPP.Create(resSystem);
-	m_lightAccumulationPP.AttachExtraBuffer(renderer.geometryPass->GetDepth(), GL_DEPTH_ATTACHMENT);
+	m_lightAccumulationPP.AttachExtraBuffer(renderer.geometryPass->GetDepth(), GL_DEPTH_ATTACHMENT, 0);
 }
 
 Lighting::~Lighting()
@@ -165,7 +172,7 @@ void Lighting::Render(const Renderer& renderer, const LightingSource& source)
 		}
 		renderer.quad->BindAndDraw();
 
-		m_lightAccumulationPP.SwapBuffers();
+		m_lightAccumulationPP.SwapBuffers(0);
 	}
 
 	//----LightPass---PointLights----//
@@ -195,15 +202,15 @@ void Lighting::Render(const Renderer& renderer, const LightingSource& source)
 		}
 		renderer.quad->BindAndDraw();
 
-		m_lightAccumulationPP.SwapBuffers();
+		m_lightAccumulationPP.SwapBuffers(0);
 	}
 
 	//----DeferredPass----//
 
 	FrameBufferObject* pingPongFBO = m_lightAccumulationPP.GetFBO();
 	const Texture* availableToDrawPPTexture = m_lightAccumulationPP.GetBackBuffer();
-	pingPongFBO->AttachTarget(availableToDrawPPTexture, GL_COLOR_ATTACHMENT0);
-	pingPongFBO->AttachTarget(m_bloomTextureHDR, GL_COLOR_ATTACHMENT1);
+	pingPongFBO->AttachTarget(availableToDrawPPTexture, GL_COLOR_ATTACHMENT0, 0);
+	pingPongFBO->AttachTarget(m_bloomTextureHDR, GL_COLOR_ATTACHMENT1, 0);
 	uint32 attachments[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
 	pingPongFBO->DefineDrawAttachments(attachments, SizeofArray(attachments));
 

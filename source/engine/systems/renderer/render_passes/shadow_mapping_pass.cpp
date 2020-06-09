@@ -75,7 +75,7 @@ void ShadowMappingPass::Render(const Renderer& renderer, const ShadowMappingPass
 		if (!light->IsCastingShadows())
 			continue;
 
-		m_fbo->AttachTarget(light->GetShadowMap(), GL_DEPTH_ATTACHMENT);
+		m_fbo->AttachTarget(light->GetShadowMap(), GL_DEPTH_ATTACHMENT, 0);
 		const glm::vec2& shadowMapSize = light->GetShadowMap()->GetCurrentBufferSize();
 		glViewport(0, 0, shadowMapSize.x, shadowMapSize.y);
 		glClear(GL_DEPTH_BUFFER_BIT);
@@ -106,7 +106,7 @@ void ShadowMappingPass::Render(const Renderer& renderer, const ShadowMappingPass
 		if (!light->IsCastingShadows())
 			continue;
 
-		m_fbo->AttachTarget(light->GetShadowMap(), GL_DEPTH_ATTACHMENT);
+		m_fbo->AttachTarget(light->GetShadowMap(), GL_DEPTH_ATTACHMENT, 0);
 		const glm::vec2 shadowMapSize = light->GetShadowMap()->GetCurrentBufferSize();
 		glViewport(0, 0, shadowMapSize.x, shadowMapSize.y);
 		glClear(GL_DEPTH_BUFFER_BIT);

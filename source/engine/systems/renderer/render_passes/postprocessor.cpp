@@ -62,30 +62,46 @@ PostProcessor::PostProcessor(ResourceSystem& resSystem, const Renderer& renderer
 	m_vignetteProgram->Bind();
 	m_vignetteProgram->SetUniformTexture("sceneSample", 0);
 
-	m_pingPong.CreateBuffers(resSystem, viewport, GL_RGB8, GL_RGB, GL_UNSIGNED_BYTE);
+	m_pingPong.CreateBuffers(resSystem);
 	m_pingPong.DefineBuffersParameters(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	m_pingPong.DefineBuffersParameters(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	m_pingPong.DefineBuffersParameters(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	m_pingPong.DefineBuffersParameters(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	m_pingPong.DefineBuffers(viewport, 0, GL_RGB8, GL_RGB, GL_UNSIGNED_BYTE);
 	m_pingPong.Create(resSystem);
 
-	m_gaussianBlurPP.CreateBuffers(resSystem, viewport, GL_RGB16F, GL_RGB, GL_FLOAT);
-	m_gaussianBlurPP.DefineBuffersParameters(GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-	m_gaussianBlurPP.DefineBuffersParameters(GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-	m_gaussianBlurPP.DefineBuffersParameters(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	m_gaussianBlurPP.DefineBuffersParameters(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	m_gaussianBlurPP.Create(resSystem);
+	m_gaussianBlurInnerStepTexture = resSystem.Create<Texture>();
+	m_gaussianBlurInnerStepTexture->Create();
+	m_gaussianBlurInnerStepTexture->Bind(0);
+	m_gaussianBlurInnerStepTexture->DefineParameter(GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+	m_gaussianBlurInnerStepTexture->DefineParameter(GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+	m_gaussianBlurInnerStepTexture->DefineParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	m_gaussianBlurInnerStepTexture->DefineParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	m_gaussianBlurInnerStepTexture->DefineParameter(GL_TEXTURE_BASE_LEVEL, 0);
+	m_gaussianBlurInnerStepTexture->DefineParameter(GL_TEXTURE_MAX_LEVEL, 4); // viewport, viewport/2, viewport/4, viewport/8, viewport/16
+	m_gaussianBlurInnerStepTexture->DefineBuffer(viewport, 0, GL_RGB16F, GL_RGB, GL_FLOAT, NULL);
+	m_gaussianBlurInnerStepTexture->DefineBuffer(viewport / glm::vec2(2.f, 2.f), 1, GL_RGB16F, GL_RGB, GL_FLOAT, NULL);
+	m_gaussianBlurInnerStepTexture->DefineBuffer(viewport / glm::vec2(4.f, 4.f), 2, GL_RGB16F, GL_RGB, GL_FLOAT, NULL);
+	m_gaussianBlurInnerStepTexture->DefineBuffer(viewport / glm::vec2(8.f, 8.f), 3, GL_RGB16F, GL_RGB, GL_FLOAT, NULL);
+	m_gaussianBlurInnerStepTexture->DefineBuffer(viewport / glm::vec2(16.f, 16.f), 4, GL_RGB16F, GL_RGB, GL_FLOAT, NULL);
+	m_gaussianBlurInnerStepTexture->GenerateMipMaps();
 
-	// TODO: Improve bloom by using mipmaps and downscaling the image at each step. Check Jesus presentation at Drive, but basically we can set max mipamap numbers using texparameters and
-	// even define them with texImage2D :)
+	m_gaussianBlurFbo = resSystem.Create<FrameBufferObject>();
+	m_gaussianBlurFbo->Init();
+	m_gaussianBlurFbo->Bind();
+	uint32 attachment = GL_COLOR_ATTACHMENT0;
+	m_gaussianBlurFbo->DefineDrawAttachments(&attachment, 1);
+	m_gaussianBlurFbo->DefineReadAttachment(GL_NONE);
 }
 
 PostProcessor::~PostProcessor() {}
 
 void PostProcessor::Destroy()
 {
+	m_gaussianBlurInnerStepTexture->Free();
+
 	m_pingPong.Free();
-	m_gaussianBlurPP.Free();
+	m_gaussianBlurFbo->Free();
 
 	m_gaussianBlurProgram->Free();
 	m_colorCorrectionProgram->Free();
@@ -98,15 +114,24 @@ void PostProcessor::Render(const Renderer& renderer, PostProcessorSource& source
 	glm::vec2 viewport = renderer.GetViewport();
 
 	source.OutputSample = source.SceneSample;
-
-	const Texture* filteredBloomSample;
+	int bloomActive = 0;
 	if (filtersFlags & FiltersFlags::Bloom)
 	{
-		filteredBloomSample = ComputeGaussianBlur(renderer, source.BloomSample, viewport, bloomData.iterations);
-	}
-	else
-	{
-		filteredBloomSample = source.BloomSample;
+		bloomActive = 1;
+		source.BloomSample->Bind(0);
+		source.BloomSample->GenerateMipMaps();
+		ComputeTwoPassGaussianBlur(renderer, m_gaussianBlurFbo, source.BloomSample, m_gaussianBlurInnerStepTexture, viewport, 0, glm::vec2(1.f, 0.f));
+		ComputeTwoPassGaussianBlur(renderer, m_gaussianBlurFbo, source.BloomSample, m_gaussianBlurInnerStepTexture, viewport / 2.f, 1, glm::vec2(1.f, 0.f));
+		ComputeTwoPassGaussianBlur(renderer, m_gaussianBlurFbo, source.BloomSample, m_gaussianBlurInnerStepTexture, viewport / 4.f, 2, glm::vec2(1.f, 0.f));
+		ComputeTwoPassGaussianBlur(renderer, m_gaussianBlurFbo, source.BloomSample, m_gaussianBlurInnerStepTexture, viewport / 8.f, 3, glm::vec2(1.f, 0.f));
+		ComputeTwoPassGaussianBlur(renderer, m_gaussianBlurFbo, source.BloomSample, m_gaussianBlurInnerStepTexture, viewport / 16.f, 4, glm::vec2(1.f, 0.f));
+
+		ComputeTwoPassGaussianBlur(renderer, m_gaussianBlurFbo, m_gaussianBlurInnerStepTexture, source.BloomSample, viewport, 0, glm::vec2(0.f, 1.f));
+		ComputeTwoPassGaussianBlur(renderer, m_gaussianBlurFbo, m_gaussianBlurInnerStepTexture, source.BloomSample, viewport / 2.f, 1, glm::vec2(0.f, 1.f));
+		ComputeTwoPassGaussianBlur(renderer, m_gaussianBlurFbo, m_gaussianBlurInnerStepTexture, source.BloomSample, viewport / 4.f, 2, glm::vec2(0.f, 1.f));
+		ComputeTwoPassGaussianBlur(renderer, m_gaussianBlurFbo, m_gaussianBlurInnerStepTexture, source.BloomSample, viewport / 8.f, 3, glm::vec2(0.f, 1.f));
+		ComputeTwoPassGaussianBlur(renderer, m_gaussianBlurFbo, m_gaussianBlurInnerStepTexture, source.BloomSample, viewport / 16.f, 4, glm::vec2(0.f, 1.f));
+		glViewport(0, 0, viewport.x, viewport.y);
 	}
 
 	m_pingPong.BindFBO();
@@ -116,14 +141,20 @@ void PostProcessor::Render(const Renderer& renderer, PostProcessorSource& source
 	{
 		m_colorCorrectionProgram->Bind();
 		source.SceneSample->Bind(0);
-		filteredBloomSample->Bind(1);
+		source.BloomSample->Bind(1);
 		m_colorCorrectionProgram->SetUniformFloat("exposure", colorCorrectionData.exposure);
+		m_colorCorrectionProgram->SetUniformInt("IsBloomActive", bloomActive);
+		m_colorCorrectionProgram->SetUniformFloat("BloomLODIntesities[0]", bloomData.LODIntesities[0]);
+		m_colorCorrectionProgram->SetUniformFloat("BloomLODIntesities[1]", bloomData.LODIntesities[1]);
+		m_colorCorrectionProgram->SetUniformFloat("BloomLODIntesities[2]", bloomData.LODIntesities[2]);
+		m_colorCorrectionProgram->SetUniformFloat("BloomLODIntesities[3]", bloomData.LODIntesities[3]);
+		m_colorCorrectionProgram->SetUniformFloat("BloomLODIntesities[4]", bloomData.LODIntesities[4]);
 		m_colorCorrectionProgram->SetUniformInt("IsToneMappingActive", colorCorrectionData.toneMapping);
 		m_colorCorrectionProgram->SetUniformInt("IsGammaCorrectionActive", colorCorrectionData.gammaCorrection);
 		m_colorCorrectionProgram->SetUniformFloat("gamma", colorCorrectionData.gamma);
 		m_colorCorrectionProgram->SetUniformVec2("viewport", viewport.x, viewport.y);
 		renderer.quad->BindAndDraw();
-		m_pingPong.SwapBuffers();
+		m_pingPong.SwapBuffers(0);
 		source.OutputSample = m_pingPong.GetFrontBuffer();
 	}
 	
@@ -133,7 +164,7 @@ void PostProcessor::Render(const Renderer& renderer, PostProcessorSource& source
 		source.OutputSample->Bind(0);
 		m_fxaaProgram->SetUniformVec2("viewport", viewport.x, viewport.y);
 		renderer.quad->BindAndDraw();
-		m_pingPong.SwapBuffers();
+		m_pingPong.SwapBuffers(0);
 		source.OutputSample = m_pingPong.GetFrontBuffer();
 	}
 
@@ -145,29 +176,23 @@ void PostProcessor::Render(const Renderer& renderer, PostProcessorSource& source
 		m_vignetteProgram->SetUniformFloat("softness", vignetteData.softness);
 		m_vignetteProgram->SetUniformVec2("viewport", viewport.x, viewport.y);
 		renderer.quad->BindAndDraw();
-		m_pingPong.SwapBuffers();
+		m_pingPong.SwapBuffers(0);
 		source.OutputSample = m_pingPong.GetFrontBuffer();
 	}
 }
 
-const Texture* PostProcessor::ComputeGaussianBlur(const Renderer& renderer, const Texture* sample, const glm::vec2& sampleSize, int numSamples)
+void PostProcessor::ComputeTwoPassGaussianBlur(const Renderer& renderer, const FrameBufferObject* fbo, const Texture* input, const Texture* output, glm::vec2& resolution, int LOD, glm::vec2& direction)
 {
-	assert(sample != nullptr && numSamples > 0);
+	fbo->Bind();
+	fbo->AttachTarget(output, GL_COLOR_ATTACHMENT0, LOD);
+	input->Bind(0);
 	m_gaussianBlurProgram->Bind();
-	m_gaussianBlurProgram->SetUniformVec2("viewport", sampleSize.x, sampleSize.y);
-
-	m_gaussianBlurPP.BindFBO();
-	m_gaussianBlurPP.ResetState();
-	sample->Bind(0);
-	for (unsigned int i = 0; i < numSamples; ++i)
-	{
-		m_gaussianBlurProgram->SetUniformInt("horizontal", !(m_gaussianBlurPP.GetIndex() % 2));
-		renderer.quad->BindAndDraw();
-		m_gaussianBlurPP.SwapBuffers();
-		m_gaussianBlurPP.GetFrontBuffer()->Bind(0);
-	}
-
-	return m_gaussianBlurPP.GetFrontBuffer();
+	m_gaussianBlurProgram->SetUniformInt("LOD", LOD);
+	glm::vec2 normalizedDirection = glm::normalize(direction);
+	m_gaussianBlurProgram->SetUniformVec2("direction", normalizedDirection.x, normalizedDirection.y);
+	m_gaussianBlurProgram->SetUniformVec2("viewport", resolution.x, resolution.y);
+	glViewport(0, 0, resolution.x, resolution.y);
+	renderer.quad->BindAndDraw();
 }
 
 namespace_end

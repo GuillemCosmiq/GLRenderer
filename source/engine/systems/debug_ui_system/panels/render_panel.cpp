@@ -45,7 +45,11 @@ void RenderPanel::Update()
 			if (ImGui::TreeNode("Bloom/Glow"))
 			{
 				ImGui::CheckboxFlags("Enable Bloom/Glow", (unsigned int*)&postProcessor->filtersFlags, PostProcessor::FiltersFlags::Bloom);
-				ImGui::DragInt("Iterations", &postProcessor->bloomData.iterations);
+				ImGui::SliderFloat("LOD 0", &postProcessor->bloomData.LODIntesities[0], 0.f, 5.f);
+				ImGui::SliderFloat("LOD 1", &postProcessor->bloomData.LODIntesities[1], 0.f, 5.f);
+				ImGui::SliderFloat("LOD 2", &postProcessor->bloomData.LODIntesities[2], 0.f, 5.f);
+				ImGui::SliderFloat("LOD 3", &postProcessor->bloomData.LODIntesities[3], 0.f, 5.f);
+				ImGui::SliderFloat("LOD 4", &postProcessor->bloomData.LODIntesities[4], 0.f, 5.f);
 				ImGui::TreePop();
 
 			}
