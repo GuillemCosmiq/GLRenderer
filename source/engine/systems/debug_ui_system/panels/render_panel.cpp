@@ -21,6 +21,7 @@
 #include "../../../engine.h"
 #include "../../renderer/renderer.h"
 #include "../../renderer/render_passes/postprocessor.h"
+#include "../../renderer/render_passes/lighting.h"
 
 namespace_begin
 
@@ -74,6 +75,7 @@ void RenderPanel::Update()
 				ImGui::DragFloat("Softness", &postProcessor->vignetteData.softness);
 				ImGui::TreePop();
 			}
+			ImGui::Checkbox("ssao", &Engine::Get()->renderer->lighting->aaa);
 		}
 
 	}

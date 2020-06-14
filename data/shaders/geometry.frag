@@ -13,7 +13,6 @@ struct Material
 	sampler2D normalMap;
 	sampler2D metallicMap;
 	sampler2D roughnessMap;
-	sampler2D aoMap;
 	int normalsBinded;
 };
 uniform Material material;
@@ -21,10 +20,10 @@ void main()
 {
 	if (material.normalsBinded)
 	{
-		gNormal = normalize(texture(material.normalMap, outTexCoords).rgb);
+		gNormal = texture(material.normalMap, outTexCoords).rgb;
 		gNormal = gNormal * 2.0 - 1.0;
 		gNormal = normalize(outTBN * gNormal);
-		gNormal = normalize(outNormal);
+	//	gNormal = normalize(outNormal);
 	}
 	else
 	{
@@ -33,5 +32,5 @@ void main()
 	gAlbedo = texture(material.albedoMap, outTexCoords).rgb;
 	gMaterial.r = texture(material.metallicMap, outTexCoords).r;
 	gMaterial.g = texture(material.roughnessMap, outTexCoords).r;
-	gMaterial.b = 1.0;//texture(material.aoMap, outTexCoords).r;
+	gMaterial.b = 0.0;
 }

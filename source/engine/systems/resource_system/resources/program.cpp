@@ -126,6 +126,16 @@ void Program::SetUniformFloat(const char* var, float v0) const
 	glUniform1f(glGetUniformLocation(m_programID, var), v0);
 }
 
+void Program::SetUniformFloatArray(const char* var, float* array, int size) const
+{
+	glUniform1fv(glGetUniformLocation(m_programID, var), size, array);
+}
+
+void Program::SetUniformVec3Array(const char* var, float* array, int size) const
+{
+	glUniform3fv(glGetUniformLocation(m_programID, var), size, array);
+}
+
 void Program::SetUniformVec2(const char* var, float v0, float v1) const
 {
 	glUniform2f(glGetUniformLocation(m_programID, var), v0, v1);

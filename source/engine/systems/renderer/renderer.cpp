@@ -241,6 +241,8 @@ void Renderer::Render()
 	shadowMappingPass->Render(*this, shadowPassSource);
 	m_profiler->EndQuery(shadowsDepthID);
 
+	environment->ComputeSSAO(*this);
+
 	int pbrProfileID = m_profiler->StartQuery("PBR");
 	LightingSource lightingSource;
 	lightingSource.Albedo = geometryPass->GetAlbedo();
@@ -268,6 +270,7 @@ void Renderer::Render()
 	int sampleToScreenProfileID = m_profiler->StartQuery("Sample to screen");
 	ScreenSamplerSource screenSamplerSource;
 	screenSamplerSource.SceneSample = postProcessorSource.OutputSample;
+//	screenSamplerSource.SceneSample = geometryPass->GetMaterial();
 	screenSampler->Render(*this, screenSamplerSource);
 	m_profiler->EndQuery(sampleToScreenProfileID);
 	m_profiler->SleepQueries();

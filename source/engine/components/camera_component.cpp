@@ -147,6 +147,12 @@ const glm::mat4x4& CameraComponent::GetViewMatrix()
 	return m_viewController.view;
 }
 
+const glm::mat4x4& CameraComponent::GetNormalsViewMatrix()
+{
+	m_viewController.normalsView = glm::lookAt(glm::vec3(0, 0, 0), m_viewController.front, m_viewController.up);
+	return m_viewController.normalsView;
+}
+
 const glm::mat4x4& CameraComponent::GetProjection()
 {
 	if (m_frustum.dirty)

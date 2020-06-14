@@ -8,3 +8,12 @@ vec3 WorldPosFromNDC(vec2 xy, float depth, mat4 invProj, mat4 invView)
 	vec4 worldSpace = invView * viewSpace;
 	return worldSpace.xyz;
 }
+
+vec3 ViewPosFromNDC(vec2 xy, float depth, mat4 invProj)
+{
+	depth = depth * 2.0 - 1.0;
+	vec4 clipSpace = vec4(xy * 2.0 - 1.0, depth, 1.0);
+	vec4 viewSpace = invProj * clipSpace;
+	viewSpace /= viewSpace.w;
+	return viewSpace.xyz;
+}

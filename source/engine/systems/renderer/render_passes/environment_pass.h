@@ -47,10 +47,11 @@ public:
 	void SetCaptureMatrices(glm::mat4& projection, glm::mat4(&captureViews)[6]);
 	void SetEquirectangularEnv(Texture* equirectangularMap);
 
+	void ComputeSSAO(const Renderer& renderer);
+
 public:
 	FrameBufferObject* m_fbo;
 	Program* m_skyboxProgram;
-
 	Program* m_equirectangularToCubemapProgram;
 	Program* m_irradianceConvolutionProgram;
 	Program* m_prefilterEnvProgram;
@@ -64,6 +65,15 @@ public:
 
 	glm::mat4 m_captureProjection;
 	glm::mat4 m_captureViews[6];
+
+public:
+
+	// ssao
+	Program* m_ssaoProgram;
+	Program* m_ssaoBlurProgram;
+	Texture* m_noiseTexture;
+	Texture* m_ssaoTexture;
+
 };
 
 namespace_end

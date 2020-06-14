@@ -14,27 +14,24 @@ layout(std140, binding = 0) uniform CameraBlock
 	mat4 view;
 	mat4 proj;
 };
-uniform mat4 model;
-uniform mat4 prevModel;
-uniform mat3 normal;
+uniform mat4 modelMatrix;
+uniform mat4 prevModelMatrix;
+uniform mat3 normalMatrix;
 void main()
 {
-vec3 T = normalize(vec3(model * vec4(aTangent, 0.0)));
-vec3 N = normalize(vec3(model * vec4(aNormal, 0.0)));
-// re-orthogonalize T with respect to N
-T = normalize(T - dot(T, N) * N);
-// then retrieve perpendicular vector B with the cross product of T and N
-vec3 B = cross(N, T);
-
-//mat3 TBN = mat3(T, B, N)  
+	vec3 T = normalize(vec3(modelMatrix * vec4(aTangent, 0.0)));
+	vec3 N = normalize(vec3(modelMatrix * vec4(aNormal, 0.0)));
+	T = normalize(T - dot(T, N) * N); // re-orthogonalize T with respect to N
+	vec3 B = cross(N, T); // then retrieve perpendicular vector B with the cross product of T and N
 
 	//vec3 T = normalize(vec3(model * vec4(aTangent, 0.0)));
 	//vec3 B = normalize(vec3(model * vec4(aBitangent, 0.0)));
 	//vec3 N = normalize(vec3(model * vec4(aNormal, 0.0)));
+	//mat3 normalMatrixa = transpose(inverse(mat3(view * modelMatrix)));
 	outTBN = mat3(T, B, N);
-	outNormal =  normal * aNormal;
+	outNormal =  normalMatrix * aNormal;
 	outTexCoords = aTexCoord;
-	out_position = proj * view * model * vec4(aPosition, 1.0f);
-	out_prevPosition = proj * view * prevModel * vec4(aPosition, 1.0f);
+	out_position = proj * view * modelMatrix * vec4(aPosition, 1.0f);
+	out_prevPosition = proj * view * prevModelMatrix * vec4(aPosition, 1.0f);
 	gl_Position = out_position;
 }

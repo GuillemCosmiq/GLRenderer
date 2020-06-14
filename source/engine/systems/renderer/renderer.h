@@ -101,8 +101,6 @@ private:
 	std::vector<std::shared_ptr<DrawableComponent>> m_drawables;
 	std::vector<std::shared_ptr<DirectionalLightComponent>> m_directionalLights;
 	std::vector<std::shared_ptr<PointLightComponent>> m_pointLights;
-
-private:
 };
 
 namespace_end;

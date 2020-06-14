@@ -46,6 +46,8 @@ public:
 	inline const std::string& GetPrefilterEnvironmentFrag() const { return m_prefilterEnvFrag; }
 	inline const std::string& GetBrdfVert() const { return m_brdfVert; }
 	inline const std::string& GetBrdfFrag() const { return m_brdfFrag; }
+	inline const std::string& GetSSAOFrag() const { return m_ssaoFrag; }
+	inline const std::string& GetSSAOBlurFrag() const { return m_ssaoBlurFrag; }
 	inline const std::string& GetDirectionalShadingFrag() const { return m_directionalShadingFrag; }
 	inline const std::string& GetPointShadingFrag() const { return m_pointShadingFrag; }
 	inline const std::string& GetFinalShadingFrag() const { return m_finalShadingFrag; }
@@ -75,6 +77,8 @@ private:
 	std::string m_prefilterEnvFrag;
 	std::string m_brdfVert;
 	std::string m_brdfFrag;
+	std::string m_ssaoFrag;
+	std::string m_ssaoBlurFrag;
 	std::string m_directionalShadingFrag;
 	std::string m_pointShadingFrag;
 	std::string m_finalShadingFrag;

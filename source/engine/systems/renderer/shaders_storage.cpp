@@ -42,6 +42,8 @@ void ShadersStorage::ParseAndStore(const char* relative_path)
 	m_prefilterEnvFrag = ReadFile((path + "prefilterEnv.frag").c_str());
 	m_brdfVert = ReadFile((path + "brdf.vert").c_str());
 	m_brdfFrag = ReadFile((path + "brdf.frag").c_str());
+	m_ssaoFrag = ReadFile((path + "ssao.frag").c_str());
+	m_ssaoBlurFrag = ReadFile((path + "ssaoBlur.frag").c_str());
 	m_directionalShadingFrag = ReadFile((path + "directional_shading.frag").c_str());
 	m_pointShadingFrag = ReadFile((path + "point_shading.frag").c_str());
 	m_finalShadingFrag = ReadFile((path + "final_shading.frag").c_str());

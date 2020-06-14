@@ -76,8 +76,8 @@ GeometryPass::GeometryPass(ResourceSystem& resSystem, const Renderer& renderer)
 	m_depthTexture = resSystem.Create<Texture>();
 	m_depthTexture->Create();
 	m_depthTexture->Bind(0);
-	m_depthTexture->DefineParameter(GL_TEXTURE_WRAP_S, GL_REPEAT);
-	m_depthTexture->DefineParameter(GL_TEXTURE_WRAP_T, GL_REPEAT);
+	m_depthTexture->DefineParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	m_depthTexture->DefineParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	m_depthTexture->DefineParameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	m_depthTexture->DefineParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	m_depthTexture->DefineBuffer(viewport, 0, GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
@@ -120,23 +120,19 @@ void GeometryPass::Render(const Renderer& renderer, const GeometrySource& source
 		std::shared_ptr<TransformComponent> transform = drawable->GetOwner()->GetComponent<TransformComponent>();
 
 		m_geometryProgram->Bind();
-		m_geometryProgram->SetUniformMat4("model", false, (const float*)glm::value_ptr(transform->GetMatrix()));
-		m_geometryProgram->SetUniformMat4("prevModel", false, (const float*)glm::value_ptr(transform->GetPrevFrameMatrix()));
-		m_geometryProgram->SetUniformMat3("normal", false, (const float*)glm::value_ptr(glm::inverseTranspose(glm::mat3x3(transform->GetMatrix()))));
+		m_geometryProgram->SetUniformMat4("modelMatrix", false, (const float*)glm::value_ptr(transform->GetMatrix()));
+		m_geometryProgram->SetUniformMat4("prevModelMatrix", false, (const float*)glm::value_ptr(transform->GetPrevFrameMatrix()));
+		m_geometryProgram->SetUniformMat3("normalMatrix", false, (const float*)glm::value_ptr(glm::inverseTranspose(glm::mat3x3(transform->GetMatrix()))));
 		m_geometryProgram->SetUniformTexture("material.albedoMap", 0);
 		m_geometryProgram->SetUniformTexture("material.normalMap", 1);
 		m_geometryProgram->SetUniformTexture("material.metallicMap", 2);
 		m_geometryProgram->SetUniformTexture("material.roughnessMap", 3);
-		//m_geometry.lock()->SetUniformTexture("material.aoMap", 4);
+		m_geometryProgram->SetUniformInt("material.normalsBinded", 1);
 
 		drawable->GetAlbedoMap()->Bind(0);
-		//drawable->GetNormalMap()->Bind(1);
-	//	m_geometryProgram->SetUniformInt("material.normalsBinded", 1);
-		m_geometryProgram->SetUniformInt("material.normalsBinded", 0);
-
+		drawable->GetNormalMap()->Bind(1);
 		drawable->GetMetallicMap()->Bind(2);
 		drawable->GetRoughnessMap()->Bind(3);
-		//drawable->GetAOMap(4);
 
 		m_geometryProgram->SetUniformVec2("viewport", viewport.x, viewport.y);
 		drawable->GetMesh()->BindAndDraw();

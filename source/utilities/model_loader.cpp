@@ -136,7 +136,7 @@ namespace ModelLoader
 			{
 				if (material->GetTexture(aiTextureType_HEIGHT, 0, &path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS)
 				{
-					drawableCmp->SetNormalMap(TextureFromFile(path.C_Str(), AssetsPath, resSystem, true));
+					drawableCmp->SetNormalMap(TextureFromFile(path.C_Str(), AssetsPath, resSystem, false));
 				}
 			}
 			if (material->GetTextureCount(aiTextureType_AMBIENT) > 0)

@@ -42,6 +42,8 @@ public:
 	void SetUniformTexture(const char* var, int v0) const;
 	void SetUniformInt(const char* var, int v0) const;
 	void SetUniformFloat(const char* var, float v0) const;
+	void SetUniformFloatArray(const char* var, float* array, int size) const;
+	void SetUniformVec3Array(const char* var, float* array, int size) const;
 	void SetUniformVec2(const char* var, float v0, float v1) const;
 	void SetUniformVec3(const char* var, float v0, float v1, float v2) const;
 	void SetUniformMat3(const char* var, bool transpose, const float* data) const;

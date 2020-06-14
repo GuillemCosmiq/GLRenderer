@@ -45,6 +45,7 @@ public:
 	float GetFarPlane() const { return m_frustum.farPlane; }
 
 	const glm::mat4x4& GetViewMatrix();
+	const glm::mat4x4& GetNormalsViewMatrix();
 	const glm::mat4x4& GetProjection();
 	const glm::vec3& GetPos() const { return m_viewController.pos; }
 	void GetWorldSpaceFrustumCorners(std::vector<glm::vec3>& corners) const;
@@ -71,6 +72,7 @@ private:
 	{
 		float cameraSpeed;
 		glm::mat4x4 view;
+		glm::mat4x4 normalsView;
 		glm::vec3 pos;
 		glm::vec3 front;
 		glm::vec3 up;

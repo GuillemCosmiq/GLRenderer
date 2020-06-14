@@ -56,7 +56,7 @@ void Scene::Initialize(Config& config, ResourceSystem& resSystem)
 
 	//-------------------------------------------------//
 
-	ModelLoader::Load("../data/3d_scenes/export3dcoatPBR_gold.obj", scene, resSystem);
+	ModelLoader::Load("../data/3d_scenes/export3dcoatPBR_rustediron.obj", scene, resSystem);
 	for (std::shared_ptr<Entity> entity : scene)
 	{
 		entity->AddComponent<AutorotationComponent>();
@@ -64,9 +64,17 @@ void Scene::Initialize(Config& config, ResourceSystem& resSystem)
 	}
 	scene.clear();
 	
-//	ModelLoader::Load("../data/3d_scenes/planeCobbleStone.obj", scene, resSystem);
+	ModelLoader::Load("../data/3d_scenes/planeCobbleStone.obj", scene, resSystem);
 	for (std::shared_ptr<Entity> entity : scene)
+	{
+		std::shared_ptr<GLEngine::TransformComponent> drawableCmp = entity->GetComponent<GLEngine::TransformComponent>();
+		glm::mat4 transform = drawableCmp->GetMatrix();
+		transform = glm::translate(transform, glm::vec3(0, -7, 0));
+		transform = glm::scale(transform, glm::vec3(1000, 1000, 1000));
+		drawableCmp->SetMatrix(transform);
 		AddEntity(entity);
+
+	}
 	scene.clear();
 
 	//------------------------------------------------------------//
@@ -102,14 +110,14 @@ void Scene::Initialize(Config& config, ResourceSystem& resSystem)
 	std::shared_ptr<DirectionalLightComponent> lightCmp = mainLight->AddComponent<DirectionalLightComponent>();
 	lightCmp->SetColor(glm::vec3(1.0f, 0.3f, 0.3f));
 	lightCmp->SetDirection(glm::vec3(0.f, -1.f, 0.f));
-	AddEntity(mainLight);
+	//AddEntity(mainLight);
 
 	std::shared_ptr<Entity> mainLight2 = std::make_shared<Entity>();
 	std::shared_ptr<TransformComponent> transform2 = mainLight2->AddComponent<TransformComponent>();
 	std::shared_ptr<DirectionalLightComponent> lightCmp2 = mainLight2->AddComponent<DirectionalLightComponent>();
 	lightCmp2->SetColor(glm::vec3(0.2f, 1.0f, 0.3f));
 	lightCmp2->SetDirection(glm::vec3(0.2f, -0.8f, 0.2f));
-	AddEntity(mainLight2);
+	//AddEntity(mainLight2);
 
 
 //	lightCmp->SetColor(glm::vec3(1000.0f, 0.3f, 0.3f));

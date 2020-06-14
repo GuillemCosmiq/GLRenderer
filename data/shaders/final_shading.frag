@@ -22,6 +22,7 @@ uniform sampler2D HDRsample;
 uniform samplerCube irradianceMap;
 uniform samplerCube prefilterMap;
 uniform sampler2D brdfLUT;
+
 vec3 FresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness);
 vec3 WorldPosFromNDC(vec2 xy, float depth, mat4 invProj, mat4 invView);
 void main()
@@ -50,7 +51,8 @@ void main()
     vec3 prefilteredColor = textureLod(prefilterMap, R,  material.g * MAX_REFLECTION_LOD).rgb;    
     vec2 brdf = texture(brdfLUT, vec2(max(dot(N, V), 0.0), material.g)).rg;
     vec3 specular = prefilteredColor * (F * brdf.x + brdf.y);
-    vec3 ambient = (kD * diffuse + specular) * material.b;
+
+    vec3 ambient = (kD * diffuse + specular) * material.b; // ambient occlusion
 
 	vec3 PBRresult = ambient + amountLight;
 	float brightness = dot(PBRresult, vec3(0.2126, 0.7152, 0.0722));
