@@ -20,11 +20,7 @@ const float radius = 1.0;
 const int kernelSize = 64;
 uniform vec3 samples[kernelSize];
 
-uniform mat4 uNormalViewMatrix;
-
-float linearizeDepth(float near, float far, float depth) {
-    return 2.0 * near / (far + near - depth * (far - near));
-}
+uniform float power;
 
 vec3 ViewPosFromNDC(vec2 xy, float depth, mat4 invProj);
 void main()
@@ -58,5 +54,5 @@ void main()
 		occlusion += (sampleDepth >= currentSample.z + bias ? 1.0 : 0.0) * rangeCheck;      
 	}
 	occlusion = 1.0 - (occlusion / float(kernelSize));
-	ssao.r = occlusion;
+	ssao.r = pow(occlusion, power);
 }

@@ -233,6 +233,9 @@ void Renderer::Render()
 	geometryPass->Render(*this, geometrySource);
 	m_profiler->EndQuery(geometryProfileID);
 
+	// SSAO is needed on lighting pass, so we need to compute it here even if its more postprocessing than anything else
+	postProcessor->ComputeSSAO(*this, geometryPass->GetNormals(), geometryPass->GetDepth(), geometryPass->GetMaterial());
+
 	int shadowsDepthID = m_profiler->StartQuery("ShadowsDepth");
 	ShadowMappingPassSource shadowPassSource;
 	shadowPassSource.Drawables = m_drawables;
@@ -240,8 +243,6 @@ void Renderer::Render()
 	shadowPassSource.PointLights = m_pointLights;
 	shadowMappingPass->Render(*this, shadowPassSource);
 	m_profiler->EndQuery(shadowsDepthID);
-
-	environment->ComputeSSAO(*this);
 
 	int pbrProfileID = m_profiler->StartQuery("PBR");
 	LightingSource lightingSource;
@@ -269,8 +270,9 @@ void Renderer::Render()
 
 	int sampleToScreenProfileID = m_profiler->StartQuery("Sample to screen");
 	ScreenSamplerSource screenSamplerSource;
-	screenSamplerSource.SceneSample = postProcessorSource.OutputSample;
-//	screenSamplerSource.SceneSample = geometryPass->GetMaterial();
+	screenSamplerSource.SceneSample[(int)ScreenSamplerSource::OutputSample::scene] = postProcessorSource.OutputSample;
+	screenSamplerSource.SceneSample[(int)ScreenSamplerSource::OutputSample::depth] = geometryPass->GetDepth();
+	screenSamplerSource.SceneSample[(int)ScreenSamplerSource::OutputSample::ssao] = geometryPass->GetMaterial();
 	screenSampler->Render(*this, screenSamplerSource);
 	m_profiler->EndQuery(sampleToScreenProfileID);
 	m_profiler->SleepQueries();

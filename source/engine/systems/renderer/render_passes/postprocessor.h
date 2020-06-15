@@ -43,31 +43,38 @@ public:
 	void Render(const Renderer& renderer, PostProcessorSource& postProcessorSource);
 
 	void ComputeTwoPassGaussianBlur(const Renderer& renderer, const FrameBufferObject* fbo, const Texture* input, const Texture* output, glm::vec2& resolution, int LOD, glm::vec2& direction);
+	void ComputeSSAO(const Renderer& renderer, const Texture* normals, const Texture* depth, const Texture* output);
 
 public:
 	enum FiltersFlags
 	{
 		Bloom = 1 << 1,
 		ColorCorrection = 1 << 2,
-		FXAA = 1 << 3,
-		MotionBlur = 1 << 4,
-		Vignette = 1 << 5
+		GammaCorrection = 1 << 3,
+		ToneMapping = 1 << 4,
+		SSAO = 1 << 5,
+		FXAA = 1 << 6,
+		MotionBlur = 1 << 7,
+		Vignette = 1 << 8,
 	};
 	
-	uint8 filtersFlags;
+	uint16 filtersFlags;
 
 	struct BloomData
 	{
-		float LODIntesities[5] = { 1.f, 1.f, 1.f, 1.f, 1.f };
+		float LODIntesities[5] = { 0.1f, 0.15f, 0.2f, 0.4f, 0.6f };
 	} bloomData;
 
 	struct ColorCorrectionData
 	{
 		float exposure = 1.f;
-		bool toneMapping = true;
-		bool gammaCorrection = true;
-		float gamma = 2.2f;
+		float gammaValue = 2.2f;
 	} colorCorrectionData;
+
+	struct SSAOData
+	{
+		float power = 10.f;
+	} ssaoData;
 
 	struct VignetteData
 	{
@@ -84,6 +91,12 @@ private:
 	Program* m_colorCorrectionProgram;
 	Program* m_fxaaProgram;
 	Program* m_vignetteProgram;
+
+	FrameBufferObject* m_ssaoFbo;
+	Program* m_ssaoProgram;
+	Program* m_ssaoBlurProgram;
+	Texture* m_noiseTexture;
+	Texture* m_ssaoTexture;
 };
 
 namespace_end

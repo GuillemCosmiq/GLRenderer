@@ -31,8 +31,9 @@ namespace_begin
 
 ScreenSampler::ScreenSampler(ResourceSystem& resSystem, const Renderer& renderer)
 {
-	m_screenSampler = resSystem.Create<Program>();
+	outputSelection = 0;
 
+	m_screenSampler = resSystem.Create<Program>();
 	m_screenSampler->AttachVertexObject(renderer.shaderStorage->GetDefaultVert().c_str());
 	m_screenSampler->AttachFragmentObject(renderer.shaderStorage->GetSamplerToScreenFrag().c_str());
 	m_screenSampler->CompileProgram();
@@ -55,8 +56,10 @@ void ScreenSampler::Render(const Renderer& renderer, const ScreenSamplerSource& 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	m_screenSampler->Bind();
-	source.SceneSample->Bind(0);
+	source.SceneSample[outputSelection]->Bind(0);
+
 	m_screenSampler->SetUniformVec2("viewport", viewport.x, viewport.y);
+	m_screenSampler->SetUniformInt("outputSelection", outputSelection);
 	renderer.quad->BindAndDraw();
 }
 

@@ -18,7 +18,6 @@
 
 #include "environment_pass.h"
 
-#include "geometry_pass.h"
 #include "lighting.h"
 #include "../renderer.h"
 #include "../shaders_storage.h"
@@ -29,9 +28,6 @@
 #include "../../resource_system/resources/render_buffer.h"
 #include "../../resource_system/resources/texture.h"
 #include "../../resource_system/resources/cubemap.h"
-
-#include "../../../components/camera_component.h"
-#include <random>
 
 namespace_begin
 
@@ -117,67 +113,6 @@ EnvironmentPass::EnvironmentPass(ResourceSystem& resSystem, const Renderer& rend
 	m_brdfLUTTexture->DefineParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	m_brdfLUTTexture->DefineParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	m_brdfLUTTexture->DefineBuffer(glm::vec2(512, 512), 0, GL_RG16F, GL_RG, GL_FLOAT, NULL);
-
-	std::uniform_real_distribution<GLfloat> randomFloats(0.0, 1.0);
-	std::default_random_engine generator;
-	glm::vec3 ssaoKernel[64];
-	for (int i = 0; i < 64; ++i)
-	{
-		glm::vec3 sample(randomFloats(generator) * 2.0 - 1.0, randomFloats(generator) * 2.0 - 1.0, randomFloats(generator));
-		sample = glm::normalize(sample);
-		sample *= randomFloats(generator);
-
-		float scale = float(i) / 64.0;
-		scale = 0.1f + (scale * scale) * (1.0f - 0.1f); // we use a lerp to add more samples close to the center and less to the perimeter.
-		sample *= scale;
-		ssaoKernel[i] = sample;
-	}
-
-	glm::vec3 ssaoNoise[16];
-	for (int i = 0; i < 16; ++i)
-	{
-		glm::vec3 noise(
-			randomFloats(generator) * 2.0 - 1.0,
-			randomFloats(generator) * 2.0 - 1.0,
-			0.0f);
-		ssaoNoise[i] = noise;
-	}
-
-	m_ssaoProgram = resSystem.Create<Program>();
-	m_ssaoProgram->AttachVertexObject(renderer.shaderStorage->GetDefaultVert().c_str());
-	m_ssaoProgram->AttachFragmentObject(renderer.shaderStorage->GetSSAOFrag().c_str());
-	m_ssaoProgram->AttachFragmentObject(renderer.shaderStorage->GetUtils().c_str());
-	m_ssaoProgram->CompileProgram();
-	m_ssaoProgram->Bind();
-	m_ssaoProgram->SetUniformTexture("noiseTexture", 0);
-	m_ssaoProgram->SetUniformTexture("gBuffer.normals", 1);
-	m_ssaoProgram->SetUniformTexture("gBuffer.depth", 2);
-	m_ssaoProgram->SetUniformVec3Array("samples", glm::value_ptr(ssaoKernel[0]), SizeofArray(ssaoKernel));
-
-	m_noiseTexture = resSystem.Create<Texture>();
-	m_noiseTexture->Create();
-	m_noiseTexture->Bind(0);
-	m_noiseTexture->DefineParameter(GL_TEXTURE_WRAP_S, GL_REPEAT);
-	m_noiseTexture->DefineParameter(GL_TEXTURE_WRAP_T, GL_REPEAT);
-	m_noiseTexture->DefineParameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	m_noiseTexture->DefineParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	m_noiseTexture->DefineBuffer(glm::vec2(4.f, 4.f), 0, GL_RGB16F, GL_RGB, GL_FLOAT, ssaoNoise);
-
-	m_ssaoTexture = resSystem.Create<Texture>();
-	m_ssaoTexture->Create();
-	m_ssaoTexture->Bind(0);
-	m_ssaoTexture->DefineParameter(GL_TEXTURE_WRAP_S, GL_REPEAT);
-	m_ssaoTexture->DefineParameter(GL_TEXTURE_WRAP_T, GL_REPEAT);
-	m_ssaoTexture->DefineParameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	m_ssaoTexture->DefineParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	m_ssaoTexture->DefineBuffer(renderer.GetViewport(), 0, GL_RGB8, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-
-	m_ssaoBlurProgram = resSystem.Create<Program>();
-	m_ssaoBlurProgram->AttachVertexObject(renderer.shaderStorage->GetDefaultVert().c_str());
-	m_ssaoBlurProgram->AttachFragmentObject(renderer.shaderStorage->GetSSAOBlurFrag().c_str());
-	m_ssaoBlurProgram->CompileProgram();
-	m_ssaoBlurProgram->Bind();
-	m_ssaoBlurProgram->SetUniformTexture("ssaoTexture", 0);
 }
 
 EnvironmentPass::~EnvironmentPass() {}
@@ -194,10 +129,6 @@ void EnvironmentPass::Destroy()
 	m_irradianceCubemap->Free();
 	m_prefilterCubemap->Free();
 	m_brdfLUTTexture->Free();
-	m_noiseTexture->Free();
-	m_ssaoTexture->Free();
-	m_ssaoBlurProgram->Free();
-	m_ssaoProgram->Free();
 	m_fbo->Free();
 }
 
@@ -303,29 +234,6 @@ void EnvironmentPass::SetEquirectangularEnv(Texture* equirectangularMap)
 {
 	m_equirectangularEnv = equirectangularMap;
 	needComputeEnvironmentMaps = true;
-}
-
-void EnvironmentPass::ComputeSSAO(const Renderer& renderer)
-{
-	glm::vec2 viewport = renderer.GetViewport();
-
-	m_fbo->Bind();
-	m_fbo->AttachTarget(m_ssaoTexture, GL_COLOR_ATTACHMENT0, 0);
-	m_ssaoProgram->Bind();
-	m_ssaoProgram->SetUniformVec2("viewport", viewport.x, viewport.y);
-	m_ssaoProgram->SetUniformMat4("uNormalViewMatrix", false, (const float*)glm::value_ptr(renderer.GetCamera()->GetNormalsViewMatrix()));
-	m_noiseTexture->Bind(0);
-	renderer.geometryPass->GetNormals()->Bind(1);
-	renderer.geometryPass->GetDepth()->Bind(2);
-	renderer.quad->BindAndDraw();
-
-	glColorMask(false, false, true, false);
-	m_fbo->AttachTarget(renderer.geometryPass->GetMaterial(), GL_COLOR_ATTACHMENT0, 0);
-	m_ssaoBlurProgram->Bind();
-	m_ssaoBlurProgram->SetUniformVec2("viewport", viewport.x, viewport.y);
-	m_ssaoTexture->Bind(0);
-	renderer.quad->BindAndDraw();
-	glColorMask(true, true, true, true);
 }
 
 namespace_end

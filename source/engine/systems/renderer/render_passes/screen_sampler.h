@@ -38,6 +38,9 @@ public:
 
 private:
 	Program* m_screenSampler;
+
+public:
+	int outputSelection;
 };
 
 namespace_end

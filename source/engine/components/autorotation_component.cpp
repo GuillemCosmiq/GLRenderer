@@ -26,7 +26,7 @@ namespace_begin
 
 AutorotationComponent::AutorotationComponent(std::shared_ptr<Entity> owner)
 	: BaseComponent(owner)
-	, m_strengthRadians(0.000f)
+	, m_strengthRadians(0.015f)
 {
 	assert(owner->GetComponent<TransformComponent>() != nullptr); // no transform component attached.
 	transformCompRef = owner->GetComponent<TransformComponent>().get();

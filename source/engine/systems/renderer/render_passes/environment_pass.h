@@ -65,15 +65,6 @@ public:
 
 	glm::mat4 m_captureProjection;
 	glm::mat4 m_captureViews[6];
-
-public:
-
-	// ssao
-	Program* m_ssaoProgram;
-	Program* m_ssaoBlurProgram;
-	Texture* m_noiseTexture;
-	Texture* m_ssaoTexture;
-
 };
 
 namespace_end
