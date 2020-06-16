@@ -49,20 +49,23 @@ Scene::~Scene()
 
 void Scene::Initialize(Config& config, ResourceSystem& resSystem)
 {
+	// TODO: Unload environment maps. add shutdown method :)
 	// TODO: Organize this better and unload everything. Also, component camera is super hackish in terms of transformation ;)
+
+	std::shared_ptr<Entity> player = std::make_shared<Entity>();
+	static_cast<void>(player->AddComponent<CameraComponent>());
+	AddEntity(player);
 
 	stbi_set_flip_vertically_on_load(true);
 	ModelLoader::SceneObjects scene;
 
 	//-------------------------------------------------//
+	LoadAndStoreSwitchableObjScenes(resSystem, "Mitsuba Rusted Iron", "../data/3d_scenes/export3dcoatPBR_rustediron.obj");
+	LoadAndStoreSwitchableObjScenes(resSystem, "Mitsuba Gold", "../data/3d_scenes/export3dcoatPBR_gold.obj");
+	LoadAndStoreSwitchableObjScenes(resSystem, "Cerberus", "../data/3d_scenes/Cerberus.obj", glm::vec3(10.f, 10.f, 10.f));
 
-	ModelLoader::Load("../data/3d_scenes/export3dcoatPBR_rustediron.obj", scene, resSystem);
-	for (std::shared_ptr<Entity> entity : scene)
-	{
-		entity->AddComponent<AutorotationComponent>();
-		AddEntity(entity);
-	}
-	scene.clear();
+	m_currentSwitchableObjScene = "Mitsuba Rusted Iron";
+	AddEntity(m_loadedSwitchableObjScenes[m_currentSwitchableObjScene]);
 	
 	ModelLoader::Load("../data/3d_scenes/planeCobbleStone.obj", scene, resSystem);
 	for (std::shared_ptr<Entity> entity : scene)
@@ -73,37 +76,15 @@ void Scene::Initialize(Config& config, ResourceSystem& resSystem)
 		transform = glm::scale(transform, glm::vec3(1000, 1000, 1000));
 		drawableCmp->SetMatrix(transform);
 		AddEntity(entity);
-
 	}
 	scene.clear();
 
+	LoadAndStoreEnvironment(resSystem, "Apartment", "../data/cubemaps/Alexs_Apt_2k.hdr");
+	LoadAndStoreEnvironment(resSystem, "Pine Tree", "../data/cubemaps/Arches_E_PineTree_3k.hdr");
+	LoadAndStoreEnvironment(resSystem, "Ueno Shrine", "../data/cubemaps/03-Ueno-Shrine_3k.hdr");
+	SetCurrentEnvironmentFromLoadedMap("Apartment");
+
 	//------------------------------------------------------------//
-
-	std::shared_ptr<Entity> player = std::make_shared<Entity>();
-	static_cast<void>(player->AddComponent<CameraComponent>());
-	AddEntity(player);
-
-	{
-		int envWidth, envHeight, nrComponents;
-		float* environmentData = stbi_loadf("../data/cubemaps/Alexs_Apt_2k.hdr", &envWidth, &envHeight, &nrComponents, 0);
-		if (environmentData)
-		{
-			Texture* environment = resSystem.Create<Texture>();
-
-			environment->Create();
-			environment->Bind(0);
-			environment->DefineParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-			environment->DefineParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-			environment->DefineParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			environment->DefineParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			if (nrComponents == 3)
-				environment->DefineBuffer({ envWidth, envHeight }, 0, GL_RGB16F, GL_RGB, GL_FLOAT, environmentData);
-			else
-				environment->DefineBuffer({ envWidth, envHeight }, 0, GL_RGBA16F, GL_RGBA, GL_FLOAT, environmentData);
-			stbi_image_free(environmentData);
-			Engine::Get()->renderer->environment->SetEquirectangularEnv(environment);
-		}
-	}
 
 	std::shared_ptr<Entity> mainLight = std::make_shared<Entity>();
 	std::shared_ptr<TransformComponent> transform = mainLight->AddComponent<TransformComponent>();
@@ -153,9 +134,7 @@ void Scene::Initialize(Config& config, ResourceSystem& resSystem)
 void Scene::Update()
 {
 	for (std::shared_ptr<Entity> entity : m_entities)
-	{
 		entity->Update();
-	}
 }
 
 void Scene::AddEntity(std::shared_ptr<Entity> entity)
@@ -165,15 +144,89 @@ void Scene::AddEntity(std::shared_ptr<Entity> entity)
 	m_entities.emplace_back(entity);
 }
 
-void Scene::RemoveEntity(std::weak_ptr<Entity> entity)
+void Scene::RemoveEntity(std::shared_ptr<Entity> entity)
 {
-	assert(!entity.expired());
-	std::shared_ptr<Entity> validEntity = entity.lock();
+	assert(std::find(m_entities.begin(), m_entities.end(), entity) != m_entities.end());
+	std::shared_ptr<Entity> validEntity = entity;
 	validEntity->RemovedFromScene(shared_from_this());
 	m_entities.erase(std::remove_if(m_entities.begin(), m_entities.end(), [validEntity](auto sharedPtr)
 		{
 			return sharedPtr == validEntity;
 		}), m_entities.end());
+}
+
+void Scene::SetCurrentSwitchableObjScene(const std::string& objScene)
+{
+	RemoveEntity(m_loadedSwitchableObjScenes[m_currentSwitchableObjScene]);
+	AddEntity(m_loadedSwitchableObjScenes[objScene]);
+	m_currentSwitchableObjScene = objScene;
+}
+
+const std::map<const std::string, std::shared_ptr<Entity>>& Scene::GetLoadedSwitchableObjScenes() const
+{
+	return m_loadedSwitchableObjScenes;
+}
+
+void Scene::LoadAndStoreSwitchableObjScenes(ResourceSystem& resSystem, const std::string& name, const std::string& path, const glm::vec3& scale)
+{
+	ModelLoader::SceneObjects objModels;
+	ModelLoader::Load(path.c_str(), objModels, resSystem);
+	for (std::shared_ptr<Entity> model : objModels)
+	{
+		model->AddComponent<AutorotationComponent>();
+		if (scale != glm::vec3(1.f, 1.f, 1.f))
+		{
+			std::shared_ptr transformCmp = model->GetComponent<TransformComponent>();
+			glm::mat4x4 modelMatrix = transformCmp->GetMatrix();
+			transformCmp->SetMatrix(glm::scale(modelMatrix, scale));
+		}
+		m_loadedSwitchableObjScenes.insert(std::make_pair(name, model));
+	}
+	objModels.clear();
+}
+
+void Scene::SetRotationStrenghOfObjScenes(float value)
+{
+	for (auto& model : m_loadedSwitchableObjScenes)
+	{
+		std::shared_ptr autorotationCmp = model.second->GetComponent<AutorotationComponent>();
+		autorotationCmp->SetRotation(value);
+	}
+}
+
+void Scene::SetCurrentEnvironmentFromLoadedMap(const std::string& name)
+{
+	Engine::Get()->renderer->environment->SetEquirectangularEnv(m_loadedEnvironmentMaps[name]);
+}
+
+const std::map<const std::string, Texture*>& Scene::GetLoadedEnvironments() const
+{
+	return m_loadedEnvironmentMaps;
+}
+
+void Scene::LoadAndStoreEnvironment(ResourceSystem& resSystem, const std::string& name, const std::string& path)
+{
+	Texture* environmentTexture;
+	int envWidth, envHeight, nrComponents;
+	float* data = stbi_loadf(path.c_str(), &envWidth, &envHeight, &nrComponents, 0);
+	if (data)
+	{
+		environmentTexture = resSystem.Create<Texture>();
+
+		environmentTexture->Create();
+		environmentTexture->Bind(0);
+		environmentTexture->DefineParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		environmentTexture->DefineParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		environmentTexture->DefineParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		environmentTexture->DefineParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		if (nrComponents == 3)
+			environmentTexture->DefineBuffer({ envWidth, envHeight }, 0, GL_RGB16F, GL_RGB, GL_FLOAT, data);
+		else
+			environmentTexture->DefineBuffer({ envWidth, envHeight }, 0, GL_RGBA16F, GL_RGBA, GL_FLOAT, data);
+
+		m_loadedEnvironmentMaps.insert(std::make_pair(name, environmentTexture));
+		stbi_image_free(data);
+	}
 }
 
 namespace_end

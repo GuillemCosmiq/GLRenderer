@@ -24,6 +24,7 @@ namespace_begin
 class Config;
 class ResourceSystem;
 class Entity;
+class Texture;
 
 class Scene : public std::enable_shared_from_this<Scene>
 {
@@ -35,11 +36,24 @@ public:
 	void Update();
 
 	void AddEntity(std::shared_ptr<Entity> entity);
-	void RemoveEntity(std::weak_ptr<Entity> entity);
+	void RemoveEntity(std::shared_ptr<Entity> entity);
+
+	void SetCurrentSwitchableObjScene(const std::string&);
+	const std::map<const std::string, std::shared_ptr<Entity>>& GetLoadedSwitchableObjScenes() const;
+	void LoadAndStoreSwitchableObjScenes(ResourceSystem& resSystem, const std::string& name, const std::string& path, const glm::vec3& scale = glm::vec3(1.f, 1.f, 1.f));
+	void SetRotationStrenghOfObjScenes(float value);
+
+	void SetCurrentEnvironmentFromLoadedMap(const std::string& name);
+	const std::map<const std::string, Texture*>& GetLoadedEnvironments() const;
+	void LoadAndStoreEnvironment(ResourceSystem& resSystem, const std::string& name, const std::string& path);
 
 private:
 	std::string m_name;
 	std::vector<std::shared_ptr<Entity>> m_entities;
+
+	std::string m_currentSwitchableObjScene;
+	std::map<const std::string, std::shared_ptr<Entity>> m_loadedSwitchableObjScenes;
+	std::map<const std::string, Texture*> m_loadedEnvironmentMaps;
 };
 
 namespace_end

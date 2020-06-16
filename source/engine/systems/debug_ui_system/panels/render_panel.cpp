@@ -19,6 +19,7 @@
 #include "render_panel.h"
 
 #include "../../../engine.h"
+#include "../../../scene.h"
 #include "../../renderer/renderer.h"
 #include "../../renderer/render_passes/lighting.h"
 #include "../../renderer/render_passes/postprocessor.h"
@@ -61,7 +62,7 @@ void RenderPanel::Update()
 				if (ImGui::TreeNode("Gamma Correction"))
 				{
 					ImGui::CheckboxFlags("Active ##GC", (unsigned int*)& postProcessor->filtersFlags, PostProcessor::FiltersFlags::GammaCorrection);
-					ImGui::DragFloat("Gamma Value", &postProcessor->colorCorrectionData.gammaValue);
+					ImGui::SliderFloat("Gamma Value", &postProcessor->colorCorrectionData.gammaValue, 0.f, 10.f);
 					ImGui::TreePop();
 				}
 				if (ImGui::TreeNode("HDR Tone mapping"))
@@ -115,9 +116,47 @@ void RenderPanel::Update()
 			ImGui::SameLine();	
 			ImGui::RadioButton("4", true);
 		}
+
 		if (ImGui::CollapsingHeader("Scene", ImGuiTreeNodeFlags_DefaultOpen))
 		{
+			ImGui::Text("Models & Materials");
 
+			std::shared_ptr<Scene> scene = Engine::Get()->scene;
+
+			const std::map<const std::string, std::shared_ptr<Entity>> objScenes = scene->GetLoadedSwitchableObjScenes();
+			static int currentObjScenesRadioButtonActive = 0;
+
+			int iterationsCount = 0;
+			for (auto& it = objScenes.begin(); it != objScenes.end(); ++it, ++iterationsCount)
+			{
+				if (ImGui::RadioButton(it->first.c_str(), currentObjScenesRadioButtonActive == iterationsCount))
+				{
+					currentObjScenesRadioButtonActive = iterationsCount;
+					scene->SetCurrentSwitchableObjScene(it->first);
+				}
+			}
+
+			static float rotationStrength = 0.01f;
+			ImGui::PushItemWidth(100.f);
+			if (ImGui::SliderFloat("Rotation strengh", &rotationStrength, 0.f, 0.1f))
+				scene->SetRotationStrenghOfObjScenes(rotationStrength);
+			ImGui::PopItemWidth();
+
+			ImGui::Separator();
+			ImGui::Text("Environments");
+
+			const std::map<const std::string, Texture*> maps = scene->GetLoadedEnvironments();
+			static int currentEnvRadioButtonActive = 0;
+
+			iterationsCount = 0;
+			for (auto& it = maps.begin(); it != maps.end(); ++it, ++iterationsCount)
+			{
+				if (ImGui::RadioButton(it->first.c_str(), currentEnvRadioButtonActive == iterationsCount))
+				{
+					currentEnvRadioButtonActive = iterationsCount;
+					scene->SetCurrentEnvironmentFromLoadedMap(it->first);
+				}
+			}
 		}
 	}
 	ImGui::End();
