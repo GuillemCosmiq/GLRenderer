@@ -25,7 +25,7 @@ class Texture;
 
 struct ScreenSamplerSource
 {
-	enum class OutputSample: int { scene, depth, ssao, max };
+	enum class OutputSample: int { scene, depth, ssao, velocity, max };
 
 	const Texture* SceneSample[(int)OutputSample::max];
 };

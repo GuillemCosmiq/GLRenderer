@@ -36,6 +36,8 @@ PostProcessor::PostProcessor(ResourceSystem& resSystem, const Renderer& renderer
 
 	m_gaussianBlurProgram = resSystem.Create<Program>();
 	m_colorCorrectionProgram = resSystem.Create<Program>();
+	m_objectMotionBlur = resSystem.Create<Program>();
+	m_cameraMotionBlurProgram = resSystem.Create<Program>();
 	m_fxaaProgram = resSystem.Create<Program>();
 	m_vignetteProgram = resSystem.Create<Program>();
 
@@ -57,6 +59,22 @@ PostProcessor::PostProcessor(ResourceSystem& resSystem, const Renderer& renderer
 	m_fxaaProgram->CompileProgram();
 	m_fxaaProgram->Bind();
 	m_fxaaProgram->SetUniformTexture("sceneSample", 0);
+
+	m_objectMotionBlur->AttachVertexObject(renderer.shaderStorage->GetDefaultVert().c_str());
+	m_objectMotionBlur->AttachFragmentObject(renderer.shaderStorage->GetObjectMotionBlurfrag().c_str());
+	m_objectMotionBlur->CompileProgram();
+	m_objectMotionBlur->Bind();
+	m_objectMotionBlur->SetUniformTexture("sceneSample", 0);
+	m_objectMotionBlur->SetUniformTexture("gBuffer.velocity", 1);
+
+	m_cameraMotionBlurProgram->AttachVertexObject(renderer.shaderStorage->GetDefaultVert().c_str());
+	m_cameraMotionBlurProgram->AttachFragmentObject(renderer.shaderStorage->GetCameraMotionBlurfrag().c_str());
+	m_cameraMotionBlurProgram->AttachFragmentObject(renderer.shaderStorage->GetUtils().c_str());
+	m_cameraMotionBlurProgram->CompileProgram();
+	m_cameraMotionBlurProgram->Bind();
+	m_cameraMotionBlurProgram->SetUniformTexture("sceneSample", 0);
+	m_cameraMotionBlurProgram->SetUniformTexture("gBuffer.albedo", 1);
+	m_cameraMotionBlurProgram->SetUniformTexture("gBuffer.depth", 2);
 
 	m_vignetteProgram->AttachVertexObject(renderer.shaderStorage->GetDefaultVert().c_str());
 	m_vignetteProgram->AttachFragmentObject(renderer.shaderStorage->GetVignetteFrag().c_str());
@@ -175,6 +193,8 @@ void PostProcessor::Destroy()
 
 	m_gaussianBlurProgram->Free();
 	m_colorCorrectionProgram->Free();
+	m_objectMotionBlur->Free();
+	m_cameraMotionBlurProgram->Free();
 	m_fxaaProgram->Free();
 	m_vignetteProgram->Free();
 
@@ -243,6 +263,30 @@ void PostProcessor::Render(const Renderer& renderer, PostProcessorSource& source
 		m_pingPong.SwapBuffers(0);
 		source.OutputSample = m_pingPong.GetFrontBuffer();
 	}
+
+	if (filtersFlags & FiltersFlags::ObjectBlur)
+	{
+		m_objectMotionBlur->Bind();
+		source.OutputSample->Bind(0);
+		source.VelocitySample->Bind(1);
+		m_objectMotionBlur->SetUniformVec2("viewport", viewport.x, viewport.y);
+		renderer.quad->BindAndDraw();
+		m_pingPong.SwapBuffers(0);
+		source.OutputSample = m_pingPong.GetFrontBuffer();
+	}
+
+	//if (filtersFlags & FiltersFlags::MotionBlur)
+	//{
+	//	m_cameraMotionBlurProgram->Bind();
+	//	source.OutputSample->Bind(0);
+	//	source.AlbedoSample->Bind(1);
+	//	source.Depth->Bind(2);
+	//	m_cameraMotionBlurProgram->SetUniformMat4("prevProjViewMatrix", false, (const float*)glm::value_ptr(renderer.GetPrevFrameProjViewMatrix()));
+	//	m_cameraMotionBlurProgram->SetUniformVec2("viewport", viewport.x, viewport.y);
+	//	renderer.quad->BindAndDraw();
+	//	m_pingPong.SwapBuffers(0);
+	//	source.OutputSample = m_pingPong.GetFrontBuffer();
+	//}
 
 	if (filtersFlags & FiltersFlags::Vignette)
 	{

@@ -32,6 +32,7 @@ public:
 	~Entity();
 
 	void Update();
+	void PostUpdate();
 
 	void SetName(std::string& name) { m_name = name; }
 	std::string GetName() { return m_name; }

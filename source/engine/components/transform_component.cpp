@@ -64,11 +64,23 @@ const glm::vec3& TransformComponent::GetScale()
 	return m_scale;
 }
 
-void TransformComponent::SetMatrix(const glm::mat4x4& transformation)
+void TransformComponent::PostUpdate()
 {
 	m_prevTransform = m_transform;
+}
+
+void TransformComponent::SetMatrix(const glm::mat4x4& transformation)
+{
+	//m_prevTransform = m_transform;
 	m_transform = transformation;
 	m_dirty = true;
+}
+
+void TransformComponent::SetPosition(const glm::vec3& position)
+{
+	glm::mat4x4 transformMatrix = GetMatrix();
+	transformMatrix[3] = glm::vec4(position, 1);
+	SetMatrix(transformMatrix);
 }
 
 void TransformComponent::DecomposeMatrix()
@@ -77,6 +89,16 @@ void TransformComponent::DecomposeMatrix()
 	glm::vec4 perspective; // unused but needed for decompose
 	glm::decompose(m_transform, m_scale, m_rotation, m_position, skew, perspective);
 	m_rotation = glm::conjugate(m_rotation);
+}
+
+const glm::mat4x4& TransformComponent::GetMatrix() const
+{
+	return m_transform;
+}
+
+const glm::mat4x4& TransformComponent::GetPrevFrameMatrix() const
+{
+	return m_prevTransform;
 }
 
 namespace_end

@@ -37,7 +37,7 @@ CameraComponent::CameraComponent(std::shared_ptr<Entity> owner)
 	m_frustum.dirty = true;
 	m_frustum.perspective = glm::mat4(1.f);
 
-	m_viewController.cameraSpeed = 0.01f;
+	m_viewController.cameraSpeed = 0.10f;
 	m_viewController.view = glm::mat4(1.f);
 	m_viewController.pos = glm::vec3(0.f, 0.f, 15.f);
 	m_viewController.front = glm::vec3(0.f, 0.f, -1.f);

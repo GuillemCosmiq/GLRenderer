@@ -63,6 +63,7 @@ Renderer::Renderer()
 	, postProcessor(nullptr)
 	, screenSampler(nullptr)
 	, m_viewport(glm::vec2(0, 0))
+	, m_prevProjViewMatrix(1.f)
 {
 }
 
@@ -118,7 +119,7 @@ bool Renderer::Initialize(Config& config, ResourceSystem& resSystem)
 		ret = false;
 	}
 
-	SDL_GL_SetSwapInterval(0);
+	SDL_GL_SetSwapInterval(1);
 
 	if (!gladLoadGLLoader(SDL_GL_GetProcAddress))
 	{
@@ -208,6 +209,11 @@ void Renderer::Update(ResourceSystem& resSystem)
 {
 	UpdateCameraBlock();
 	Render();
+
+	// Store previous frame viewProj Matrix
+	const glm::mat4x4& proj = m_camera->GetProjection();
+	const glm::mat4x4& view = m_camera->GetViewMatrix();
+	m_prevProjViewMatrix = proj * view;
 }
 
 void Renderer::Shutdown()
@@ -264,6 +270,8 @@ void Renderer::Render()
 	PostProcessorSource postProcessorSource;
 	postProcessorSource.SceneSample = lighting->GetSceneHDR();
 	postProcessorSource.BloomSample = lighting->GetBloomHDR();
+	postProcessorSource.AlbedoSample = geometryPass->GetAlbedo();
+	postProcessorSource.VelocitySample = geometryPass->GetVelocity();
 	postProcessorSource.Depth = geometryPass->GetDepth();
 	postProcessor->Render(*this, postProcessorSource);
 	m_profiler->EndQuery(postProcessorProfileID);
@@ -273,6 +281,7 @@ void Renderer::Render()
 	screenSamplerSource.SceneSample[(int)ScreenSamplerSource::OutputSample::scene] = postProcessorSource.OutputSample;
 	screenSamplerSource.SceneSample[(int)ScreenSamplerSource::OutputSample::depth] = geometryPass->GetDepth();
 	screenSamplerSource.SceneSample[(int)ScreenSamplerSource::OutputSample::ssao] = geometryPass->GetMaterial();
+	screenSamplerSource.SceneSample[(int)ScreenSamplerSource::OutputSample::velocity] = geometryPass->GetVelocity();
 	screenSampler->Render(*this, screenSamplerSource);
 	m_profiler->EndQuery(sampleToScreenProfileID);
 	m_profiler->SleepQueries();

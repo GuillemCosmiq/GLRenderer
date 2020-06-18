@@ -23,6 +23,8 @@
 #include "components/camera_component.h"
 #include "components/transform_component.h"
 #include "components/autorotation_component.h"
+#include "components/automovement_component.h"
+#include "components/drawable_component.h"
 #include "components/directional_light_component.h"
 #include "components/point_light_component.h"
 #include "systems/resource_system/resource_system.h"
@@ -59,14 +61,6 @@ void Scene::Initialize(Config& config, ResourceSystem& resSystem)
 	stbi_set_flip_vertically_on_load(true);
 	ModelLoader::SceneObjects scene;
 
-	//-------------------------------------------------//
-	LoadAndStoreSwitchableObjScenes(resSystem, "Mitsuba Rusted Iron", "../data/3d_scenes/export3dcoatPBR_rustediron.obj");
-	LoadAndStoreSwitchableObjScenes(resSystem, "Mitsuba Gold", "../data/3d_scenes/export3dcoatPBR_gold.obj");
-	LoadAndStoreSwitchableObjScenes(resSystem, "Cerberus", "../data/3d_scenes/Cerberus.obj", glm::vec3(10.f, 10.f, 10.f));
-
-	m_currentSwitchableObjScene = "Mitsuba Rusted Iron";
-	AddEntity(m_loadedSwitchableObjScenes[m_currentSwitchableObjScene]);
-	
 	ModelLoader::Load("../data/3d_scenes/planeCobbleStone.obj", scene, resSystem);
 	for (std::shared_ptr<Entity> entity : scene)
 	{
@@ -78,6 +72,14 @@ void Scene::Initialize(Config& config, ResourceSystem& resSystem)
 		AddEntity(entity);
 	}
 	scene.clear();
+
+	//-------------------------------------------------//
+	LoadAndStoreSwitchableObjScenes(resSystem, "Mitsuba Rusted Iron", "../data/3d_scenes/export3dcoatPBR_rustediron.obj");
+	LoadAndStoreSwitchableObjScenes(resSystem, "Mitsuba Gold", "../data/3d_scenes/export3dcoatPBR_gold.obj");
+	LoadAndStoreSwitchableObjScenes(resSystem, "Cerberus Revolver", "../data/3d_scenes/Cerberus.obj", glm::vec3(10.f, 10.f, 10.f));
+
+	m_currentSwitchableObjScene = "Mitsuba Rusted Iron";
+	AddEntity(m_loadedSwitchableObjScenes[m_currentSwitchableObjScene]);
 
 	LoadAndStoreEnvironment(resSystem, "Apartment", "../data/cubemaps/Alexs_Apt_2k.hdr");
 	LoadAndStoreEnvironment(resSystem, "Pine Tree", "../data/cubemaps/Arches_E_PineTree_3k.hdr");
@@ -137,6 +139,12 @@ void Scene::Update()
 		entity->Update();
 }
 
+void Scene::PostUpdate()
+{
+	for (std::shared_ptr<Entity> entity : m_entities)
+		entity->PostUpdate();
+}
+
 void Scene::AddEntity(std::shared_ptr<Entity> entity)
 {
 	assert(std::find(m_entities.begin(), m_entities.end(), entity) == m_entities.end());
@@ -174,12 +182,15 @@ void Scene::LoadAndStoreSwitchableObjScenes(ResourceSystem& resSystem, const std
 	for (std::shared_ptr<Entity> model : objModels)
 	{
 		model->AddComponent<AutorotationComponent>();
+		model->AddComponent<AutomovementComponent>();
 		if (scale != glm::vec3(1.f, 1.f, 1.f))
 		{
 			std::shared_ptr transformCmp = model->GetComponent<TransformComponent>();
 			glm::mat4x4 modelMatrix = transformCmp->GetMatrix();
 			transformCmp->SetMatrix(glm::scale(modelMatrix, scale));
 		}
+		std::shared_ptr drawableCmp = model->GetComponent<DrawableComponent>();
+		drawableCmp->SetIfMaskedForMotionBlur(true);
 		m_loadedSwitchableObjScenes.insert(std::make_pair(name, model));
 	}
 	objModels.clear();
@@ -191,6 +202,16 @@ void Scene::SetRotationStrenghOfObjScenes(float value)
 	{
 		std::shared_ptr autorotationCmp = model.second->GetComponent<AutorotationComponent>();
 		autorotationCmp->SetRotation(value);
+	}
+}
+
+void Scene::SetMovementParametersOfObjScenes(float distance, float strengh)
+{
+	for (auto& model : m_loadedSwitchableObjScenes)
+	{
+		std::shared_ptr automovementCmp = model.second->GetComponent<AutomovementComponent>();
+		automovementCmp->SetAmplitude(distance);
+		automovementCmp->SetStrengh(strengh);
 	}
 }
 

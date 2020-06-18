@@ -4,8 +4,8 @@ layout(location = 1) in vec2 aTexCoord;
 layout(location = 2) in vec3 aNormal;
 layout(location = 3) in vec3 aTangent;
 layout(location = 4) in vec3 aBitangent;
-out vec4 out_position;
-out vec4 out_prevPosition;
+smooth out vec4 out_position;
+smooth out vec4 out_prevPosition;
 out vec3 outNormal;
 out vec2 outTexCoords;
 out mat3 outTBN;
@@ -31,7 +31,7 @@ void main()
 	outTBN = mat3(T, B, N);
 	outNormal =  normalMatrix * aNormal;
 	outTexCoords = aTexCoord;
-	out_position = proj * view * modelMatrix * vec4(aPosition, 1.0f);
-	out_prevPosition = proj * view * prevModelMatrix * vec4(aPosition, 1.0f);
+	out_position = proj * view * modelMatrix * vec4(aPosition, 1.0);
+	out_prevPosition = proj * view * prevModelMatrix * vec4(aPosition, 1.0);
 	gl_Position = out_position;
 }

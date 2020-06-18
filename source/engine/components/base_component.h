@@ -32,6 +32,7 @@ public:
 	virtual ~BaseComponent() = default;
 
 	virtual void Update() {};
+	virtual void PostUpdate() {};
 
 	std::shared_ptr<class Entity> GetOwner() { return m_owner; };
 

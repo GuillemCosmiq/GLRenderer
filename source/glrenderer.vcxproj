@@ -1037,6 +1037,7 @@
     <ClInclude Include="..\contrib\SDL2\include\SDL_video.h" />
     <ClInclude Include="..\contrib\SDL2\include\SDL_vulkan.h" />
     <ClInclude Include="..\contrib\stb_image\stb_image.h" />
+    <ClInclude Include="engine\components\automovement_component.h" />
     <ClInclude Include="engine\components\autorotation_component.h" />
     <ClInclude Include="engine\components\base_component.h" />
     <ClInclude Include="engine\components\camera_component.h" />
@@ -1105,6 +1106,7 @@
     <ClCompile Include="..\contrib\imgui\imgui_stdlib.cpp" />
     <ClCompile Include="..\contrib\imgui\imgui_widgets.cpp" />
     <ClCompile Include="..\contrib\jsoncpp\jsoncpp.cpp" />
+    <ClCompile Include="engine\components\automovement_component.cpp" />
     <ClCompile Include="engine\components\autorotation_component.cpp" />
     <ClCompile Include="engine\components\base_component.cpp" />
     <ClCompile Include="engine\components\camera_component.cpp" />

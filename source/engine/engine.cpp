@@ -77,6 +77,7 @@ void Engine::Update()
 
 void Engine::PostUpdate()
 {
+	scene->PostUpdate();
 	renderer->PostUpdate();
 }
 

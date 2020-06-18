@@ -34,6 +34,7 @@ public:
 
 	void Initialize(Config& config, ResourceSystem& resSystem);
 	void Update();
+	void PostUpdate();
 
 	void AddEntity(std::shared_ptr<Entity> entity);
 	void RemoveEntity(std::shared_ptr<Entity> entity);
@@ -42,6 +43,7 @@ public:
 	const std::map<const std::string, std::shared_ptr<Entity>>& GetLoadedSwitchableObjScenes() const;
 	void LoadAndStoreSwitchableObjScenes(ResourceSystem& resSystem, const std::string& name, const std::string& path, const glm::vec3& scale = glm::vec3(1.f, 1.f, 1.f));
 	void SetRotationStrenghOfObjScenes(float value);
+	void SetMovementParametersOfObjScenes(float distance, float strengh);
 
 	void SetCurrentEnvironmentFromLoadedMap(const std::string& name);
 	const std::map<const std::string, Texture*>& GetLoadedEnvironments() const;

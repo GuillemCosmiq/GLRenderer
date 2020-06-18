@@ -70,6 +70,7 @@ public:
 
 	void SetViewport(const glm::vec2& viewport);
 	glm::vec2 GetViewport() const { return m_viewport; }
+	const glm::mat4& GetPrevFrameProjViewMatrix() const { return m_prevProjViewMatrix; }
 	GPUProfiler* GetGPUProfilerPtr() const { return m_profiler.get(); }
 
 private:
@@ -95,6 +96,7 @@ private:
 
 	glm::vec2 m_viewport;
 	uint32 m_cameraBlockID;
+	glm::mat4x4 m_prevProjViewMatrix;
 
 	std::unique_ptr<GPUProfiler> m_profiler;
 	std::shared_ptr<CameraComponent> m_camera;

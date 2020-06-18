@@ -27,6 +27,8 @@ struct PostProcessorSource
 {
 	const Texture* SceneSample;
 	const Texture* BloomSample;
+	const Texture* AlbedoSample;
+	const Texture* VelocitySample;
 	const Texture* Depth;
 
 	const Texture* OutputSample;

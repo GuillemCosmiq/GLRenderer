@@ -16,40 +16,33 @@
 // 3. The above copyright notice and this permission notice shall be included in
 //	  all copies or substantial portions of the Software.
 
-#ifndef __TRANSFORM_COMPONENT_H__
-#define __TRANSFORM_COMPONENT_H__
+#ifndef __AUTOMOVEMENT_COMPONENT_H__
+#define __AUTOMOVEMENT_COMPONENT_H__
 
 #include "base_component.h"
 
 namespace_begin
 
-class TransformComponent : public BaseComponent
+class TransformComponent;
+
+class AutomovementComponent : public BaseComponent
 {
 public:
-	TransformComponent() = delete;
-	TransformComponent(std::shared_ptr<Entity> owner);
+	AutomovementComponent() = delete;
+	AutomovementComponent(std::shared_ptr<Entity> owner);
 
-	const glm::mat4x4& GetMatrix() const;
-	const glm::mat4x4& GetPrevFrameMatrix() const;
-	const glm::vec3& GetPosition();
-	const glm::quat& GetRotation();
-	const glm::vec3& GetScale();
+	virtual void Update() override;
 
-	void PostUpdate() override;
-
-	void SetMatrix(const glm::mat4x4& newTransform);
-	void SetPosition(const glm::vec3& position);
+	void SetAmplitude(float amplitude);
+	void SetStrengh(float strengh);
+	float GetAmplitude() const;
+	float GetStrengh() const;
 
 private:
-	void DecomposeMatrix();
-
-private:
-	glm::mat4x4 m_transform;
-	glm::mat4x4 m_prevTransform;
-	glm::vec3 m_position;
-	glm::quat m_rotation;
-	glm::vec3 m_scale;
-	bool m_dirty;
+	TransformComponent* transformCompRef;
+	float m_amplitude;
+	float m_strength;
+	float m_time;
 };
 
 namespace_end

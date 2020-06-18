@@ -54,6 +54,8 @@ public:
 	inline const std::string& GetBlurFrag() const { return m_blur; }
 	inline const std::string& GetMergeBloomFrag() const { return m_mergeBloom; }
 	inline const std::string& GetColorCorrectionFrag() const { return m_colorCorrection; }
+	inline const std::string& GetObjectMotionBlurfrag() const { return m_objectMotionBlur; }
+	inline const std::string& GetCameraMotionBlurfrag() const { return m_cameraMotionBlur; }
 	inline const std::string& GetFXAAfrag() const { return m_fxaa; }
 	inline const std::string& GetVignetteFrag() const { return m_vignetteFrag; }
 	inline const std::string& GetSamplerToScreenFrag() const { return m_samplerToScreenFrag; }
@@ -86,6 +88,8 @@ private:
 	std::string m_mergeBloom;
 	std::string m_colorCorrection;
 	std::string m_fxaa;
+	std::string m_objectMotionBlur;
+	std::string m_cameraMotionBlur;
 	std::string m_vignetteFrag;
 	std::string m_samplerToScreenFrag;
 };

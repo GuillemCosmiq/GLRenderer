@@ -53,7 +53,7 @@ GeometryPass::GeometryPass(ResourceSystem& resSystem, const Renderer& renderer)
 	m_albedoTexture->DefineParameter(GL_TEXTURE_WRAP_T, GL_REPEAT);
 	m_albedoTexture->DefineParameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	m_albedoTexture->DefineParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	m_albedoTexture->DefineBuffer(viewport, 0, GL_RGB8, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	m_albedoTexture->DefineBuffer(viewport, 0, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 
 	m_normalsTexture = resSystem.Create<Texture>();
 	m_normalsTexture->Create();
@@ -73,6 +73,15 @@ GeometryPass::GeometryPass(ResourceSystem& resSystem, const Renderer& renderer)
 	m_materialTexture->DefineParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	m_materialTexture->DefineBuffer(viewport, 0, GL_RGB8, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 
+	m_velocityTexture = resSystem.Create<Texture>();
+	m_velocityTexture->Create();
+	m_velocityTexture->Bind(0);
+	m_velocityTexture->DefineParameter(GL_TEXTURE_WRAP_S, GL_REPEAT);
+	m_velocityTexture->DefineParameter(GL_TEXTURE_WRAP_T, GL_REPEAT);
+	m_velocityTexture->DefineParameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	m_velocityTexture->DefineParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	m_velocityTexture->DefineBuffer(viewport, 0, GL_RG16F, GL_RG, GL_UNSIGNED_BYTE, NULL);
+
 	m_depthTexture = resSystem.Create<Texture>();
 	m_depthTexture->Create();
 	m_depthTexture->Bind(0);
@@ -87,8 +96,9 @@ GeometryPass::GeometryPass(ResourceSystem& resSystem, const Renderer& renderer)
 	m_fbo->AttachTarget(m_albedoTexture, GL_COLOR_ATTACHMENT0, 0);
 	m_fbo->AttachTarget(m_normalsTexture, GL_COLOR_ATTACHMENT1, 0);
 	m_fbo->AttachTarget(m_materialTexture, GL_COLOR_ATTACHMENT2, 0);
+	m_fbo->AttachTarget(m_velocityTexture, GL_COLOR_ATTACHMENT3, 0);
 	m_fbo->AttachTarget(m_depthTexture, GL_DEPTH_ATTACHMENT, 0);
-	uint32 attachments[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+	uint32 attachments[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
 	m_fbo->DefineDrawAttachments(attachments, SizeofArray(attachments));
 	m_fbo->DefineReadAttachment(GL_NONE);
 }
@@ -102,6 +112,7 @@ void GeometryPass::Destroy()
 	m_albedoTexture->Free();
 	m_normalsTexture->Free();
 	m_materialTexture->Free();
+	m_velocityTexture->Free();
 	m_depthTexture->Free();
 
 	m_fbo->Free();
@@ -122,6 +133,7 @@ void GeometryPass::Render(const Renderer& renderer, const GeometrySource& source
 		m_geometryProgram->Bind();
 		m_geometryProgram->SetUniformMat4("modelMatrix", false, (const float*)glm::value_ptr(transform->GetMatrix()));
 		m_geometryProgram->SetUniformMat4("prevModelMatrix", false, (const float*)glm::value_ptr(transform->GetPrevFrameMatrix()));
+
 		m_geometryProgram->SetUniformMat3("normalMatrix", false, (const float*)glm::value_ptr(glm::inverseTranspose(glm::mat3x3(transform->GetMatrix()))));
 		m_geometryProgram->SetUniformTexture("material.albedoMap", 0);
 		m_geometryProgram->SetUniformTexture("material.normalMap", 1);
@@ -134,6 +146,7 @@ void GeometryPass::Render(const Renderer& renderer, const GeometrySource& source
 		drawable->GetMetallicMap()->Bind(2);
 		drawable->GetRoughnessMap()->Bind(3);
 
+		m_geometryProgram->SetUniformInt("blurMask", drawable->IsMaskedForMotionBlur());
 		m_geometryProgram->SetUniformVec2("viewport", viewport.x, viewport.y);
 		drawable->GetMesh()->BindAndDraw();
 	}

@@ -16,42 +16,50 @@
 // 3. The above copyright notice and this permission notice shall be included in
 //	  all copies or substantial portions of the Software.
 
-#ifndef __TRANSFORM_COMPONENT_H__
-#define __TRANSFORM_COMPONENT_H__
+#include "automovement_component.h"
+#include "transform_component.h"
 
-#include "base_component.h"
+#include "../engine.h"
+#include "../entity.h"
 
 namespace_begin
 
-class TransformComponent : public BaseComponent
+AutomovementComponent::AutomovementComponent(std::shared_ptr<Entity> owner)
+	: BaseComponent(owner)
+	, m_strength(DEFAULT_MOVEMENT_STRENGH)
+	, m_amplitude(DEFAULT_MOVEMENT_AMPLITUDE)
+	, m_time(0.f)
 {
-public:
-	TransformComponent() = delete;
-	TransformComponent(std::shared_ptr<Entity> owner);
+	assert(owner->GetComponent<TransformComponent>() != nullptr); // no transform component attached.
+	transformCompRef = owner->GetComponent<TransformComponent>().get();
+}
 
-	const glm::mat4x4& GetMatrix() const;
-	const glm::mat4x4& GetPrevFrameMatrix() const;
-	const glm::vec3& GetPosition();
-	const glm::quat& GetRotation();
-	const glm::vec3& GetScale();
+void AutomovementComponent::Update()
+{
+	glm::vec3 position = transformCompRef->GetPosition();
+	position.x = glm::sin(m_time * m_strength) * m_amplitude;
+	transformCompRef->SetPosition(position);
+	m_time += FRAME_MS;
+}
 
-	void PostUpdate() override;
+void AutomovementComponent::SetAmplitude(float amplitude)
+{
+	m_amplitude = amplitude;
+}
 
-	void SetMatrix(const glm::mat4x4& newTransform);
-	void SetPosition(const glm::vec3& position);
+void AutomovementComponent::SetStrengh(float strengh)
+{
+	m_strength = strengh;
+}
 
-private:
-	void DecomposeMatrix();
+float AutomovementComponent::GetAmplitude() const
+{
+	return m_amplitude;
+}
 
-private:
-	glm::mat4x4 m_transform;
-	glm::mat4x4 m_prevTransform;
-	glm::vec3 m_position;
-	glm::quat m_rotation;
-	glm::vec3 m_scale;
-	bool m_dirty;
-};
+float AutomovementComponent::GetStrengh() const
+{
+	return m_strength;
+}
 
 namespace_end
-
-#endif

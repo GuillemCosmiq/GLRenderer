@@ -42,6 +42,7 @@ public:
 	inline const Texture* GetAlbedo() const { return m_albedoTexture; };
 	inline const Texture* GetNormals() const { return m_normalsTexture; };
 	inline const Texture* GetMaterial() const { return m_materialTexture; };
+	inline const Texture* GetVelocity() const { return m_velocityTexture; };
 	inline const Texture* GetDepth() const { return m_depthTexture; };
 
 private:
@@ -50,6 +51,7 @@ private:
 	Texture* m_albedoTexture;
 	Texture* m_normalsTexture;
 	Texture* m_materialTexture;
+	Texture* m_velocityTexture;
 	Texture* m_depthTexture;
 };
 

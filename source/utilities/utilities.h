@@ -31,6 +31,12 @@
 #define VISUAL_LOG
 #endif
 
+#define FRAME_MS 0.016f // Only supports 60 fps
+
+#define DEFAULT_ROTATION_STRENGH 0.f
+#define DEFAULT_MOVEMENT_AMPLITUDE 0.f
+#define DEFAULT_MOVEMENT_STRENGH 0.f
+
 #define NON_COPYABLE_CLASS(C) private: \
 C( const C& ) = delete; \
 C& operator=( const C& ) = delete

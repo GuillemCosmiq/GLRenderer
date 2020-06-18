@@ -40,9 +40,13 @@ Entity::~Entity()
 void Entity::Update()
 {
 	for (const auto& m_component : m_components)
-	{
 		m_component.second->Update();
-	}
+}
+
+void Entity::PostUpdate()
+{
+	for (const auto& m_component : m_components)
+		m_component.second->PostUpdate();
 }
 
 void Entity::AddedToScene(std::shared_ptr<Scene> scene)

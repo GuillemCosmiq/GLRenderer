@@ -19,7 +19,9 @@ void main()
 	else if (outputSelection == 1) // depth
 		FragColor = vec4(linearizeDepth(nearFrustum, farFrustum, texture(inputSample, screenUVs).r).xxx, 1);
 	else if (outputSelection == 2) // ssao
-		FragColor = vec4(texture(inputSample, screenUVs).bbb, 1.0);	
-	else if (outputSelection == 3) // ssao
+		FragColor = vec4(texture(inputSample, screenUVs).bbb, 1.0);
+	else if (outputSelection == 3) // velocity
+		FragColor = vec4(texture(inputSample, screenUVs, 0).rg, 0.0, 1.0);
+	else if (outputSelection == 4) // LOD
 		FragColor = vec4(textureLod(inputSample, screenUVs, 0).rgb, 1.0);
 }

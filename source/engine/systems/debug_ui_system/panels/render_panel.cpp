@@ -79,6 +79,12 @@ void RenderPanel::Update()
 				ImGui::SliderFloat("Power", &postProcessor->ssaoData.power, 0.f, 20.f);
 				ImGui::TreePop();
 			}
+			if (ImGui::TreeNode("Motion Blur"))
+			{
+				ImGui::CheckboxFlags("Per Object Motion Blur", (unsigned int*)& postProcessor->filtersFlags, PostProcessor::FiltersFlags::ObjectBlur);
+				ImGui::CheckboxFlags("Camera Motion Blur", (unsigned int*)& postProcessor->filtersFlags, PostProcessor::FiltersFlags::MotionBlur);
+				ImGui::TreePop();
+			}
 			if(ImGui::TreeNode("FXAA"))
 			{
 				ImGui::CheckboxFlags("Active ##FXAA", (unsigned int*)& postProcessor->filtersFlags, PostProcessor::FiltersFlags::FXAA);
@@ -104,17 +110,8 @@ void RenderPanel::Update()
 				screenSampler->outputSelection = (int)ScreenSamplerSource::OutputSample::depth;
 			else if (ImGui::RadioButton("SSAO", currentActive[(int)ScreenSamplerSource::OutputSample::ssao]))
 				screenSampler->outputSelection = (int)ScreenSamplerSource::OutputSample::ssao;
-
-			ImGui::Text("Bloom/Glow LODS");
-			ImGui::RadioButton("0", true);
-			ImGui::SameLine();
-			ImGui::RadioButton("1", true);
-			ImGui::SameLine();
-			ImGui::RadioButton("2", true);
-			ImGui::SameLine();
-			ImGui::RadioButton("3", true);
-			ImGui::SameLine();	
-			ImGui::RadioButton("4", true);
+			else if (ImGui::RadioButton("Velocity", currentActive[(int)ScreenSamplerSource::OutputSample::velocity]))
+				screenSampler->outputSelection = (int)ScreenSamplerSource::OutputSample::velocity;
 		}
 
 		if (ImGui::CollapsingHeader("Scene", ImGuiTreeNodeFlags_DefaultOpen))
@@ -136,10 +133,28 @@ void RenderPanel::Update()
 				}
 			}
 
-			static float rotationStrength = 0.01f;
+			static float rotationStrength = DEFAULT_ROTATION_STRENGH;
 			ImGui::PushItemWidth(100.f);
-			if (ImGui::SliderFloat("Rotation strengh", &rotationStrength, 0.f, 0.1f))
+			if (ImGui::SliderFloat("Rotation strengh", &rotationStrength, -0.5f, 0.5f))
 				scene->SetRotationStrenghOfObjScenes(rotationStrength);
+			if (ImGui::Button("Reset ##Rotation"))
+			{
+				rotationStrength = 0.f;
+				scene->SetRotationStrenghOfObjScenes(rotationStrength);
+			}
+
+			static float movementDistance = DEFAULT_MOVEMENT_AMPLITUDE;
+			static float movementStrength = DEFAULT_MOVEMENT_STRENGH;
+			if (ImGui::SliderFloat("Movement amplitude", &movementDistance, 0.f, 10.f))
+				scene->SetMovementParametersOfObjScenes(movementDistance, movementStrength);
+			if (ImGui::SliderFloat("Movement frequency", &movementStrength, 0.f, 10.f))
+				scene->SetMovementParametersOfObjScenes(movementDistance, movementStrength);
+			if (ImGui::Button("Reset ##Movement"))
+			{
+				movementDistance = 0.f;
+				movementStrength = 0.f;
+				scene->SetMovementParametersOfObjScenes(movementDistance, movementStrength);
+			}
 			ImGui::PopItemWidth();
 
 			ImGui::Separator();

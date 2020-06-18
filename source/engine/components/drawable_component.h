@@ -41,6 +41,7 @@ public:
 	void SetMetallicMap(Texture* metallicMap) { m_metallicMap = metallicMap; };
 	void SetRoughnessMap(Texture* roughnessMap) { m_roughnessMap = roughnessMap; };
 	void SetAOMap(Texture* AOMap) { m_AOMap = AOMap; };
+	void SetIfMaskedForMotionBlur(bool enable) { m_maskedForMotionBlur = enable; };
 
 	Mesh* GetMesh() const { return m_mesh; };
 	Texture* GetAlbedoMap() const { return m_albedoMap; };
@@ -48,6 +49,8 @@ public:
 	Texture* GetMetallicMap() const { return m_metallicMap; };
 	Texture* GetRoughnessMap() const { return m_roughnessMap; };
 	Texture* GetAOMap() const { return m_AOMap; };
+	
+	bool IsMaskedForMotionBlur() const { return m_maskedForMotionBlur; };
 
 private:
 	Mesh* m_mesh;
@@ -56,6 +59,8 @@ private:
 	Texture* m_metallicMap;
 	Texture* m_roughnessMap;
 	Texture* m_AOMap;
+
+	bool m_maskedForMotionBlur;
 };
 
 namespace_end

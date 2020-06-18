@@ -50,6 +50,8 @@ void ShadersStorage::ParseAndStore(const char* relative_path)
 	m_blur = ReadFile((path + "blur.frag").c_str());
 	m_mergeBloom = ReadFile((path + "merge_bloom.frag").c_str());
 	m_colorCorrection = ReadFile((path + "color_correction.frag").c_str());
+	m_objectMotionBlur = ReadFile((path + "object_motion_blur.frag").c_str());
+	m_cameraMotionBlur = ReadFile((path + "camera_motion_blur.frag").c_str());
 	m_fxaa = ReadFile((path + "fxaa.frag").c_str());
 	m_vignetteFrag = ReadFile((path + "vignette.frag").c_str());
 	m_samplerToScreenFrag = ReadFile((path + "screen_sampler.frag").c_str());

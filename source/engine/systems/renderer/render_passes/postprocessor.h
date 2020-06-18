@@ -54,8 +54,9 @@ public:
 		ToneMapping = 1 << 4,
 		SSAO = 1 << 5,
 		FXAA = 1 << 6,
-		MotionBlur = 1 << 7,
-		Vignette = 1 << 8,
+		ObjectBlur = 1 << 7,
+		MotionBlur = 1 << 8,
+		Vignette = 1 << 9,
 	};
 	
 	uint16 filtersFlags;
@@ -90,6 +91,8 @@ private:
 	Program* m_gaussianBlurProgram;
 	Program* m_colorCorrectionProgram;
 	Program* m_fxaaProgram;
+	Program* m_objectMotionBlur;
+	Program* m_cameraMotionBlurProgram;
 	Program* m_vignetteProgram;
 
 	FrameBufferObject* m_ssaoFbo;
