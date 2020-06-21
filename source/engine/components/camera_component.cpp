@@ -169,14 +169,14 @@ void CameraComponent::GetWorldSpaceFrustumCorners(std::vector<glm::vec3>& corner
 	corners.reserve(8);
 
 	glm::vec4 homogeneousCorners[8];
-	homogeneousCorners[0] = glm::vec4(1, 1, 1, 1);
-	homogeneousCorners[1] = glm::vec4(-1, 1, 1, 1);
-	homogeneousCorners[2] = glm::vec4(1, -1, 1, 1);
-	homogeneousCorners[3] = glm::vec4(-1, -1, 1, 1);
-	homogeneousCorners[4] = glm::vec4(1, 1, -1, 1);
-	homogeneousCorners[5] = glm::vec4(-1, 1, -1, 1);
-	homogeneousCorners[6] = glm::vec4(1, -1, -1, 1);
-	homogeneousCorners[7] = glm::vec4(-1, -1, -1, 1);
+	homogeneousCorners[0] = glm::vec4(-1.0f, 1.0f, -1.0f, 1.0f);
+	homogeneousCorners[1] = glm::vec4(1.0f, 1.0f, -1.0f, 1.0f);
+	homogeneousCorners[2] = glm::vec4(1.0f, -1.0f, -1.0f, 1.0f);
+	homogeneousCorners[3] = glm::vec4(-1.0f, -1.0f, -1.0f, 1.0f);
+	homogeneousCorners[4] = glm::vec4(-1.0f, 1.0f, 1.0f, 1.0f);
+	homogeneousCorners[5] = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	homogeneousCorners[6] = glm::vec4(1.0f, -1.0f, 1.0f, 1.0f);
+	homogeneousCorners[7] = glm::vec4(-1.0f, -1.0f, 1.0f, 1.0f);
 
 	glm::mat4 inverseViewProj = glm::inverse(GetProjection() * GetViewMatrix());
 	for (int i = 0; i < 8; ++i)

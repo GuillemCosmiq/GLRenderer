@@ -86,40 +86,63 @@ Texture* DirectionalLightComponent::GetShadowMap() const
 
 void DirectionalLightComponent::ComputeOrtoProjViewContainingOBB(glm::mat4& outOrtoProj, glm::mat4& outView, const std::vector<glm::vec3>& corners, float nearClip, float nearClipOffset, float farClip)
 {
-	glm::vec3 frustumCentroid(0.f);
-	for (auto& corner : corners)
-		frustumCentroid += corner;
+	#define NUM_CASCADES 4
+	float cascadeSplits[NUM_CASCADES + 1] = { nearClip, (farClip - nearClip) * 0.08f, (farClip - nearClip) * 0.2f,(farClip - nearClip) * 0.6f, farClip };
 
-	frustumCentroid /= 8;
 
-	float distFromCentroid = farClip + nearClipOffset;
-	glm::vec3 tmpLightPos = frustumCentroid - (glm::normalize(m_direction) * distFromCentroid);
-	outView = glm::lookAt(tmpLightPos, frustumCentroid, glm::vec3(0.0f, 1.0f, 0.0f));
-
-	std::vector<glm::vec3> lightSpaceCorners;
-	lightSpaceCorners.resize(8);
-	for (int i = 0, size = corners.size(); i < size; ++i)
-		lightSpaceCorners[i] = outView * glm::vec4(corners[i], 1.f);
-
-	glm::vec3 mins = lightSpaceCorners[0];
-	glm::vec3 maxes = lightSpaceCorners[0];
-	for (auto& corner : lightSpaceCorners)
+	for (int cascadeIterator = 0; cascadeIterator < NUM_CASCADES; ++cascadeIterator)
 	{
-		if (corner.x > maxes.x)
-			maxes.x = corner.x;
-		else if (corner.x < mins.x)
-			mins.x = corner.x;
-		if (corner.y > maxes.y)
-			maxes.y = corner.y;
-		else if (corner.y < mins.y)
-			mins.y = corner.y;
-		if (corner.z > maxes.z)
-			maxes.z = corner.z;
-		else if (corner.z < mins.z)
-			mins.z = corner.z;
+		float prevSplitDistance = cascadeIterator == 0 ? nearClip : cascadeSplits[cascadeIterator - 1];
+		float splitDistance = cascadeSplits[cascadeIterator];
+
+		std::vector<glm::vec3> boundedCorners = corners;
+		// https://stackoverflow.com/questions/55427438/cascaded-shadow-map-unexpected-behavior
+		// here the frustum corners are bounded to the current near far cascade distance.
+		for (unsigned int i = 0; i < 4; ++i)
+		{
+			glm::vec3 cornerRay = boundedCorners[i + 4] - boundedCorners[i];
+			glm::vec3 nearCornerRay = cornerRay * prevSplitDistance;
+			glm::vec3 farCornerRay = cornerRay * splitDistance;
+			boundedCorners[i + 4] = boundedCorners[i] + farCornerRay;
+			boundedCorners[i] = boundedCorners[i] + nearCornerRay;
+		}
+
+		glm::vec3 frustumCentroid(0.f);
+		for (auto& corner : corners)
+			frustumCentroid += corner;
+
+		frustumCentroid /= 8;
+
+		float distFromCentroid = farClip + nearClipOffset;
+		glm::vec3 tmpLightPos = frustumCentroid - (glm::normalize(m_direction) * distFromCentroid);
+		outView = glm::lookAt(tmpLightPos, frustumCentroid, glm::vec3(0.0f, 1.0f, 0.0f));
+
+		std::vector<glm::vec3> lightSpaceCorners;
+		lightSpaceCorners.resize(8);
+		for (int i = 0, size = corners.size(); i < size; ++i)
+			lightSpaceCorners[i] = outView * glm::vec4(corners[i], 1.f);
+
+		glm::vec3 mins = lightSpaceCorners[0];
+		glm::vec3 maxes = lightSpaceCorners[0];
+		for (auto& corner : lightSpaceCorners)
+		{
+			if (corner.x > maxes.x)
+				maxes.x = corner.x;
+			else if (corner.x < mins.x)
+				mins.x = corner.x;
+			if (corner.y > maxes.y)
+				maxes.y = corner.y;
+			else if (corner.y < mins.y)
+				mins.y = corner.y;
+			if (corner.z > maxes.z)
+				maxes.z = corner.z;
+			else if (corner.z < mins.z)
+				mins.z = corner.z;
+		}
+		float distz = maxes.z - mins.z;
+		outOrtoProj = glm::ortho(mins.x, maxes.x, mins.y, maxes.y, -maxes.z, -mins.z);
+		m_lightSpaceProjView = outOrtoProj * outView;
 	}
-	outOrtoProj = glm::ortho(mins.x, maxes.x, mins.y, maxes.y, -maxes.z, -mins.z);
-	m_lightSpaceProjView = outOrtoProj * outView;
 }
 
 const glm::mat4x4& DirectionalLightComponent::GetLightSpaceProjViewMatrix() const
