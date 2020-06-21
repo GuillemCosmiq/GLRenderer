@@ -18,14 +18,16 @@ struct Material
 	int normalsBinded;
 };
 uniform Material material;
+uniform int numTiles;
 
 uniform int blurMask;
 
 void main()
 {
+	vec2 texCoords = outTexCoords * numTiles;
 	if (material.normalsBinded)
 	{
-		gNormal = texture(material.normalMap, outTexCoords).rgb;
+		gNormal = texture(material.normalMap, texCoords).rgb;
 		gNormal = gNormal * 2.0 - 1.0;
 		gNormal = normalize(outTBN * gNormal);
 	//	gNormal = normalize(outNormal);
@@ -34,9 +36,10 @@ void main()
 	{
 		gNormal = normalize(outNormal);
 	}
-	gAlbedo = vec4(texture(material.albedoMap, outTexCoords).rgb, blurMask);
-	gMaterial.r = texture(material.metallicMap, outTexCoords).r;
-	gMaterial.g = texture(material.roughnessMap, outTexCoords).r;
+	
+	gAlbedo = vec4(texture(material.albedoMap, texCoords).rgb, blurMask);
+	gMaterial.r = texture(material.metallicMap, texCoords).r;
+	gMaterial.g = texture(material.roughnessMap, texCoords).r;
 	gMaterial.b = 0.0;
 
 	vec2 a = (out_position.xy / out_position.w) * 0.5 + 0.5;

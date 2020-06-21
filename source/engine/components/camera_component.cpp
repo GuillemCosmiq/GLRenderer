@@ -163,7 +163,7 @@ const glm::mat4x4& CameraComponent::GetProjection()
 	return m_frustum.perspective;
 }
 
-void CameraComponent::GetWorldSpaceFrustumCorners(std::vector<glm::vec3>& corners) const
+void CameraComponent::GetWorldSpaceFrustumCorners(std::vector<glm::vec3>& corners)
 {
 	corners.clear();
 	corners.reserve(8);
@@ -178,10 +178,10 @@ void CameraComponent::GetWorldSpaceFrustumCorners(std::vector<glm::vec3>& corner
 	homogeneousCorners[6] = glm::vec4(1, -1, -1, 1);
 	homogeneousCorners[7] = glm::vec4(-1, -1, -1, 1);
 
-	glm::mat4 inverseProj = glm::inverse(m_frustum.perspective * m_viewController.view);
+	glm::mat4 inverseViewProj = glm::inverse(GetProjection() * GetViewMatrix());
 	for (int i = 0; i < 8; ++i)
 	{
-		homogeneousCorners[i] = inverseProj * homogeneousCorners[i];
+		homogeneousCorners[i] = inverseViewProj * homogeneousCorners[i];
 		homogeneousCorners[i] /= homogeneousCorners[i].w;
 		corners.emplace_back(std::move(homogeneousCorners[i]));
 	}

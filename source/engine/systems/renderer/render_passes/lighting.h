@@ -26,7 +26,6 @@ namespace_begin
 class Renderer;
 class ResourceSystem;
 class LightingSource;
-class FrameBufferObject;
 class Texture;
 class Program;
 

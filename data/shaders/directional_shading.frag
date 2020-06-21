@@ -28,14 +28,17 @@ struct Light
 	sampler2D depth;
 };
 uniform Light light;
+
 float ShadowCalculation(vec4 fragPosLightSpace, Light lightArg, vec3 normal)
 {
-
 	vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
 	projCoords = projCoords * 0.5 + 0.5;
 	float closestDepth = texture(lightArg.depth, projCoords.xy).r;
 	float currentDepth = projCoords.z;  
-	float bias = max(0.05 * (1.0 - dot(normal, lightArg.dir)), 0.005);
+	float bias = max(0.05 * (1.0 - normalize(dot(normal, -lightArg.dir))), 0.005);
+
+	//return closestDepth < currentDepth - bias ? 1 : 0; // in case we want to ignore the box filtering of nearby samples
+
 	float shadow = 0.0;
 	vec2 texelSize = 1.0 / textureSize(lightArg.depth, 0);
 	for(int x = -1; x <= 1; ++x)
@@ -83,6 +86,11 @@ void main()
 	vec3 specular = numerator / max(denominator, 0.001);
 
 	float NdotL = max(dot(N, direction), 0.0);
-	float shadow = ShadowCalculation(light.lightSpaceMatrix * vec4(worldPos, 1.0), light, N) * light.castShadows;
+
+	float shadow = 0.0;
+	if (light.castShadows)
+		shadow = ShadowCalculation(light.lightSpaceMatrix * vec4(worldPos, 1.0), light, N);
+	else
+		shadow = 0.0;
 	HDRsample.rgb += texture(cumHDRsample, screenUVs).rgb + ((kD * albedo / PI + specular) * radiance * NdotL) * (1.0 - shadow);
 }

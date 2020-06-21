@@ -39,7 +39,6 @@ namespace_begin
 
 ShadowMappingPass::ShadowMappingPass(ResourceSystem& resSystem, const Renderer& renderer)
 {
-	m_fbo = resSystem.Create<FrameBufferObject>();
 	m_shadowsProgram = resSystem.Create<Program>();
 	m_shadowsProgram->AttachVertexObject(renderer.shaderStorage->GetDirShadowsVert().c_str());
 	m_shadowsProgram->AttachFragmentObject(renderer.shaderStorage->GetDirShadowsFrag().c_str());
@@ -51,7 +50,12 @@ ShadowMappingPass::ShadowMappingPass(ResourceSystem& resSystem, const Renderer& 
 	m_pointShadowsProgram->AttachFragmentObject(renderer.shaderStorage->GetPointShadowsFrag().c_str());
 	m_pointShadowsProgram->CompileProgram();
 
+	m_fbo = resSystem.Create<FrameBufferObject>();
 	m_fbo->Init();
+	m_fbo->Bind();
+	uint32 attachment = GL_NONE;
+	m_fbo->DefineDrawAttachments(&attachment, 1);
+	m_fbo->DefineReadAttachment(GL_NONE);
 }
 
 ShadowMappingPass::~ShadowMappingPass() {}
@@ -87,13 +91,10 @@ void ShadowMappingPass::Render(const Renderer& renderer, const ShadowMappingPass
 		std::shared_ptr<CameraComponent> camera = renderer.GetCamera();
 		camera->GetWorldSpaceFrustumCorners(frustumCorners);
 		light->ComputeOrtoProjViewContainingOBB(lightProjection, lightView, frustumCorners, camera->GetNearPlane(), nearClipOffset, camera->GetFarPlane());
-		glm::mat4 lightSpaceMatrix = lightProjection * lightView;
-
-
-		m_shadowsProgram->SetUniformMat4("lightSpaceMatrix", false, (const float*)glm::value_ptr(lightSpaceMatrix));
 		for (auto& drawable : source.Drawables)
 		{
-			m_shadowsProgram->SetUniformMat4("model", false, (const float*)glm::value_ptr(drawable->GetOwner()->GetComponent<TransformComponent>()->GetMatrix()));
+			glm::mat4x4 lightSpaceModelMatrix = light->GetLightSpaceProjViewMatrix() * drawable->GetOwner()->GetComponent<TransformComponent>()->GetMatrix();
+			m_shadowsProgram->SetUniformMat4("lightSpaceModelMatrix", false, (const float*)glm::value_ptr(lightSpaceModelMatrix));
 			drawable->GetMesh()->BindAndDraw();
 		}
 	}
@@ -107,7 +108,7 @@ void ShadowMappingPass::Render(const Renderer& renderer, const ShadowMappingPass
 			continue;
 
 		m_fbo->AttachTarget(light->GetShadowMap(), GL_DEPTH_ATTACHMENT, 0);
-		const glm::vec2 shadowMapSize = light->GetShadowMap()->GetCurrentBufferSize();
+		const glm::vec2& shadowMapSize = light->GetShadowMap()->GetCurrentBufferSize();
 		glViewport(0, 0, shadowMapSize.x, shadowMapSize.y);
 		glClear(GL_DEPTH_BUFFER_BIT);
 
@@ -127,7 +128,7 @@ void ShadowMappingPass::Render(const Renderer& renderer, const ShadowMappingPass
 		m_pointShadowsProgram->SetUniformVec3("lightPos", lightPos.x, lightPos.y, lightPos.z);
 		for (auto& drawable : source.Drawables)
 		{
-			m_pointShadowsProgram->SetUniformMat4("model", false, (const float*)glm::value_ptr(transform->GetMatrix()));
+			m_pointShadowsProgram->SetUniformMat4("model", false, (const float*)glm::value_ptr(drawable->GetOwner()->GetComponent<TransformComponent>()->GetMatrix()));
 			drawable->GetMesh()->BindAndDraw();
 		}
 	}

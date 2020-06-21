@@ -356,10 +356,11 @@ void Renderer::HandleEvent(SDL_Event& SDLEvent)
 	}
 }
 
-void Renderer::UpdateCameraBlock() const
+void Renderer::UpdateCameraBlock()
 {
 	const glm::mat4x4& proj = m_camera->GetProjection();
 	const glm::mat4x4& view = m_camera->GetViewMatrix();
+	m_projViewMatrix = proj * view;
 	glBindBuffer(GL_UNIFORM_BUFFER, m_cameraBlockID);
 	glBufferSubData(GL_UNIFORM_BUFFER, 0, 4 * 16, (const float*)glm::value_ptr(view));
 	glBufferSubData(GL_UNIFORM_BUFFER, 4 * 16, 4 * 16, (const float*)glm::value_ptr(proj));

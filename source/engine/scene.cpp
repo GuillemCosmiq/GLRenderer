@@ -64,11 +64,14 @@ void Scene::Initialize(Config& config, ResourceSystem& resSystem)
 	ModelLoader::Load("../data/3d_scenes/planeCobbleStone.obj", scene, resSystem);
 	for (std::shared_ptr<Entity> entity : scene)
 	{
-		std::shared_ptr<GLEngine::TransformComponent> drawableCmp = entity->GetComponent<GLEngine::TransformComponent>();
-		glm::mat4 transform = drawableCmp->GetMatrix();
-		transform = glm::translate(transform, glm::vec3(0, -7, 0));
-		transform = glm::scale(transform, glm::vec3(1000, 1000, 1000));
-		drawableCmp->SetMatrix(transform);
+		std::shared_ptr<GLEngine::TransformComponent> transformCmp = entity->GetComponent<GLEngine::TransformComponent>();
+		glm::mat4 transform = transformCmp->GetMatrix();
+		transform = glm::translate(transform, glm::vec3(0, -20, 0));
+		transform = glm::scale(transform, glm::vec3(100, 100, 100));
+		transformCmp->SetMatrix(transform);
+
+		std::shared_ptr<GLEngine::DrawableComponent> drawableCmp = entity->GetComponent<GLEngine::DrawableComponent>();
+		drawableCmp->SetNumTiles(10);
 		AddEntity(entity);
 	}
 	scene.clear();
@@ -88,19 +91,31 @@ void Scene::Initialize(Config& config, ResourceSystem& resSystem)
 
 	//------------------------------------------------------------//
 
-	std::shared_ptr<Entity> mainLight = std::make_shared<Entity>();
-	std::shared_ptr<TransformComponent> transform = mainLight->AddComponent<TransformComponent>();
-	std::shared_ptr<DirectionalLightComponent> lightCmp = mainLight->AddComponent<DirectionalLightComponent>();
-	lightCmp->SetColor(glm::vec3(1.0f, 0.3f, 0.3f));
-	lightCmp->SetDirection(glm::vec3(0.f, -1.f, 0.f));
-	//AddEntity(mainLight);
+	//std::shared_ptr<Entity> mainLight = std::make_shared<Entity>();
+	//std::shared_ptr<TransformComponent> transform = mainLight->AddComponent<TransformComponent>();
+	//std::shared_ptr<DirectionalLightComponent> lightCmp = mainLight->AddComponent<DirectionalLightComponent>();
+	//lightCmp->SetColor(glm::vec3(1.0f, 0.3f, 0.3f));
+	//lightCmp->SetDirection(glm::vec3(0.f, -1.f, 0.f));
+	////AddEntity(mainLight);
 
 	std::shared_ptr<Entity> mainLight2 = std::make_shared<Entity>();
 	std::shared_ptr<TransformComponent> transform2 = mainLight2->AddComponent<TransformComponent>();
 	std::shared_ptr<DirectionalLightComponent> lightCmp2 = mainLight2->AddComponent<DirectionalLightComponent>();
-	lightCmp2->SetColor(glm::vec3(0.2f, 1.0f, 0.3f));
-	lightCmp2->SetDirection(glm::vec3(0.2f, -0.8f, 0.2f));
-	//AddEntity(mainLight2);
+	lightCmp2->SetColor(glm::vec3(10.0f, 0.3f, 0.f));
+	lightCmp2->SetDirection(glm::vec3(0.f, -0.8f, -0.2f));
+	
+	Texture* shadowMap = resSystem.Create<Texture>();
+	shadowMap->Create();
+	shadowMap->Bind(0);
+	shadowMap->DefineParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	shadowMap->DefineParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	shadowMap->DefineParameter(GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	shadowMap->DefineParameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	shadowMap->DefineParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	shadowMap->DefineBuffer(glm::vec2(1024, 1024), 0, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	lightCmp2->SetShadowCasting(true);
+	lightCmp2->SetShadowMap(shadowMap);
+	AddEntity(mainLight2);
 
 
 //	lightCmp->SetColor(glm::vec3(1000.0f, 0.3f, 0.3f));
@@ -111,25 +126,25 @@ void Scene::Initialize(Config& config, ResourceSystem& resSystem)
 	//lightCmp->SetDirection(glm::vec3(0.2f, 0.2f, -0.3f));
 //	AddEntity(mainLight);
 
-	std::shared_ptr<Entity> pointLight = std::make_shared<Entity>();
-	transform = pointLight->AddComponent<TransformComponent>();
-	glm::mat4 pointMatrix = transform->GetMatrix();
-	pointMatrix = glm::translate(pointMatrix, glm::vec3(0.f, 10.f, 0.f));
-	transform->SetMatrix(pointMatrix);
-	std::shared_ptr<PointLightComponent> pointLightCmp = pointLight->AddComponent<PointLightComponent>();
-	Cubemap* pointShadowMap = resSystem.Create<Cubemap>();
-	pointShadowMap->Create();
-	pointShadowMap->Bind(0);
-	pointShadowMap->DefineParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	pointShadowMap->DefineParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	pointShadowMap->DefineParameter(GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-	pointShadowMap->DefineParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	pointShadowMap->DefineParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	pointShadowMap->DefineBuffer(glm::vec2(1024, 1024), GL_DEPTH, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-	pointLightCmp->SetColor(glm::vec3(1000.f, 0.3f, 0.3f));
-	pointLightCmp->SetRadius(1200.f);
-	pointLightCmp->SetShadowCasting(false);
-	pointLightCmp->SetShadowMap(pointShadowMap);
+	//std::shared_ptr<Entity> pointLight = std::make_shared<Entity>();
+	//std::shared_ptr<TransformComponent> transform = pointLight->AddComponent<TransformComponent>();
+	//glm::mat4 pointMatrix = transform->GetMatrix();
+	//pointMatrix = glm::translate(pointMatrix, glm::vec3(5.f, 15.f, 0.f));
+	//transform->SetMatrix(pointMatrix);
+	//std::shared_ptr<PointLightComponent> pointLightCmp = pointLight->AddComponent<PointLightComponent>();
+	//Cubemap* pointShadowMap = resSystem.Create<Cubemap>();
+	//pointShadowMap->Create();
+	//pointShadowMap->Bind(0);
+	//pointShadowMap->DefineParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	//pointShadowMap->DefineParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	//pointShadowMap->DefineParameter(GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	//pointShadowMap->DefineParameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	//pointShadowMap->DefineParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	//pointShadowMap->DefineBuffer(glm::vec2(1024, 1024), GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	//pointLightCmp->SetColor(glm::vec3(100.f, 0.3f, 0.3f));
+	//pointLightCmp->SetRadius(120.f);
+	//pointLightCmp->SetShadowCasting(true);
+	//pointLightCmp->SetShadowMap(pointShadowMap);
 	//AddEntity(pointLight);
 }
 

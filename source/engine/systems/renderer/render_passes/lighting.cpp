@@ -70,6 +70,7 @@ Lighting::Lighting(ResourceSystem& resSystem, const Renderer& renderer)
 	m_dirLightProgram->SetUniformTexture("gBuffer.material", 2);
 	m_dirLightProgram->SetUniformTexture("gBuffer.depth", 3);
 	m_dirLightProgram->SetUniformTexture("cumHDRsample", 4);
+	m_dirLightProgram->SetUniformTexture("light.depth", 5);
 
 	m_pointLightProgram->Bind();
 	m_pointLightProgram->SetUniformTexture("gBuffer.albedo", 0);
@@ -77,6 +78,7 @@ Lighting::Lighting(ResourceSystem& resSystem, const Renderer& renderer)
 	m_pointLightProgram->SetUniformTexture("gBuffer.material", 2);
 	m_pointLightProgram->SetUniformTexture("gBuffer.depth", 3);
 	m_pointLightProgram->SetUniformTexture("cumHDRsample", 4);
+	m_pointLightProgram->SetUniformTexture("light.depth", 5);
 
 	m_finalShadingProgram->Bind();
 	m_finalShadingProgram->SetUniformTexture("HDRsample", 0);
@@ -153,25 +155,14 @@ void Lighting::Render(const Renderer& renderer, const LightingSource& source)
 		glm::vec3 dir, color;
 		dir = light->GetDirection();
 		color = light->GetColor();
-		float nearClipOffset = 0.f;
-		glm::mat4 lightProjection;
-		glm::mat4 lightView;
-		std::vector<glm::vec3> frustumCorners;
-		std::shared_ptr<CameraComponent> camera = renderer.GetCamera();
-		camera->GetWorldSpaceFrustumCorners(frustumCorners);
-		light->ComputeOrtoProjViewContainingOBB(lightProjection, lightView, frustumCorners, camera->GetNearPlane(), nearClipOffset, camera->GetFarPlane());
-		glm::mat4 lightSpaceMatrix = lightProjection * lightView;
 		m_dirLightProgram->SetUniformVec3("light.dir", dir.x, dir.y, dir.z);
 		m_dirLightProgram->SetUniformVec3("light.color", color.r, color.g, color.b);
 		m_dirLightProgram->SetUniformInt("light.castShadows", light->IsCastingShadows());
-		m_dirLightProgram->SetUniformMat4("light.lightSpaceMatrix", false, (const float*)glm::value_ptr(lightSpaceMatrix));
+		m_dirLightProgram->SetUniformMat4("light.lightSpaceMatrix", false, (const float*)glm::value_ptr(light->GetLightSpaceProjViewMatrix()));
 		if (light->IsCastingShadows())
-		{
 			light->GetShadowMap()->Bind(5);
-			m_dirLightProgram->SetUniformTexture("light.depth", 5);
-		}
-		renderer.quad->BindAndDraw();
 
+		renderer.quad->BindAndDraw();
 		m_lightAccumulationPP.SwapBuffers(0);
 	}
 
@@ -186,7 +177,6 @@ void Lighting::Render(const Renderer& renderer, const LightingSource& source)
 	for (std::shared_ptr<PointLightComponent> light : source.PointLights)
 	{
 		m_lightAccumulationPP.GetFrontBuffer()->Bind(4);
-
 		std::shared_ptr<TransformComponent> transform = light->GetOwner()->GetComponent<TransformComponent>();
 		glm::vec3 lightPos = transform->GetPosition();
 		glm::vec3 lightColor = light->GetColor();
@@ -195,13 +185,9 @@ void Lighting::Render(const Renderer& renderer, const LightingSource& source)
 		m_pointLightProgram->SetUniformFloat("light.radius", light->GetRadius());
 		m_pointLightProgram->SetUniformInt("light.castShadows", light->IsCastingShadows());
 		if (light->IsCastingShadows())
-		{
-			// TODO: Create white depth texture... for when not using shadows
 			light->GetShadowMap()->Bind(5);
-			m_pointLightProgram->SetUniformTexture("light.depth", 5);
-		}
-		renderer.quad->BindAndDraw();
 
+		renderer.quad->BindAndDraw();
 		m_lightAccumulationPP.SwapBuffers(0);
 	}
 

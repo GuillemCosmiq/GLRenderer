@@ -75,6 +75,11 @@ void main()
 	vec3 specular = numerator / max(denominator, 0.001);
 
 	float NdotL = max(dot(N, L), 0.0);
-	float shadow = ShadowCalculation(worldPos, light, L, N); // TODO: Fix no light if shadow computation disabled
+
+	float shadow = 0.0;
+	if (light.castShadows)
+		shadow = ShadowCalculation(worldPos, light, L, N);
+	else
+		shadow = 0.0;
 	HDRsample.rgb += texture(cumHDRsample, screenUVs).rgb + ((kD * albedo / PI + specular) * radiance * NdotL) * (1.0 - shadow);
 }

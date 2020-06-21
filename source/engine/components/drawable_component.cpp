@@ -32,6 +32,7 @@ DrawableComponent::DrawableComponent(std::shared_ptr<Entity> owner)
 	, m_metallicMap(nullptr)
 	, m_roughnessMap(nullptr)
 	, m_AOMap(nullptr)
+	, m_numTiles(1)
 	, m_maskedForMotionBlur(false)
 {
 }

@@ -124,6 +124,8 @@ void GeometryPass::Render(const Renderer& renderer, const GeometrySource& source
 
 	m_fbo->Bind();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
+	const glm::mat4x4& projViewMatrix = renderer.GetProjViewMatrix();
 
 	//----GBufferPass----//
 	for (std::shared_ptr<DrawableComponent> drawable : source.Drawables)
@@ -132,7 +134,8 @@ void GeometryPass::Render(const Renderer& renderer, const GeometrySource& source
 
 		m_geometryProgram->Bind();
 		m_geometryProgram->SetUniformMat4("modelMatrix", false, (const float*)glm::value_ptr(transform->GetMatrix()));
-		m_geometryProgram->SetUniformMat4("prevModelMatrix", false, (const float*)glm::value_ptr(transform->GetPrevFrameMatrix()));
+		m_geometryProgram->SetUniformMat4("projViewModelMatrix", false, (const float*)glm::value_ptr(projViewMatrix * transform->GetMatrix()));
+		m_geometryProgram->SetUniformMat4("projViewPrevModelMatrix", false, (const float*)glm::value_ptr(projViewMatrix * transform->GetPrevFrameMatrix()));
 
 		m_geometryProgram->SetUniformMat3("normalMatrix", false, (const float*)glm::value_ptr(glm::inverseTranspose(glm::mat3x3(transform->GetMatrix()))));
 		m_geometryProgram->SetUniformTexture("material.albedoMap", 0);
@@ -146,6 +149,7 @@ void GeometryPass::Render(const Renderer& renderer, const GeometrySource& source
 		drawable->GetMetallicMap()->Bind(2);
 		drawable->GetRoughnessMap()->Bind(3);
 
+		m_geometryProgram->SetUniformInt("numTiles", drawable->GetNumTiles());
 		m_geometryProgram->SetUniformInt("blurMask", drawable->IsMaskedForMotionBlur());
 		m_geometryProgram->SetUniformVec2("viewport", viewport.x, viewport.y);
 		drawable->GetMesh()->BindAndDraw();

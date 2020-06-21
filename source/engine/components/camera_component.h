@@ -48,7 +48,7 @@ public:
 	const glm::mat4x4& GetNormalsViewMatrix();
 	const glm::mat4x4& GetProjection();
 	const glm::vec3& GetPos() const { return m_viewController.pos; }
-	void GetWorldSpaceFrustumCorners(std::vector<glm::vec3>& corners) const;
+	void GetWorldSpaceFrustumCorners(std::vector<glm::vec3>& corners);
 
 private:
 	void ProcessKeyboard(const SDL_Keycode key, const Input::KeyState state);

@@ -64,25 +64,43 @@ void DirectionalLightComponent::SetShadowMap(Texture* shadowMap)
 	m_shadowMap = shadowMap;
 }
 
+const glm::vec3& DirectionalLightComponent::GetDirection() const
+{
+	return m_direction;
+}
+
+const glm::vec3& DirectionalLightComponent::GetColor() const
+{
+	return m_color;
+}
+
+bool DirectionalLightComponent::IsCastingShadows() const
+{
+	return m_castShadows;
+}
+
+Texture* DirectionalLightComponent::GetShadowMap() const
+{
+	return m_shadowMap;
+}
+
 void DirectionalLightComponent::ComputeOrtoProjViewContainingOBB(glm::mat4& outOrtoProj, glm::mat4& outView, const std::vector<glm::vec3>& corners, float nearClip, float nearClipOffset, float farClip)
 {
 	glm::vec3 frustumCentroid(0.f);
 	for (auto& corner : corners)
-	{
 		frustumCentroid += corner;
-	}
+
 	frustumCentroid /= 8;
 
 	float distFromCentroid = farClip + nearClipOffset;
-	glm::vec3 tmpLightPos = frustumCentroid - (m_direction * distFromCentroid);
+	glm::vec3 tmpLightPos = frustumCentroid - (glm::normalize(m_direction) * distFromCentroid);
 	outView = glm::lookAt(tmpLightPos, frustumCentroid, glm::vec3(0.0f, 1.0f, 0.0f));
 
 	std::vector<glm::vec3> lightSpaceCorners;
 	lightSpaceCorners.resize(8);
 	for (int i = 0, size = corners.size(); i < size; ++i)
-	{
 		lightSpaceCorners[i] = outView * glm::vec4(corners[i], 1.f);
-	}
+
 	glm::vec3 mins = lightSpaceCorners[0];
 	glm::vec3 maxes = lightSpaceCorners[0];
 	for (auto& corner : lightSpaceCorners)
@@ -101,6 +119,12 @@ void DirectionalLightComponent::ComputeOrtoProjViewContainingOBB(glm::mat4& outO
 			mins.z = corner.z;
 	}
 	outOrtoProj = glm::ortho(mins.x, maxes.x, mins.y, maxes.y, -maxes.z, -mins.z);
+	m_lightSpaceProjView = outOrtoProj * outView;
+}
+
+const glm::mat4x4& DirectionalLightComponent::GetLightSpaceProjViewMatrix() const
+{
+	return m_lightSpaceProjView;
 }
 
 namespace_end
