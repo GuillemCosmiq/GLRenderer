@@ -70,7 +70,9 @@ Lighting::Lighting(ResourceSystem& resSystem, const Renderer& renderer)
 	m_dirLightProgram->SetUniformTexture("gBuffer.material", 2);
 	m_dirLightProgram->SetUniformTexture("gBuffer.depth", 3);
 	m_dirLightProgram->SetUniformTexture("cumHDRsample", 4);
-	m_dirLightProgram->SetUniformTexture("light.depth", 5);
+	m_dirLightProgram->SetUniformTexture("light.depth[0]", 5);
+	m_dirLightProgram->SetUniformTexture("light.depth[1]", 6);
+	m_dirLightProgram->SetUniformTexture("light.depth[2]", 7);
 
 	m_pointLightProgram->Bind();
 	m_pointLightProgram->SetUniformTexture("gBuffer.albedo", 0);
@@ -158,9 +160,19 @@ void Lighting::Render(const Renderer& renderer, const LightingSource& source)
 		m_dirLightProgram->SetUniformVec3("light.dir", dir.x, dir.y, dir.z);
 		m_dirLightProgram->SetUniformVec3("light.color", color.r, color.g, color.b);
 		m_dirLightProgram->SetUniformInt("light.castShadows", light->IsCastingShadows());
-		m_dirLightProgram->SetUniformMat4("light.lightSpaceMatrix", false, (const float*)glm::value_ptr(light->GetLightSpaceProjViewMatrix()));
+		glm::mat4x4 lightMatrices[3];
+		light->GetLightSpaceCascadesProjViewMatrix(lightMatrices);
+		m_dirLightProgram->SetUniformMat4("light.lightSpaceMatrix[0]", false, (const float*)glm::value_ptr(lightMatrices[0]));
+		m_dirLightProgram->SetUniformMat4("light.lightSpaceMatrix[1]", false, (const float*)glm::value_ptr(lightMatrices[1]));
+		m_dirLightProgram->SetUniformMat4("light.lightSpaceMatrix[2]", false, (const float*)glm::value_ptr(lightMatrices[2]));
 		if (light->IsCastingShadows())
-			light->GetShadowMap()->Bind(5);
+		{
+			Texture* shadowMaps[3];
+			light->GetShadowMaps(shadowMaps);
+			shadowMaps[0]->Bind(5);
+			shadowMaps[1]->Bind(6);
+			shadowMaps[2]->Bind(7);
+		}
 
 		renderer.quad->BindAndDraw();
 		m_lightAccumulationPP.SwapBuffers(0);

@@ -24,35 +24,38 @@ struct Light
 	vec3 dir;
 	vec3 color;
 	int castShadows;
-	mat4 lightSpaceMatrix;
-	sampler2D depth;
+	mat4 lightSpaceMatrix[3];
+	sampler2D depth[3];
 };
 uniform Light light;
 
 float ShadowCalculation(vec4 fragPosLightSpace, Light lightArg, vec3 normal)
 {
-	vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
-	projCoords = projCoords * 0.5 + 0.5;
-	float closestDepth = texture(lightArg.depth, projCoords.xy).r;
-	float currentDepth = projCoords.z;  
-	float bias = max(0.05 * (1.0 - normalize(dot(normal, -lightArg.dir))), 0.005);
-
-	//return closestDepth < currentDepth - bias ? 1 : 0; // in case we want to ignore the box filtering of nearby samples
-
-	float shadow = 0.0;
-	vec2 texelSize = 1.0 / textureSize(lightArg.depth, 0);
-	for(int x = -1; x <= 1; ++x)
-	{
-	    for(int y = -1; y <= 1; ++y)
-	    {
-	        float pcfDepth = texture(lightArg.depth, projCoords.xy + vec2(x, y) * texelSize).r; 
-	        shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;        
-	    }    
-	}
-	shadow /= 9.0;
-	return shadow;
+	//vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+	//projCoords = projCoords * 0.5 + 0.5;
+	//float closestDepth = texture(lightArg.depth, projCoords.xy).r;
+	//float currentDepth = projCoords.z;  
+	//float bias = max(0.05 * (1.0 - normalize(dot(normal, -lightArg.dir))), 0.005);
+	//
+	////return closestDepth < currentDepth - bias ? 1 : 0; // in case we want to ignore the box filtering of nearby samples
+	//
+	//float shadow = 0.0;
+	//vec2 texelSize = 1.0 / textureSize(lightArg.depth, 0);
+	//for(int x = -1; x <= 1; ++x)
+	//{
+	//    for(int y = -1; y <= 1; ++y)
+	//    {
+	//        float pcfDepth = texture(lightArg.depth, projCoords.xy + vec2(x, y) * texelSize).r; 
+	//        shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;        
+	//    }    
+	//}
+	//shadow /= 9.0;
+	//return shadow;
+	return 0;
 }
-
+float linearizeDepth(float near, float far, float depth) {
+    return 2.0 * near / (far + near - depth * (far - near));
+}
 float DistributionGGX(vec3 N, vec3 H, float roughness);
 float GeometrySchlickGGX(float NdotV, float roughness);
 float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness);
@@ -86,11 +89,38 @@ void main()
 	vec3 specular = numerator / max(denominator, 0.001);
 
 	float NdotL = max(dot(N, direction), 0.0);
+	
+	float cascadeSplits[3] = { 0.4, 0.8, 1.0 };
+	int cascadeIndex = 0;
+	for (int i = 0; i < 3 - 1; ++i)
+	{
+		if ((linearizeDepth(0.1, 100, depth)) >= cascadeSplits[i])
+			cascadeIndex = i + 1;
+	}
 
 	float shadow = 0.0;
 	if (light.castShadows)
-		shadow = ShadowCalculation(light.lightSpaceMatrix * vec4(worldPos, 1.0), light, N);
+	{
+	vec4 fragPosLightSpace = light.lightSpaceMatrix[cascadeIndex] * vec4(worldPos, 1.0);
+	vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+	projCoords = projCoords * 0.5 + 0.5;
+	float closestDepth = texture(light.depth[cascadeIndex], projCoords.xy).r;
+	float currentDepth = projCoords.z;  
+	float bias = max(0.05 * (1.0 - normalize(dot(N, -light.dir))), 0.005);
+
+	shadow = closestDepth < currentDepth ? 1 : 0;
+	}
+		//shadow = ShadowCalculation(light.lightSpaceMatrix * vec4(worldPos, 1.0), light, N);
 	else
 		shadow = 0.0;
-	HDRsample.rgb += texture(cumHDRsample, screenUVs).rgb + ((kD * albedo / PI + specular) * radiance * NdotL) * (1.0 - shadow);
+
+	vec3 rgbCascade = vec3(0.0, 0.0, 0.0);
+	if (cascadeIndex == 0)
+	rgbCascade.r = 1.0;
+	else if (cascadeIndex == 1)
+	rgbCascade.g = 1.0;	
+	else if (cascadeIndex == 2)
+	rgbCascade.b = 1.0;
+	//rgbCascade = vec3(0.0, 0.0, 0.0);
+	HDRsample.rgb += texture(cumHDRsample, screenUVs).rgb + ((kD * albedo / PI + specular) * radiance * NdotL) * (1.0 - shadow) + rgbCascade;
 }

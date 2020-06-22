@@ -78,11 +78,10 @@ void ShadowMappingPass::Render(const Renderer& renderer, const ShadowMappingPass
 	{
 		if (!light->IsCastingShadows())
 			continue;
-
-		m_fbo->AttachTarget(light->GetShadowMap(), GL_DEPTH_ATTACHMENT, 0);
-		const glm::vec2& shadowMapSize = light->GetShadowMap()->GetCurrentBufferSize();
+		Texture* shadowMaps[3];
+		light->GetShadowMaps(shadowMaps);
+		const glm::vec2& shadowMapSize = shadowMaps[0]->GetCurrentBufferSize();
 		glViewport(0, 0, shadowMapSize.x, shadowMapSize.y);
-		glClear(GL_DEPTH_BUFFER_BIT);
 
 		float nearClipOffset = 0.f;
 		glm::mat4 lightProjection;
@@ -91,11 +90,21 @@ void ShadowMappingPass::Render(const Renderer& renderer, const ShadowMappingPass
 		std::shared_ptr<CameraComponent> camera = renderer.GetCamera();
 		camera->GetWorldSpaceFrustumCorners(frustumCorners);
 		light->ComputeOrtoProjViewContainingOBB(lightProjection, lightView, frustumCorners, camera->GetNearPlane(), nearClipOffset, camera->GetFarPlane());
-		for (auto& drawable : source.Drawables)
+
+
+		glm::mat4x4 currentCascadelightProjView[3];
+		light->GetLightSpaceCascadesProjViewMatrix(currentCascadelightProjView);
+
+		for (int i = 0; i < 3; ++i)
 		{
-			glm::mat4x4 lightSpaceModelMatrix = light->GetLightSpaceProjViewMatrix() * drawable->GetOwner()->GetComponent<TransformComponent>()->GetMatrix();
-			m_shadowsProgram->SetUniformMat4("lightSpaceModelMatrix", false, (const float*)glm::value_ptr(lightSpaceModelMatrix));
-			drawable->GetMesh()->BindAndDraw();
+			m_fbo->AttachTarget(shadowMaps[i], GL_DEPTH_ATTACHMENT, 0);
+			glClear(GL_DEPTH_BUFFER_BIT);
+			for (auto& drawable : source.Drawables)
+			{
+				glm::mat4x4 lightSpaceModelMatrix = currentCascadelightProjView[i] * drawable->GetOwner()->GetComponent<TransformComponent>()->GetMatrix();
+				m_shadowsProgram->SetUniformMat4("lightSpaceModelMatrix", false, (const float*)glm::value_ptr(lightSpaceModelMatrix));
+				drawable->GetMesh()->BindAndDraw();
+			}
 		}
 	}
 

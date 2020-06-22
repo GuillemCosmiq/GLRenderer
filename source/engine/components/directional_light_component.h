@@ -37,21 +37,21 @@ public:
 	void SetDirection(const glm::vec3& direction);
 	void SetColor(const glm::vec3& color);
 	void SetShadowCasting(bool enable);
-	void SetShadowMap(Texture* shadowMap);
+	void SetShadowMap(Texture* shadowMap[3]);
 	const glm::vec3& GetDirection() const;
 	const glm::vec3& GetColor() const;
 	bool IsCastingShadows() const;
-	Texture* GetShadowMap() const;
+	void GetShadowMaps(Texture* shadowMaps[3]) const;
 
 	void ComputeOrtoProjViewContainingOBB(glm::mat4& outOrtoProj, glm::mat4& outView, const std::vector<glm::vec3>& corners, float nearclip, float nearClipOffset, float farclip);
-	const glm::mat4x4& GetLightSpaceProjViewMatrix() const;
+	void GetLightSpaceCascadesProjViewMatrix(glm::mat4x4 matrices[3]) const;
 
 private:
 	glm::vec3 m_direction;
 	glm::vec3 m_color;
 	bool m_castShadows;
-	Texture* m_shadowMap;
-	glm::mat4x4 m_lightSpaceProjView;
+	Texture* m_shadowMaps[3];
+	glm::mat4x4 m_lightSpaceCascadesMatrices[3];
 };
 
 namespace_end

@@ -104,17 +104,21 @@ void Scene::Initialize(Config& config, ResourceSystem& resSystem)
 	lightCmp2->SetColor(glm::vec3(10.0f, 0.3f, 0.f));
 	lightCmp2->SetDirection(glm::vec3(0.f, -0.8f, -0.2f));
 	
-	Texture* shadowMap = resSystem.Create<Texture>();
-	shadowMap->Create();
-	shadowMap->Bind(0);
-	shadowMap->DefineParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	shadowMap->DefineParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	shadowMap->DefineParameter(GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-	shadowMap->DefineParameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	shadowMap->DefineParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	shadowMap->DefineBuffer(glm::vec2(1024, 1024), 0, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	Texture* shadowMaps[3];
+	for (int i = 0; i < 3; ++i)
+	{
+		shadowMaps[i] = resSystem.Create<Texture>();
+		shadowMaps[i]->Create();
+		shadowMaps[i]->Bind(0);
+		shadowMaps[i]->DefineParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		shadowMaps[i]->DefineParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		shadowMaps[i]->DefineParameter(GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+		shadowMaps[i]->DefineParameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		shadowMaps[i]->DefineParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		shadowMaps[i]->DefineBuffer(glm::vec2(2048, 2048), 0, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	}
 	lightCmp2->SetShadowCasting(true);
-	lightCmp2->SetShadowMap(shadowMap);
+	lightCmp2->SetShadowMap(shadowMaps);
 	AddEntity(mainLight2);
 
 

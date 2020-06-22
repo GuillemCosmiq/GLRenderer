@@ -30,7 +30,6 @@ DirectionalLightComponent::DirectionalLightComponent(std::shared_ptr<Entity> own
 	, m_direction(0.f, -1.f, 0.f)
 	, m_color(1.f, 1.f, 1.f)
 	, m_castShadows(false)
-	, m_shadowMap(nullptr)
 {
 }
 
@@ -59,9 +58,11 @@ void DirectionalLightComponent::SetShadowCasting(bool enable)
 	m_castShadows = enable;
 }
 
-void DirectionalLightComponent::SetShadowMap(Texture* shadowMap)
+void DirectionalLightComponent::SetShadowMap(Texture* shadowMaps[3])
 {
-	m_shadowMap = shadowMap;
+	m_shadowMaps[0] = shadowMaps[0];
+	m_shadowMaps[1] = shadowMaps[1];
+	m_shadowMaps[2] = shadowMaps[2];
 }
 
 const glm::vec3& DirectionalLightComponent::GetDirection() const
@@ -79,15 +80,17 @@ bool DirectionalLightComponent::IsCastingShadows() const
 	return m_castShadows;
 }
 
-Texture* DirectionalLightComponent::GetShadowMap() const
+void DirectionalLightComponent::GetShadowMaps(Texture* shadowMaps[3]) const
 {
-	return m_shadowMap;
+	shadowMaps[0] = m_shadowMaps[0];
+	shadowMaps[1] = m_shadowMaps[1];
+	shadowMaps[2] = m_shadowMaps[2];
 }
 
 void DirectionalLightComponent::ComputeOrtoProjViewContainingOBB(glm::mat4& outOrtoProj, glm::mat4& outView, const std::vector<glm::vec3>& corners, float nearClip, float nearClipOffset, float farClip)
 {
-	#define NUM_CASCADES 4
-	float cascadeSplits[NUM_CASCADES + 1] = { nearClip, (farClip - nearClip) * 0.08f, (farClip - nearClip) * 0.2f,(farClip - nearClip) * 0.6f, farClip };
+	#define NUM_CASCADES 3
+	float cascadeSplits[NUM_CASCADES] = { 0.4f, 0.8f, 1.f };
 
 
 	for (int cascadeIterator = 0; cascadeIterator < NUM_CASCADES; ++cascadeIterator)
@@ -100,54 +103,94 @@ void DirectionalLightComponent::ComputeOrtoProjViewContainingOBB(glm::mat4& outO
 		// here the frustum corners are bounded to the current near far cascade distance.
 		for (unsigned int i = 0; i < 4; ++i)
 		{
-			glm::vec3 cornerRay = boundedCorners[i + 4] - boundedCorners[i];
-			glm::vec3 nearCornerRay = cornerRay * prevSplitDistance;
-			glm::vec3 farCornerRay = cornerRay * splitDistance;
-			boundedCorners[i + 4] = boundedCorners[i] + farCornerRay;
-			boundedCorners[i] = boundedCorners[i] + nearCornerRay;
+			glm::vec3 dist = boundedCorners[i + 4] - boundedCorners[i];
+			boundedCorners[i + 4] = boundedCorners[i] + (dist * splitDistance);
+			boundedCorners[i] = boundedCorners[i] + (dist * prevSplitDistance);
 		}
 
 		glm::vec3 frustumCentroid(0.f);
-		for (auto& corner : corners)
+		for (auto& corner : boundedCorners)
 			frustumCentroid += corner;
 
-		frustumCentroid /= 8;
+		frustumCentroid /= 8.f;
 
-		float distFromCentroid = farClip + nearClipOffset;
-		glm::vec3 tmpLightPos = frustumCentroid - (glm::normalize(m_direction) * distFromCentroid);
+
+		GLfloat radius = 0.0f;
+		for (unsigned int i = 0; i < 8; ++i)
+		{
+			GLfloat distance = glm::length(boundedCorners[i] - frustumCentroid);
+			radius = glm::max(radius, distance);
+		}
+		radius = std::ceil(radius * 16.0f) / 16.0f;
+
+		glm::vec3 maxExtents = glm::vec3(radius, radius, radius);
+		glm::vec3 minExtents = -maxExtents;
+
+		//Position the viewmatrix looking down the center of the frustum with an arbitrary lighht direction
+		glm::vec3 tmpLightPos = frustumCentroid - glm::normalize(m_direction) * -minExtents.z;
+		outView = glm::mat4(1.0f);
 		outView = glm::lookAt(tmpLightPos, frustumCentroid, glm::vec3(0.0f, 1.0f, 0.0f));
 
-		std::vector<glm::vec3> lightSpaceCorners;
-		lightSpaceCorners.resize(8);
-		for (int i = 0, size = corners.size(); i < size; ++i)
-			lightSpaceCorners[i] = outView * glm::vec4(corners[i], 1.f);
+		glm::vec3 cascadeExtents = maxExtents - minExtents;
 
-		glm::vec3 mins = lightSpaceCorners[0];
-		glm::vec3 maxes = lightSpaceCorners[0];
-		for (auto& corner : lightSpaceCorners)
-		{
-			if (corner.x > maxes.x)
-				maxes.x = corner.x;
-			else if (corner.x < mins.x)
-				mins.x = corner.x;
-			if (corner.y > maxes.y)
-				maxes.y = corner.y;
-			else if (corner.y < mins.y)
-				mins.y = corner.y;
-			if (corner.z > maxes.z)
-				maxes.z = corner.z;
-			else if (corner.z < mins.z)
-				mins.z = corner.z;
-		}
-		float distz = maxes.z - mins.z;
-		outOrtoProj = glm::ortho(mins.x, maxes.x, mins.y, maxes.y, -maxes.z, -mins.z);
-		m_lightSpaceProjView = outOrtoProj * outView;
+		outOrtoProj = glm::ortho(minExtents.x, maxExtents.x, minExtents.y, maxExtents.y, 0.0f, cascadeExtents.z);
+		m_lightSpaceCascadesMatrices[cascadeIterator] = outOrtoProj * outView;
+
+		// The rounding matrix that ensures that shadow edges do not shimmer
+		glm::mat4 shadowMatrix = outOrtoProj * outView;
+		glm::vec4 shadowOrigin = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+		shadowOrigin = shadowMatrix * shadowOrigin;
+		float mShadowMapSize = static_cast<float>(2048);
+		shadowOrigin = shadowOrigin * mShadowMapSize / 2.0f;
+
+		glm::vec4 roundedOrigin = glm::round(shadowOrigin);
+		glm::vec4 roundOffset = roundedOrigin - shadowOrigin;
+		roundOffset = roundOffset * 2.0f / mShadowMapSize;
+		roundOffset.z = 0.0f;
+		roundOffset.w = 0.0f;
+
+		glm::mat4 shadowProj = outOrtoProj;
+		shadowProj[3] += roundOffset;
+		outOrtoProj = shadowProj;
+		m_lightSpaceCascadesMatrices[cascadeIterator] = outOrtoProj * outView;
+
+		//float distFromCentroid = splitDistance + nearClipOffset;
+		//glm::vec3 tmpLightPos = frustumCentroid - (glm::normalize(m_direction) * distFromCentroid);
+		//outView = glm::lookAt(tmpLightPos, frustumCentroid, glm::vec3(0.0f, 1.0f, 0.0f));
+		//
+		//std::vector<glm::vec3> lightSpaceCorners;
+		//lightSpaceCorners.resize(8);
+		//for (int i = 0, size = boundedCorners.size(); i < size; ++i)
+		//	lightSpaceCorners[i] = outView * glm::vec4(boundedCorners[i], 1.f);
+		//
+		//glm::vec3 mins = lightSpaceCorners[0];
+		//glm::vec3 maxes = lightSpaceCorners[0];
+		//for (auto& corner : lightSpaceCorners)
+		//{
+		//	if (corner.x > maxes.x)
+		//		maxes.x = corner.x;
+		//	else if (corner.x < mins.x)
+		//		mins.x = corner.x;
+		//	if (corner.y > maxes.y)
+		//		maxes.y = corner.y;
+		//	else if (corner.y < mins.y)
+		//		mins.y = corner.y;
+		//	if (corner.z > maxes.z)
+		//		maxes.z = corner.z;
+		//	else if (corner.z < mins.z)
+		//		mins.z = corner.z;
+		//}
+		//float distz = maxes.z - mins.z;
+		//outOrtoProj = glm::ortho(mins.x, maxes.x, mins.y, maxes.y, -maxes.z, -mins.z);
+		//m_lightSpaceCascadesMatrices[cascadeIterator] = outOrtoProj * outView;
 	}
 }
 
-const glm::mat4x4& DirectionalLightComponent::GetLightSpaceProjViewMatrix() const
+void DirectionalLightComponent::GetLightSpaceCascadesProjViewMatrix(glm::mat4x4 matrices[3]) const
 {
-	return m_lightSpaceProjView;
+	matrices[0] = m_lightSpaceCascadesMatrices[0];
+	matrices[1] = m_lightSpaceCascadesMatrices[1];
+	matrices[2] = m_lightSpaceCascadesMatrices[2];
 }
 
 namespace_end
