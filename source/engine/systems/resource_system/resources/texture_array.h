@@ -16,26 +16,37 @@
 // 3. The above copyright notice and this permission notice shall be included in
 //	  all copies or substantial portions of the Software.
 
-#include "resource_system.h"
+#ifndef __TEXTURE_ARRAY_H__
+#define __TEXTURE_ARRAY_H__
 
-#include "resources/resource.h"
-#include "resources/mesh.h"
-#include "resources/program.h"
-#include "resources/texture.h"
-#include "resources/texture_array.h"
-#include "resources/cubemap.h"
-#include "resources/framebuffer_object.h"
+#include "resource.h"
 
 namespace_begin
 
-void ResourceSystem::Initialize(Config& config)
+class TextureArray : public Resource
 {
-	m_resources.reserve(50);
-}
+	NON_COPYABLE_CLASS(TextureArray);
 
-void ResourceSystem::Shutdown()
-{
-	// TODO: assert if resources still load on vram
-}
+public:
+	TextureArray();
+	~TextureArray();
+
+	void Create();
+	void Free();
+	void Bind(int textureIndex) const;
+	void DefineParameter(uint32 parameter, uint32 value) const;
+	void DefineBuffer(const glm::vec2& size, uint32 level, uint32 numberOfTextures, uint32 internalFormat, uint32 format, uint32 dataType, const void* data);
+	void DefineSubBuffer(const glm::vec2& size, const glm::vec3& offsets, uint32 level, uint32 numberOfTextures, uint32 format, uint32 dataType, const void* data);
+	void GenerateMipMaps() const;
+
+	uint32 GetID() const;
+	const glm::vec2& GetCurrentBufferSize() const;
+
+private:
+	uint32 m_ID;
+	glm::vec2 m_currentBufferSize;
+};
 
 namespace_end
+
+#endif

@@ -25,6 +25,7 @@ namespace_begin
 
 class RenderBuffer;
 class Texture;
+class TextureArray;
 class Cubemap;
 
 class FrameBufferObject : public Resource
@@ -44,6 +45,7 @@ public:
 
 	void AttachTarget(const RenderBuffer* target, uint32 type) const;
 	void AttachTarget(const Texture* target, uint32 type, uint32 level) const;
+	void AttachTarget(const TextureArray* target, uint32 type, uint32 level, uint32 layer) const;
 	void AttachTarget(const Cubemap* target, uint32 type, uint32 level) const;
 	void AttachTarget(const Cubemap* target, uint32 type, uint32 face, uint32 level) const;
 

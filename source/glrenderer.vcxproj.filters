@@ -153,6 +153,9 @@
     <ClCompile Include="engine\components\automovement_component.cpp">
       <Filter>engine\components</Filter>
     </ClCompile>
+    <ClCompile Include="engine\systems\resource_system\resources\texture_array.cpp">
+      <Filter>engine\systems\resource_system\resources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\contrib\assimp\include\aabb.h">
@@ -1985,6 +1988,9 @@
     </ClInclude>
     <ClInclude Include="engine\components\automovement_component.h">
       <Filter>engine\components</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\systems\resource_system\resources\texture_array.h">
+      <Filter>engine\systems\resource_system\resources</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

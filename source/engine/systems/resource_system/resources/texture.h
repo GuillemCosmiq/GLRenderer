@@ -36,10 +36,12 @@ public:
 	void Bind(int textureIndex) const;
 	void DefineParameter(uint32 parameter, uint32 value) const;
 	void DefineBuffer(const glm::vec2& size, uint32 level, uint32 internalFormat, uint32 format, uint32 dataType, const void* data);
+	void DefineBuffer3D(const glm::vec2& size, uint32 level, uint32 numberOfTextures, uint32 internalFormat, uint32 format, uint32 dataType, const void* data);
+	void DefineSubBuffer3D(const glm::vec2& size, const glm::vec3& offsets, uint32 level, uint32 numberOfTextures, uint32 format, uint32 dataType, const void* data);
 	void GenerateMipMaps() const;
 
 	uint32 GetID() const;
-	const glm::vec2& GetCurrentBufferSize();
+	const glm::vec2& GetCurrentBufferSize() const;
 
 private:
 	uint32 m_ID;

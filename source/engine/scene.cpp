@@ -113,9 +113,9 @@ void Scene::Initialize(Config& config, ResourceSystem& resSystem)
 		shadowMaps[i]->DefineParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		shadowMaps[i]->DefineParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		shadowMaps[i]->DefineParameter(GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-		shadowMaps[i]->DefineParameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		shadowMaps[i]->DefineParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		shadowMaps[i]->DefineBuffer(glm::vec2(2048, 2048), 0, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+		shadowMaps[i]->DefineParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		shadowMaps[i]->DefineParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		shadowMaps[i]->DefineBuffer(glm::vec2(1024, 1024), 0, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 	}
 	lightCmp2->SetShadowCasting(true);
 	lightCmp2->SetShadowMap(shadowMaps);

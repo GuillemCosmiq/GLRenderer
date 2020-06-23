@@ -25,7 +25,9 @@ struct Light
 	vec3 color;
 	int castShadows;
 	mat4 lightSpaceMatrix[3];
-	sampler2D depth[3];
+	sampler2D depth1;
+	sampler2D depth2;
+	sampler2D depth3;
 };
 uniform Light light;
 
@@ -94,7 +96,7 @@ void main()
 	int cascadeIndex = 0;
 	for (int i = 0; i < 3 - 1; ++i)
 	{
-		if ((linearizeDepth(0.1, 100, depth)) >= cascadeSplits[i])
+		if (linearizeDepth(0.1, 100, depth) >= cascadeSplits[i])
 			cascadeIndex = i + 1;
 	}
 
@@ -104,7 +106,15 @@ void main()
 	vec4 fragPosLightSpace = light.lightSpaceMatrix[cascadeIndex] * vec4(worldPos, 1.0);
 	vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
 	projCoords = projCoords * 0.5 + 0.5;
-	float closestDepth = texture(light.depth[cascadeIndex], projCoords.xy).r;
+	float closestDepth;
+	if (cascadeIndex == 0)
+		closestDepth = texture(light.depth1, projCoords.xy).r;
+		
+	if (cascadeIndex == 1)
+		closestDepth = texture(light.depth2, projCoords.xy).r;
+		
+	if (cascadeIndex == 2)
+		closestDepth = texture(light.depth3, projCoords.xy).r;
 	float currentDepth = projCoords.z;  
 	float bias = max(0.05 * (1.0 - normalize(dot(N, -light.dir))), 0.005);
 
@@ -116,11 +126,11 @@ void main()
 
 	vec3 rgbCascade = vec3(0.0, 0.0, 0.0);
 	if (cascadeIndex == 0)
-	rgbCascade.r = 1.0;
+	rgbCascade.r = 0.3;
 	else if (cascadeIndex == 1)
-	rgbCascade.g = 1.0;	
+	rgbCascade.g = 0.3;	
 	else if (cascadeIndex == 2)
-	rgbCascade.b = 1.0;
+	rgbCascade.b = 0.3;
 	//rgbCascade = vec3(0.0, 0.0, 0.0);
 	HDRsample.rgb += texture(cumHDRsample, screenUVs).rgb + ((kD * albedo / PI + specular) * radiance * NdotL) * (1.0 - shadow) + rgbCascade;
 }

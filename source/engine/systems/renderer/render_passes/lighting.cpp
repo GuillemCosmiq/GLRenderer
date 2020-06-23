@@ -28,6 +28,7 @@
 #include "../../resource_system/resources/program.h"
 #include "../../resource_system/resources/mesh.h"
 #include "../../resource_system/resources/texture.h"
+#include "../../resource_system/resources/texture_array.h"
 #include "../../resource_system/resources/cubemap.h"
 
 #include "../../../entity.h"
@@ -70,9 +71,9 @@ Lighting::Lighting(ResourceSystem& resSystem, const Renderer& renderer)
 	m_dirLightProgram->SetUniformTexture("gBuffer.material", 2);
 	m_dirLightProgram->SetUniformTexture("gBuffer.depth", 3);
 	m_dirLightProgram->SetUniformTexture("cumHDRsample", 4);
-	m_dirLightProgram->SetUniformTexture("light.depth[0]", 5);
-	m_dirLightProgram->SetUniformTexture("light.depth[1]", 6);
-	m_dirLightProgram->SetUniformTexture("light.depth[2]", 7);
+	m_dirLightProgram->SetUniformTexture("light.depth1", 5);
+	m_dirLightProgram->SetUniformTexture("light.depth2", 6);
+	m_dirLightProgram->SetUniformTexture("light.depth3", 7);
 
 	m_pointLightProgram->Bind();
 	m_pointLightProgram->SetUniformTexture("gBuffer.albedo", 0);
@@ -168,11 +169,12 @@ void Lighting::Render(const Renderer& renderer, const LightingSource& source)
 		if (light->IsCastingShadows())
 		{
 			Texture* shadowMaps[3];
-			light->GetShadowMaps(shadowMaps);
+			light->GetShadowMapArray(shadowMaps);
 			shadowMaps[0]->Bind(5);
 			shadowMaps[1]->Bind(6);
 			shadowMaps[2]->Bind(7);
 		}
+
 
 		renderer.quad->BindAndDraw();
 		m_lightAccumulationPP.SwapBuffers(0);

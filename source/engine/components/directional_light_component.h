@@ -24,6 +24,7 @@
 namespace_begin
 
 class Texture;
+class TextureArray;
 
 class DirectionalLightComponent : public BaseComponent
 {
@@ -41,7 +42,8 @@ public:
 	const glm::vec3& GetDirection() const;
 	const glm::vec3& GetColor() const;
 	bool IsCastingShadows() const;
-	void GetShadowMaps(Texture* shadowMaps[3]) const;
+	const TextureArray* GetShadowMap() const;
+	void GetShadowMapArray(Texture* shadowMaps[3]) const;
 
 	void ComputeOrtoProjViewContainingOBB(glm::mat4& outOrtoProj, glm::mat4& outView, const std::vector<glm::vec3>& corners, float nearclip, float nearClipOffset, float farclip);
 	void GetLightSpaceCascadesProjViewMatrix(glm::mat4x4 matrices[3]) const;
@@ -50,7 +52,7 @@ private:
 	glm::vec3 m_direction;
 	glm::vec3 m_color;
 	bool m_castShadows;
-	Texture* m_shadowMaps[3];
+	Texture* m_shadowMap[3];
 	glm::mat4x4 m_lightSpaceCascadesMatrices[3];
 };
 

@@ -1074,6 +1074,7 @@
     <ClInclude Include="engine\systems\renderer\shaders_storage.h" />
     <ClInclude Include="engine\systems\resource_system\resources\framebuffer_object.h" />
     <ClInclude Include="engine\systems\resource_system\resources\render_buffer.h" />
+    <ClInclude Include="engine\systems\resource_system\resources\texture_array.h" />
     <ClInclude Include="engine\systems\resource_system\resource_system.h" />
     <ClInclude Include="engine\systems\resource_system\resources\cubemap.h" />
     <ClInclude Include="engine\systems\resource_system\resources\mesh.h" />
@@ -1137,6 +1138,7 @@
     <ClCompile Include="engine\systems\renderer\shaders_storage.cpp" />
     <ClCompile Include="engine\systems\resource_system\resources\framebuffer_object.cpp" />
     <ClCompile Include="engine\systems\resource_system\resources\render_buffer.cpp" />
+    <ClCompile Include="engine\systems\resource_system\resources\texture_array.cpp" />
     <ClCompile Include="engine\systems\resource_system\resource_system.cpp" />
     <ClCompile Include="engine\systems\resource_system\resources\cubemap.cpp" />
     <ClCompile Include="engine\systems\resource_system\resources\mesh.cpp" />

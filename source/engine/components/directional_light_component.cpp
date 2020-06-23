@@ -21,7 +21,7 @@
 #include "../engine.h"
 #include "../entity.h"
 #include "../systems/renderer/renderer.h"
-#include "../systems/resource_system/resources/texture.h"
+#include "../systems/resource_system/resources/texture_array.h"
 
 namespace_begin
 
@@ -60,9 +60,9 @@ void DirectionalLightComponent::SetShadowCasting(bool enable)
 
 void DirectionalLightComponent::SetShadowMap(Texture* shadowMaps[3])
 {
-	m_shadowMaps[0] = shadowMaps[0];
-	m_shadowMaps[1] = shadowMaps[1];
-	m_shadowMaps[2] = shadowMaps[2];
+	m_shadowMap[0] = shadowMaps[0];
+	m_shadowMap[1] = shadowMaps[1];
+	m_shadowMap[2] = shadowMaps[2];
 }
 
 const glm::vec3& DirectionalLightComponent::GetDirection() const
@@ -80,18 +80,22 @@ bool DirectionalLightComponent::IsCastingShadows() const
 	return m_castShadows;
 }
 
-void DirectionalLightComponent::GetShadowMaps(Texture* shadowMaps[3]) const
+const TextureArray* DirectionalLightComponent::GetShadowMap() const
 {
-	shadowMaps[0] = m_shadowMaps[0];
-	shadowMaps[1] = m_shadowMaps[1];
-	shadowMaps[2] = m_shadowMaps[2];
+	return nullptr;
+}
+
+void DirectionalLightComponent::GetShadowMapArray(Texture* shadowMaps[3]) const
+{
+	shadowMaps[0] = m_shadowMap[0];
+	shadowMaps[1] = m_shadowMap[1];
+	shadowMaps[2] = m_shadowMap[2];
 }
 
 void DirectionalLightComponent::ComputeOrtoProjViewContainingOBB(glm::mat4& outOrtoProj, glm::mat4& outView, const std::vector<glm::vec3>& corners, float nearClip, float nearClipOffset, float farClip)
 {
 	#define NUM_CASCADES 3
 	float cascadeSplits[NUM_CASCADES] = { 0.4f, 0.8f, 1.f };
-
 
 	for (int cascadeIterator = 0; cascadeIterator < NUM_CASCADES; ++cascadeIterator)
 	{
@@ -101,7 +105,7 @@ void DirectionalLightComponent::ComputeOrtoProjViewContainingOBB(glm::mat4& outO
 		std::vector<glm::vec3> boundedCorners = corners;
 		// https://stackoverflow.com/questions/55427438/cascaded-shadow-map-unexpected-behavior
 		// here the frustum corners are bounded to the current near far cascade distance.
-		for (unsigned int i = 0; i < 4; ++i)
+		for (int i = 0; i < 4; ++i)
 		{
 			glm::vec3 dist = boundedCorners[i + 4] - boundedCorners[i];
 			boundedCorners[i + 4] = boundedCorners[i] + (dist * splitDistance);
@@ -128,7 +132,6 @@ void DirectionalLightComponent::ComputeOrtoProjViewContainingOBB(glm::mat4& outO
 
 		//Position the viewmatrix looking down the center of the frustum with an arbitrary lighht direction
 		glm::vec3 tmpLightPos = frustumCentroid - glm::normalize(m_direction) * -minExtents.z;
-		outView = glm::mat4(1.0f);
 		outView = glm::lookAt(tmpLightPos, frustumCentroid, glm::vec3(0.0f, 1.0f, 0.0f));
 
 		glm::vec3 cascadeExtents = maxExtents - minExtents;
@@ -140,7 +143,7 @@ void DirectionalLightComponent::ComputeOrtoProjViewContainingOBB(glm::mat4& outO
 		glm::mat4 shadowMatrix = outOrtoProj * outView;
 		glm::vec4 shadowOrigin = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 		shadowOrigin = shadowMatrix * shadowOrigin;
-		float mShadowMapSize = static_cast<float>(2048);
+		float mShadowMapSize = static_cast<float>(1024);
 		shadowOrigin = shadowOrigin * mShadowMapSize / 2.0f;
 
 		glm::vec4 roundedOrigin = glm::round(shadowOrigin);

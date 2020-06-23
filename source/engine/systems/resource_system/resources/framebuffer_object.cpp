@@ -20,6 +20,7 @@
 
 #include "render_buffer.h"
 #include "texture.h"
+#include "texture_array.h"
 #include "cubemap.h"
 
 namespace_begin
@@ -74,6 +75,11 @@ void FrameBufferObject::AttachTarget(const Texture* target, uint32 type, uint32 
 	glFramebufferTexture2D(GL_FRAMEBUFFER, type, GL_TEXTURE_2D, target->GetID(), level);
 	GLenum result = 0;
 	result = glGetError();
+}
+
+void FrameBufferObject::AttachTarget(const TextureArray* target, uint32 type, uint32 level, uint32 layer) const
+{
+	glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, target->GetID(), level, layer);
 }
 
 void FrameBufferObject::AttachTarget(const Cubemap* target, uint32 type, uint32 level) const

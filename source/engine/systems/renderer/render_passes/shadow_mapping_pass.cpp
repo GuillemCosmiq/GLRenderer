@@ -26,6 +26,7 @@
 #include "../../resource_system/resources/program.h"
 #include "../../resource_system/resources/mesh.h"
 #include "../../resource_system/resources/texture.h"
+#include "../../resource_system/resources/texture_array.h"
 #include "../../resource_system/resources/cubemap.h"
 
 #include "../../../entity.h"
@@ -78,8 +79,9 @@ void ShadowMappingPass::Render(const Renderer& renderer, const ShadowMappingPass
 	{
 		if (!light->IsCastingShadows())
 			continue;
+		const TextureArray* shadowMap = light->GetShadowMap();
 		Texture* shadowMaps[3];
-		light->GetShadowMaps(shadowMaps);
+		light->GetShadowMapArray(shadowMaps);
 		const glm::vec2& shadowMapSize = shadowMaps[0]->GetCurrentBufferSize();
 		glViewport(0, 0, shadowMapSize.x, shadowMapSize.y);
 
@@ -99,6 +101,17 @@ void ShadowMappingPass::Render(const Renderer& renderer, const ShadowMappingPass
 		{
 			m_fbo->AttachTarget(shadowMaps[i], GL_DEPTH_ATTACHMENT, 0);
 			glClear(GL_DEPTH_BUFFER_BIT);
+			//GLint status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+			//if (status != GL_FRAMEBUFFER_COMPLETE)
+			//{
+			//	int a = 0;
+			//	a++;
+			//	//char* infoLog = (char*)malloc(100);
+			//	//glGetProgramInfoLog(programObject, status, NULL, infoLog);
+			//	//errormsg = infoLog;
+			//	//free(infoLog);
+			//}
+			//glClear(GL_DEPTH_BUFFER_BIT);
 			for (auto& drawable : source.Drawables)
 			{
 				glm::mat4x4 lightSpaceModelMatrix = currentCascadelightProjView[i] * drawable->GetOwner()->GetComponent<TransformComponent>()->GetMatrix();
@@ -107,7 +120,6 @@ void ShadowMappingPass::Render(const Renderer& renderer, const ShadowMappingPass
 			}
 		}
 	}
-
 	glCullFace(GL_BACK);
 
 	m_pointShadowsProgram->Bind();

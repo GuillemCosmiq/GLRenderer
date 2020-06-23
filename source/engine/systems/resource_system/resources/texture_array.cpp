@@ -16,28 +16,28 @@
 // 3. The above copyright notice and this permission notice shall be included in
 //	  all copies or substantial portions of the Software.
 
-#include "texture.h"
+#include "texture_array.h"
 
 namespace_begin
 
-Texture::Texture()
+TextureArray::TextureArray()
 	: m_ID(0)
 	, m_currentBufferSize(0, 0)
 {
 }
 
-Texture::~Texture()
+TextureArray::~TextureArray()
 {
 	assert(m_ID == 0);
 }
 
-void Texture::Create()
+void TextureArray::Create()
 {
 	assert(m_ID == 0);
 	glGenTextures(1, &m_ID);
 }
 
-void Texture::Free()
+void TextureArray::Free()
 {
 	assert(m_ID != 0);
 	glDeleteTextures(1, &m_ID);
@@ -45,48 +45,42 @@ void Texture::Free()
 	m_currentBufferSize = { 0,0 };
 }
 
-void Texture::Bind(int textureIndex) const
+void TextureArray::Bind(int textureIndex) const
 {
 	assert(m_ID != 0);
 	glActiveTexture(GL_TEXTURE0 + textureIndex);
-	glBindTexture(GL_TEXTURE_2D, m_ID);
+	glBindTexture(GL_TEXTURE_2D_ARRAY, m_ID);
 }
 
-void Texture::DefineParameter(uint32 parameter, uint32 value) const
+void TextureArray::DefineParameter(uint32 parameter, uint32 value) const
 {
 	assert(m_ID != 0);
-	glTexParameteri(GL_TEXTURE_2D, parameter, value);
+	glTexParameteri(GL_TEXTURE_2D_ARRAY, parameter, value);
 }
 
-void Texture::DefineBuffer(const glm::vec2& size, uint32 level, uint32 internalFormat, uint32 format, uint32 dataType, const void* data)
+void TextureArray::DefineBuffer(const glm::vec2& size, uint32 level, uint32 numberOfTextures, uint32 internalFormat, uint32 format, uint32 dataType, const void* data)
 {
-	assert(m_ID != 0);
-	m_currentBufferSize = size;
-	glTexImage2D(GL_TEXTURE_2D, level, internalFormat, size.x, size.y, 0, format, dataType, data);
+	glTexImage3D(GL_TEXTURE_2D_ARRAY, level, internalFormat, size.x, size.y, numberOfTextures, 0, format, dataType, data);
+	//glTexStorage3D(GL_TEXTURE_2D_ARRAY, level, internalFormat, size.x, size.y, numberOfTextures);
 }
 
-void Texture::DefineBuffer3D(const glm::vec2& size, uint32 level, uint32 numberOfTextures, uint32 internalFormat, uint32 format, uint32 dataType, const void* data)
-{
-	glTexImage3D(GL_TEXTURE_2D, level, internalFormat, size.x, size.y, numberOfTextures, 0, format, dataType, data);
-}
-
-void Texture::DefineSubBuffer3D(const glm::vec2& size, const glm::vec3& offsets, uint32 level, uint32 numberOfTextures, uint32 format, uint32 dataType, const void* data)
+void TextureArray::DefineSubBuffer(const glm::vec2& size, const glm::vec3& offsets, uint32 level, uint32 numberOfTextures, uint32 format, uint32 dataType, const void* data)
 {
 	glTexSubImage3D(GL_TEXTURE_2D_ARRAY, level, offsets.x, offsets.y, offsets.z, size.x, size.y, 1, format, dataType, data);
 }
 
-void Texture::GenerateMipMaps() const
+void TextureArray::GenerateMipMaps() const
 {
 	assert(m_ID != 0);
-	glGenerateMipmap(GL_TEXTURE_2D);
+	glGenerateMipmap(GL_TEXTURE_2D_ARRAY);
 }
 
-uint32 Texture::GetID() const
+uint32 TextureArray::GetID() const
 {
 	return m_ID;
 }
 
-const glm::vec2& Texture::GetCurrentBufferSize() const
+const glm::vec2& TextureArray::GetCurrentBufferSize() const
 {
 	return m_currentBufferSize;
 }
