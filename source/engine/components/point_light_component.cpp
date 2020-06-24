@@ -26,6 +26,7 @@ namespace_begin
 
 PointLightComponent::PointLightComponent(std::shared_ptr<Entity> owner)
 	: BaseComponent(owner)
+	, m_enabled(false)
 	, m_radius(1.f)
 	, m_color(1.f, 1.f, 1.f)
 	, m_castShadows(true)
@@ -40,6 +41,11 @@ void PointLightComponent::AddedToScene(std::shared_ptr<Scene> scene)
 void PointLightComponent::RemovedFromScene(std::shared_ptr<Scene> scene)
 {
 	Engine::Get()->renderer->RemoveLight(std::static_pointer_cast<PointLightComponent>(shared_from_this()));
+}
+
+void PointLightComponent::Enable(bool value)
+{
+	m_enabled = value;
 }
 
 void PointLightComponent::SetRadius(float radius)
@@ -60,6 +66,31 @@ void PointLightComponent::SetShadowMap(Cubemap* shadowMap)
 void PointLightComponent::SetShadowCasting(bool enable)
 {
 	m_castShadows = enable;
+}
+
+bool PointLightComponent::IsEnabled() const
+{
+	return m_enabled;
+}
+
+float PointLightComponent::GetRadius() const
+{
+	return m_radius;
+}
+
+const glm::vec3& PointLightComponent::GetColor() const
+{
+	return m_color;
+}
+
+Cubemap* PointLightComponent::GetShadowMap() const
+{
+	return m_shadowMap;
+}
+
+bool PointLightComponent::IsCastingShadows() const
+{
+	return m_castShadows;
 }
 
 void PointLightComponent::GetLightSpaceTransformationMatrices(std::vector<glm::mat4>& matrices, const glm::vec3& position)

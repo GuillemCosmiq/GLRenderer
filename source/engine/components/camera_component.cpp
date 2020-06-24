@@ -142,6 +142,7 @@ const glm::mat4x4& CameraComponent::GetViewMatrix()
 	if (m_viewController.dirty)
 	{
 		m_viewController.view = glm::lookAt(m_viewController.pos, m_viewController.pos + m_viewController.front, m_viewController.up);
+		cameraDirtyEmitter.Emit(this);
 		m_viewController.dirty = false;
 	}
 	return m_viewController.view;
@@ -158,6 +159,7 @@ const glm::mat4x4& CameraComponent::GetProjection()
 	if (m_frustum.dirty)
 	{
 		m_frustum.perspective = glm::perspective((float)glm::radians(m_frustum.fieldOfView), m_frustum.aspectRatio, m_frustum.nearPlane, m_frustum.farPlane);
+		cameraDirtyEmitter.Emit(this);
 		m_frustum.dirty = false;
 	}
 	return m_frustum.perspective;
@@ -178,7 +180,7 @@ void CameraComponent::GetWorldSpaceFrustumCorners(std::vector<glm::vec3>& corner
 	homogeneousCorners[6] = glm::vec4(1.0f, -1.0f, 1.0f, 1.0f);
 	homogeneousCorners[7] = glm::vec4(-1.0f, -1.0f, 1.0f, 1.0f);
 
-	glm::mat4 inverseViewProj = glm::inverse(GetProjection() * GetViewMatrix());
+	glm::mat4 inverseViewProj = glm::inverse(m_frustum.perspective * m_viewController.view);
 	for (int i = 0; i < 8; ++i)
 	{
 		homogeneousCorners[i] = inverseViewProj * homogeneousCorners[i];

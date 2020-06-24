@@ -35,25 +35,36 @@ public:
 	void AddedToScene(std::shared_ptr<Scene> scene) override;
 	void RemovedFromScene(std::shared_ptr<Scene> scene) override;
 
+	void Enable(bool value);
 	void SetDirection(const glm::vec3& direction);
 	void SetColor(const glm::vec3& color);
 	void SetShadowCasting(bool enable);
 	void SetShadowMap(Texture* shadowMap[3]);
+	void SetFrustumSplits(float frustumSplits[3]);
+	bool IsEnabled() const;
 	const glm::vec3& GetDirection() const;
 	const glm::vec3& GetColor() const;
 	bool IsCastingShadows() const;
 	const TextureArray* GetShadowMap() const;
+	void GetFrustumSplits(float frustumSplits[3]) const;
 	void GetShadowMapArray(Texture* shadowMaps[3]) const;
 
-	void ComputeOrtoProjViewContainingOBB(glm::mat4& outOrtoProj, glm::mat4& outView, const std::vector<glm::vec3>& corners, float nearclip, float nearClipOffset, float farclip);
+	void ComputeOrtoProjViewContainingOBB(const std::vector<glm::vec3>& corners, float nearclip, float nearClipOffset, float farclip);
 	void GetLightSpaceCascadesProjViewMatrix(glm::mat4x4 matrices[3]) const;
 
 private:
+	int m_cameraEmitterID;
+	bool m_enabled;
 	glm::vec3 m_direction;
 	glm::vec3 m_color;
-	bool m_castShadows;
-	Texture* m_shadowMap[3];
-	glm::mat4x4 m_lightSpaceCascadesMatrices[3];
+
+	struct
+	{
+		bool CastShadows;
+		Texture* ShadowMaps[3];
+		glm::mat4x4 LightSpaceCascadesMatrices[3];
+		float FrustumSplits[3];
+	} m_shadowData;
 };
 
 namespace_end

@@ -34,18 +34,21 @@ public:
 	void AddedToScene(std::shared_ptr<Scene> scene) override;
 	void RemovedFromScene(std::shared_ptr<Scene> scene) override;
 
+	void Enable(bool value);
 	void SetRadius(const float radius);
 	void SetColor(const glm::vec3& color);
 	void SetShadowMap(Cubemap* shadowMap);
 	void SetShadowCasting(bool enable);
-	float GetRadius() const { return m_radius; }
-	glm::vec3 GetColor() const { return m_color; }
-	Cubemap* GetShadowMap() const { return m_shadowMap; }
-	bool IsCastingShadows() const { return m_castShadows; }
+	bool IsEnabled() const;
+	float GetRadius() const;
+	const glm::vec3& GetColor() const;
+	Cubemap* GetShadowMap() const;
+	bool IsCastingShadows() const;
 
 	void GetLightSpaceTransformationMatrices(std::vector<glm::mat4>& matrices, const glm::vec3& position);
 
 private:
+	bool m_enabled;
 	float m_radius;
 	glm::vec3 m_color;
 	Cubemap* m_shadowMap;

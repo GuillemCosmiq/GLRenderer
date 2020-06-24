@@ -77,22 +77,14 @@ void ShadowMappingPass::Render(const Renderer& renderer, const ShadowMappingPass
 	m_shadowsProgram->Bind();
 	for (std::shared_ptr<DirectionalLightComponent> light : source.DirectionalLights)
 	{
-		if (!light->IsCastingShadows())
+		if (!light->IsEnabled() || !light->IsCastingShadows())
 			continue;
+
 		const TextureArray* shadowMap = light->GetShadowMap();
 		Texture* shadowMaps[3];
 		light->GetShadowMapArray(shadowMaps);
 		const glm::vec2& shadowMapSize = shadowMaps[0]->GetCurrentBufferSize();
 		glViewport(0, 0, shadowMapSize.x, shadowMapSize.y);
-
-		float nearClipOffset = 0.f;
-		glm::mat4 lightProjection;
-		glm::mat4 lightView;
-		std::vector<glm::vec3> frustumCorners;
-		std::shared_ptr<CameraComponent> camera = renderer.GetCamera();
-		camera->GetWorldSpaceFrustumCorners(frustumCorners);
-		light->ComputeOrtoProjViewContainingOBB(lightProjection, lightView, frustumCorners, camera->GetNearPlane(), nearClipOffset, camera->GetFarPlane());
-
 
 		glm::mat4x4 currentCascadelightProjView[3];
 		light->GetLightSpaceCascadesProjViewMatrix(currentCascadelightProjView);
@@ -101,17 +93,6 @@ void ShadowMappingPass::Render(const Renderer& renderer, const ShadowMappingPass
 		{
 			m_fbo->AttachTarget(shadowMaps[i], GL_DEPTH_ATTACHMENT, 0);
 			glClear(GL_DEPTH_BUFFER_BIT);
-			//GLint status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-			//if (status != GL_FRAMEBUFFER_COMPLETE)
-			//{
-			//	int a = 0;
-			//	a++;
-			//	//char* infoLog = (char*)malloc(100);
-			//	//glGetProgramInfoLog(programObject, status, NULL, infoLog);
-			//	//errormsg = infoLog;
-			//	//free(infoLog);
-			//}
-			//glClear(GL_DEPTH_BUFFER_BIT);
 			for (auto& drawable : source.Drawables)
 			{
 				glm::mat4x4 lightSpaceModelMatrix = currentCascadelightProjView[i] * drawable->GetOwner()->GetComponent<TransformComponent>()->GetMatrix();
@@ -125,7 +106,7 @@ void ShadowMappingPass::Render(const Renderer& renderer, const ShadowMappingPass
 	m_pointShadowsProgram->Bind();
 	for (std::shared_ptr<PointLightComponent> light : source.PointLights)
 	{
-		if (!light->IsCastingShadows())
+		if (!light->IsEnabled() || !light->IsCastingShadows())
 			continue;
 
 		m_fbo->AttachTarget(light->GetShadowMap(), GL_DEPTH_ATTACHMENT, 0);
@@ -138,7 +119,7 @@ void ShadowMappingPass::Render(const Renderer& renderer, const ShadowMappingPass
 		glm::vec3 lightPos = transform->GetPosition();
 		light->GetLightSpaceTransformationMatrices(lightSpaceMatrices, lightPos);
 
-		// TODO: improve uniform matrix sending. ccan be done with a single call
+		// TODO: improve uniform matrix sending. can be done with a single call
 		m_pointShadowsProgram->SetUniformMat4("shadowMatrices[0]", false, (const float*)glm::value_ptr(lightSpaceMatrices[0]));
 		m_pointShadowsProgram->SetUniformMat4("shadowMatrices[1]", false, (const float*)glm::value_ptr(lightSpaceMatrices[1]));
 		m_pointShadowsProgram->SetUniformMat4("shadowMatrices[2]", false, (const float*)glm::value_ptr(lightSpaceMatrices[2]));

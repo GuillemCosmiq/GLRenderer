@@ -55,32 +55,31 @@ public:
 		SSAO = 1 << 5,
 		FXAA = 1 << 6,
 		ObjectBlur = 1 << 7,
-		MotionBlur = 1 << 8,
-		Vignette = 1 << 9,
+		Vignette = 1 << 8,
 	};
 	
 	uint16 filtersFlags;
 
 	struct BloomData
 	{
-		float LODIntesities[5] = { 0.1f, 0.15f, 0.2f, 0.4f, 0.6f };
+		float LODIntesities[5];
 	} bloomData;
 
 	struct ColorCorrectionData
 	{
-		float exposure = 1.f;
-		float gammaValue = 2.2f;
+		float exposure;
+		float gammaValue;
 	} colorCorrectionData;
 
 	struct SSAOData
 	{
-		float power = 10.f;
+		float power;
 	} ssaoData;
 
 	struct VignetteData
 	{
-		float radius = 0.6f;
-		float softness = 0.25f;
+		float radius;
+		float softness;
 	} vignetteData;
 
 private:

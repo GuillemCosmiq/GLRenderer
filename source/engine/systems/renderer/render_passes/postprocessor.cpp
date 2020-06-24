@@ -32,6 +32,20 @@ namespace_begin
 PostProcessor::PostProcessor(ResourceSystem& resSystem, const Renderer& renderer)
 	: filtersFlags(0xffff)
 {
+	bloomData.LODIntesities[0] = 0.1f;
+	bloomData.LODIntesities[1] = 0.15f;
+	bloomData.LODIntesities[2] = 0.2f;
+	bloomData.LODIntesities[3] = 00.4f;
+	bloomData.LODIntesities[4] = 0.6f;
+
+	colorCorrectionData.exposure = 1.f;
+	colorCorrectionData.gammaValue = 2.2f;
+
+	ssaoData.power = 10.f;
+
+	vignetteData.radius = 0.6f;
+	vignetteData.softness = 0.25f;
+
 	glm::vec2 viewport = renderer.GetViewport();
 
 	m_gaussianBlurProgram = resSystem.Create<Program>();
@@ -274,19 +288,6 @@ void PostProcessor::Render(const Renderer& renderer, PostProcessorSource& source
 		m_pingPong.SwapBuffers(0);
 		source.OutputSample = m_pingPong.GetFrontBuffer();
 	}
-
-	//if (filtersFlags & FiltersFlags::MotionBlur)
-	//{
-	//	m_cameraMotionBlurProgram->Bind();
-	//	source.OutputSample->Bind(0);
-	//	source.AlbedoSample->Bind(1);
-	//	source.Depth->Bind(2);
-	//	m_cameraMotionBlurProgram->SetUniformMat4("prevProjViewMatrix", false, (const float*)glm::value_ptr(renderer.GetPrevFrameProjViewMatrix()));
-	//	m_cameraMotionBlurProgram->SetUniformVec2("viewport", viewport.x, viewport.y);
-	//	renderer.quad->BindAndDraw();
-	//	m_pingPong.SwapBuffers(0);
-	//	source.OutputSample = m_pingPong.GetFrontBuffer();
-	//}
 
 	if (filtersFlags & FiltersFlags::Vignette)
 	{

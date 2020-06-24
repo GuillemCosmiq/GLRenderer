@@ -25,6 +25,8 @@ class Config;
 class ResourceSystem;
 class Entity;
 class Texture;
+class DirectionalLightComponent;
+class PointLightComponent;
 
 class Scene : public std::enable_shared_from_this<Scene>
 {
@@ -49,6 +51,9 @@ public:
 	const std::map<const std::string, Texture*>& GetLoadedEnvironments() const;
 	void LoadAndStoreEnvironment(ResourceSystem& resSystem, const std::string& name, const std::string& path);
 
+	std::shared_ptr<DirectionalLightComponent> GetSceneDirLight() const;
+	std::shared_ptr<PointLightComponent> GetScenePointLight() const;
+
 private:
 	std::string m_name;
 	std::vector<std::shared_ptr<Entity>> m_entities;
@@ -56,6 +61,9 @@ private:
 	std::string m_currentSwitchableObjScene;
 	std::map<const std::string, std::shared_ptr<Entity>> m_loadedSwitchableObjScenes;
 	std::map<const std::string, Texture*> m_loadedEnvironmentMaps;
+
+	std::shared_ptr<DirectionalLightComponent> m_sceneDirLight;
+	std::shared_ptr<PointLightComponent> m_scenePointLight;
 };
 
 namespace_end

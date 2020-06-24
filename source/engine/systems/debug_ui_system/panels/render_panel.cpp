@@ -26,6 +26,9 @@
 #include "../../renderer/render_passes/screen_sampler.h"
 #include "../../renderer/render_sources/screen_sampler_source.h"
 
+#include "../../../components/directional_light_component.h"
+#include "../../../components/point_light_component.h"
+
 namespace_begin
 
 RenderPanel::RenderPanel()
@@ -42,6 +45,59 @@ void RenderPanel::Update()
 {
 	if (ImGui::Begin(m_name.c_str()))
 	{
+		if (ImGui::CollapsingHeader("Lighting & shadows", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			Lighting* lightingPass = Engine::Get()->renderer->lighting.get();
+
+			if (ImGui::TreeNode("Directional Lights"))
+			{
+				std::shared_ptr<DirectionalLightComponent> sceneDirLight = Engine::Get()->scene->GetSceneDirLight();
+
+				static bool enabled = false;
+				if (ImGui::Checkbox("Active ##Directional Light", &enabled))
+					sceneDirLight->Enable(enabled);
+				static glm::vec3 color(1.f);
+				if (ImGui::DragFloat3("Color", &color[0], 0.1f, 0.f, 1.f))
+					sceneDirLight->SetColor(color);
+
+				ImGui::Separator();
+
+				ImGui::Text("Cascaded shadow mapping");
+				static bool enableCSM = true;
+				if (ImGui::Checkbox("Enable CSM shadows ##Directional Light", &enableCSM))
+					sceneDirLight->SetShadowCasting(enableCSM);
+
+				ImGui::Checkbox("Show CSM debug", &lightingPass->DebugCSM);
+				ImGui::Text("Cascades information");
+				ImGui::Text("Near plane: 0.1");
+				ImGui::Text("Far plane: 100.0");
+				static float frustumSplits[3] = { 0.4f, 0.8f, 1.f };
+				if (ImGui::DragFloat3("Cascades frustum splits", &frustumSplits[0], 0.01f, 0.f, 1.f))
+					sceneDirLight->SetFrustumSplits(frustumSplits);
+				ImGui::TreePop();
+			}
+
+			if (ImGui::TreeNode("Point Lights"))
+			{
+				std::shared_ptr<PointLightComponent> scenePointLight = Engine::Get()->scene->GetScenePointLight();
+				static bool enabled = false;
+				if (ImGui::Checkbox("Active ##Point Light", &enabled))
+					scenePointLight->Enable(enabled);
+				static glm::vec3 color(1.f);
+				if (ImGui::DragFloat3("Color", &color[0], 0.1f, 0.f, 1.f))
+					scenePointLight->SetColor(color);
+				static float radius = 50.f;
+				if (ImGui::DragFloat("Radius", &radius, 1.f, 0.f, 100.f))
+					scenePointLight->SetRadius(radius);
+
+				ImGui::Separator();
+
+				static bool enableOSM = true;
+				if (ImGui::Checkbox("Enable Omnidirectional shadow mapping ##Point Light", &enableOSM))
+					scenePointLight->SetShadowCasting(enableOSM);
+				ImGui::TreePop();
+			}
+		}
 		if (ImGui::CollapsingHeader("PostProcessor", ImGuiTreeNodeFlags_DefaultOpen))
 		{
 			PostProcessor* postProcessor = Engine::Get()->renderer->postProcessor.get();
@@ -82,7 +138,6 @@ void RenderPanel::Update()
 			if (ImGui::TreeNode("Motion Blur"))
 			{
 				ImGui::CheckboxFlags("Per Object Motion Blur", (unsigned int*)& postProcessor->filtersFlags, PostProcessor::FiltersFlags::ObjectBlur);
-				ImGui::CheckboxFlags("Camera Motion Blur", (unsigned int*)& postProcessor->filtersFlags, PostProcessor::FiltersFlags::MotionBlur);
 				ImGui::TreePop();
 			}
 			if(ImGui::TreeNode("FXAA"))
@@ -102,7 +157,7 @@ void RenderPanel::Update()
 		if (ImGui::CollapsingHeader("Renderer Output", ImGuiTreeNodeFlags_DefaultOpen))
 		{
 			ScreenSampler* screenSampler = Engine::Get()->renderer->screenSampler.get();
-			bool currentActive[] = { false , false, false };
+			bool currentActive[] = { false , false, false, false };
 			currentActive[screenSampler->outputSelection] = true;
 			if (ImGui::RadioButton("Final", currentActive[(int)ScreenSamplerSource::OutputSample::scene]))
 				screenSampler->outputSelection = (int)ScreenSamplerSource::OutputSample::scene;

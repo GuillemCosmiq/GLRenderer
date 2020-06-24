@@ -43,6 +43,9 @@ public:
 	inline const Texture* GetSceneHDR() const { return m_lightAccumulationPP.GetBackBuffer(); }
 	inline const Texture* GetBloomHDR() const { return m_bloomTextureHDR; }
 
+public:
+	bool DebugCSM; // Debug first CSM light
+
 private:
 	PingPong m_lightAccumulationPP;
 	Texture* m_bloomTextureHDR;

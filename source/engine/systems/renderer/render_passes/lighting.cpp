@@ -40,6 +40,7 @@
 namespace_begin
 
 Lighting::Lighting(ResourceSystem& resSystem, const Renderer& renderer)
+	: DebugCSM(false)
 {
 	glm::vec2 viewport = renderer.GetViewport();
 
@@ -71,9 +72,9 @@ Lighting::Lighting(ResourceSystem& resSystem, const Renderer& renderer)
 	m_dirLightProgram->SetUniformTexture("gBuffer.material", 2);
 	m_dirLightProgram->SetUniformTexture("gBuffer.depth", 3);
 	m_dirLightProgram->SetUniformTexture("cumHDRsample", 4);
-	m_dirLightProgram->SetUniformTexture("light.depth1", 5);
-	m_dirLightProgram->SetUniformTexture("light.depth2", 6);
-	m_dirLightProgram->SetUniformTexture("light.depth3", 7);
+	m_dirLightProgram->SetUniformTexture("light.nearDepth", 5);
+	m_dirLightProgram->SetUniformTexture("light.midDepth", 6);
+	m_dirLightProgram->SetUniformTexture("light.farDepth", 7);
 
 	m_pointLightProgram->Bind();
 	m_pointLightProgram->SetUniformTexture("gBuffer.albedo", 0);
@@ -153,6 +154,9 @@ void Lighting::Render(const Renderer& renderer, const LightingSource& source)
 	m_dirLightProgram->SetUniformVec2("viewport", viewport.x, viewport.y);
 	for (std::shared_ptr<DirectionalLightComponent> light : source.DirectionalLights)
 	{
+		if (!light->IsEnabled())
+			continue;
+
 		m_lightAccumulationPP.GetFrontBuffer()->Bind(4);
 
 		glm::vec3 dir, color;
@@ -161,13 +165,24 @@ void Lighting::Render(const Renderer& renderer, const LightingSource& source)
 		m_dirLightProgram->SetUniformVec3("light.dir", dir.x, dir.y, dir.z);
 		m_dirLightProgram->SetUniformVec3("light.color", color.r, color.g, color.b);
 		m_dirLightProgram->SetUniformInt("light.castShadows", light->IsCastingShadows());
-		glm::mat4x4 lightMatrices[3];
-		light->GetLightSpaceCascadesProjViewMatrix(lightMatrices);
-		m_dirLightProgram->SetUniformMat4("light.lightSpaceMatrix[0]", false, (const float*)glm::value_ptr(lightMatrices[0]));
-		m_dirLightProgram->SetUniformMat4("light.lightSpaceMatrix[1]", false, (const float*)glm::value_ptr(lightMatrices[1]));
-		m_dirLightProgram->SetUniformMat4("light.lightSpaceMatrix[2]", false, (const float*)glm::value_ptr(lightMatrices[2]));
+
 		if (light->IsCastingShadows())
 		{
+			glm::mat4x4 lightMatrices[3];
+			light->GetLightSpaceCascadesProjViewMatrix(lightMatrices);
+			m_dirLightProgram->SetUniformMat4("light.lightSpaceMatrix[0]", false, (const float*)glm::value_ptr(lightMatrices[0]));
+			m_dirLightProgram->SetUniformMat4("light.lightSpaceMatrix[1]", false, (const float*)glm::value_ptr(lightMatrices[1]));
+			m_dirLightProgram->SetUniformMat4("light.lightSpaceMatrix[2]", false, (const float*)glm::value_ptr(lightMatrices[2]));
+
+			float frustumSplits[3];
+			light->GetFrustumSplits(frustumSplits);
+
+			m_dirLightProgram->SetUniformFloat("light.frustumSplits[0]", frustumSplits[0]);
+			m_dirLightProgram->SetUniformFloat("light.frustumSplits[1]", frustumSplits[1]);
+			m_dirLightProgram->SetUniformFloat("light.frustumSplits[2]", frustumSplits[2]);
+
+			m_dirLightProgram->SetUniformInt("light.debugCSM", DebugCSM);
+
 			Texture* shadowMaps[3];
 			light->GetShadowMapArray(shadowMaps);
 			shadowMaps[0]->Bind(5);
@@ -190,6 +205,9 @@ void Lighting::Render(const Renderer& renderer, const LightingSource& source)
 	m_pointLightProgram->SetUniformVec2("viewport", viewport.x, viewport.y);
 	for (std::shared_ptr<PointLightComponent> light : source.PointLights)
 	{
+		if (!light->IsEnabled())
+			continue;
+
 		m_lightAccumulationPP.GetFrontBuffer()->Bind(4);
 		std::shared_ptr<TransformComponent> transform = light->GetOwner()->GetComponent<TransformComponent>();
 		glm::vec3 lightPos = transform->GetPosition();

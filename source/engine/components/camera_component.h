@@ -22,6 +22,7 @@
 #include "base_component.h"
 
 #include "../systems/input.h"
+#include "../../utilities/emitter.h"
 
 namespace_begin
 
@@ -53,6 +54,9 @@ public:
 private:
 	void ProcessKeyboard(const SDL_Keycode key, const Input::KeyState state);
 	void ProcessMouse(double deltaX, double deltaY);
+
+public:
+	Emitter<CameraComponent*> cameraDirtyEmitter;
 
 private:
 	int m_kbEmitterID;

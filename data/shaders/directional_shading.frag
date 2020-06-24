@@ -25,39 +25,58 @@ struct Light
 	vec3 color;
 	int castShadows;
 	mat4 lightSpaceMatrix[3];
-	sampler2D depth1;
-	sampler2D depth2;
-	sampler2D depth3;
+	sampler2D nearDepth;
+	sampler2D midDepth;
+	sampler2D farDepth;
+	int debugCSM;
+	float frustumSplits[3];
 };
 uniform Light light;
+const float csmDebugIntesity = 0.3;
 
-float ShadowCalculation(vec4 fragPosLightSpace, Light lightArg, vec3 normal)
-{
-	//vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
-	//projCoords = projCoords * 0.5 + 0.5;
-	//float closestDepth = texture(lightArg.depth, projCoords.xy).r;
-	//float currentDepth = projCoords.z;  
-	//float bias = max(0.05 * (1.0 - normalize(dot(normal, -lightArg.dir))), 0.005);
-	//
-	////return closestDepth < currentDepth - bias ? 1 : 0; // in case we want to ignore the box filtering of nearby samples
-	//
-	//float shadow = 0.0;
-	//vec2 texelSize = 1.0 / textureSize(lightArg.depth, 0);
-	//for(int x = -1; x <= 1; ++x)
-	//{
-	//    for(int y = -1; y <= 1; ++y)
-	//    {
-	//        float pcfDepth = texture(lightArg.depth, projCoords.xy + vec2(x, y) * texelSize).r; 
-	//        shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;        
-	//    }    
-	//}
-	//shadow /= 9.0;
-	//return shadow;
-	return 0;
-}
+
 float linearizeDepth(float near, float far, float depth) {
     return 2.0 * near / (far + near - depth * (far - near));
 }
+
+vec4 ShadowCalculation(vec3 worldPos, float pixelDepth, vec3 pixelNormal)
+{
+	int cascadeIndex = 0;
+	for (int i = 0; i < 3 - 1; ++i)
+	{
+		if (linearizeDepth(0.1, 100, pixelDepth) >= light.frustumSplits[i])
+			cascadeIndex = i + 1;
+	}
+
+	vec4 fragPosLightSpace = light.lightSpaceMatrix[cascadeIndex] * vec4(worldPos, 1.0);
+	vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+	projCoords = projCoords * 0.5 + 0.5;
+	
+	vec3 rgbCascade = vec3(0.0, 0.0, 0.0);
+	float closestDepth;
+	if (cascadeIndex == 0)
+	{
+		closestDepth = texture(light.nearDepth, projCoords.xy).r;
+		rgbCascade.r = csmDebugIntesity;
+	}
+	else if (cascadeIndex == 1)
+	{
+		closestDepth = texture(light.midDepth, projCoords.xy).r;
+		rgbCascade.g = csmDebugIntesity;	
+	}
+	else
+	{
+		closestDepth = texture(light.farDepth, projCoords.xy).r;
+		rgbCascade.b = csmDebugIntesity;	
+	}
+	rgbCascade.rgb *= light.debugCSM;
+
+	float currentDepth = projCoords.z;  
+	float bias = max(0.05 * (1.0 - normalize(dot(pixelNormal, -light.dir))), 0.005);	
+
+	return vec4(rgbCascade.rgb, closestDepth < currentDepth ? 1 : 0);
+}
+
 float DistributionGGX(vec3 N, vec3 H, float roughness);
 float GeometrySchlickGGX(float NdotV, float roughness);
 float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness);
@@ -92,45 +111,9 @@ void main()
 
 	float NdotL = max(dot(N, direction), 0.0);
 	
-	float cascadeSplits[3] = { 0.4, 0.8, 1.0 };
-	int cascadeIndex = 0;
-	for (int i = 0; i < 3 - 1; ++i)
-	{
-		if (linearizeDepth(0.1, 100, depth) >= cascadeSplits[i])
-			cascadeIndex = i + 1;
-	}
-
-	float shadow = 0.0;
+	vec4 shadow = vec4(0.0, 0.0, 0.0, 0.0);
 	if (light.castShadows)
-	{
-	vec4 fragPosLightSpace = light.lightSpaceMatrix[cascadeIndex] * vec4(worldPos, 1.0);
-	vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
-	projCoords = projCoords * 0.5 + 0.5;
-	float closestDepth;
-	if (cascadeIndex == 0)
-		closestDepth = texture(light.depth1, projCoords.xy).r;
-		
-	if (cascadeIndex == 1)
-		closestDepth = texture(light.depth2, projCoords.xy).r;
-		
-	if (cascadeIndex == 2)
-		closestDepth = texture(light.depth3, projCoords.xy).r;
-	float currentDepth = projCoords.z;  
-	float bias = max(0.05 * (1.0 - normalize(dot(N, -light.dir))), 0.005);
+		shadow = ShadowCalculation(worldPos, depth, N);
 
-	shadow = closestDepth < currentDepth ? 1 : 0;
-	}
-		//shadow = ShadowCalculation(light.lightSpaceMatrix * vec4(worldPos, 1.0), light, N);
-	else
-		shadow = 0.0;
-
-	vec3 rgbCascade = vec3(0.0, 0.0, 0.0);
-	if (cascadeIndex == 0)
-	rgbCascade.r = 0.3;
-	else if (cascadeIndex == 1)
-	rgbCascade.g = 0.3;	
-	else if (cascadeIndex == 2)
-	rgbCascade.b = 0.3;
-	//rgbCascade = vec3(0.0, 0.0, 0.0);
-	HDRsample.rgb += texture(cumHDRsample, screenUVs).rgb + ((kD * albedo / PI + specular) * radiance * NdotL) * (1.0 - shadow) + rgbCascade;
+	HDRsample.rgb += texture(cumHDRsample, screenUVs).rgb + ((kD * albedo / PI + specular) * radiance * NdotL) * (1.0 - shadow.a) + shadow.rgb;
 }
