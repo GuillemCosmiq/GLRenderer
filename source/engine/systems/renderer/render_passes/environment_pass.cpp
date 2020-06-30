@@ -144,7 +144,10 @@ void EnvironmentPass::Render(const Renderer& renderer)
 		needComputeEnvironmentMaps = false;
 	}
 
-	renderer.lighting->GetHDRFbo()->Bind();
+	FrameBufferObject* fbo = renderer.lighting->GetHDRFbo();
+	fbo->Bind();
+	uint32 attachments[] = { GL_COLOR_ATTACHMENT0 };
+	fbo->DefineDrawAttachments(attachments, SizeofArray(attachments));
 	glDepthFunc(GL_LEQUAL);
 	m_skyboxProgram->Bind();
 	m_environmentCubemap->Bind(0);
